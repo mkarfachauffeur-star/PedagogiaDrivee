@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
@@ -7,7 +7,8 @@ import toIco from 'to-ico'
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const publicDir = path.join(rootDir, 'public')
 
-const markSvg = path.join(publicDir, 'brand/pedagogia-drive-mark.svg')
+// Source du favicon : le P Pedagogia Drive avec la route, sur fond noir.
+const markPng = path.join(publicDir, 'brand/pedagogia-drive-p-road.png')
 const fullLogo = path.join(publicDir, 'brand/pedagogia-drive-logo.png')
 
 const rasterIcons = [
@@ -20,21 +21,7 @@ const rasterIcons = [
 ]
 
 async function renderMarkPng(size, { rounded = false } = {}) {
-  const inner = Math.round(size * 0.84)
-  const padding = Math.floor((size - inner) / 2)
-
-  let pipeline = sharp(markSvg)
-    .resize(inner, inner, {
-      fit: 'contain',
-      background: { r: 0, g: 0, b: 0, alpha: 0 },
-    })
-    .extend({
-      top: padding,
-      bottom: size - inner - padding,
-      left: padding,
-      right: size - inner - padding,
-      background: { r: 255, g: 255, b: 255, alpha: 1 },
-    })
+  let pipeline = sharp(markPng).resize(size, size)
 
   if (rounded && size >= 180) {
     const radius = Math.round(size * 0.18)
@@ -48,11 +35,9 @@ async function renderMarkPng(size, { rounded = false } = {}) {
 }
 
 async function generateFromMark() {
-  if (!existsSync(markSvg)) {
-    throw new Error(`Logo mark introuvable : ${markSvg}`)
+  if (!existsSync(markPng)) {
+    throw new Error(`Symbole favicon introuvable : ${markPng}`)
   }
-
-  copyFileSync(markSvg, path.join(publicDir, 'favicon.svg'))
 
   for (const [filename, size] of rasterIcons) {
     const buffer = await renderMarkPng(size, { rounded: size >= 180 })
@@ -85,4 +70,4 @@ async function generateOgImage() {
 await generateFromMark()
 await generateOgImage()
 
-console.log('[favicons] Icônes Pedagogia Drive générées depuis brand/pedagogia-drive-mark.svg')
+console.log('[favicons] Icônes Pedagogia Drive générées depuis brand/pedagogia-drive-p-road.png')
