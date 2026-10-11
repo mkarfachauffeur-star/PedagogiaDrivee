@@ -39,12 +39,12 @@ export function LandingHero({ shouldReduceMotion }) {
             Le livret numérique des auto-écoles
           </p>
           <h1 className="mt-5 text-[2.4rem] font-semibold leading-[1.06] tracking-[-0.05em] text-[var(--lp-ink)] sm:text-5xl lg:text-[4.4rem] lg:leading-[1.02]">
-            Le suivi pédagogique de votre auto-école.{' '}
-            <span className="landing-accent-text">Réinventé.</span>
+            Le futur du livret numérique pour auto-école{' '}
+            <span className="landing-accent-text">commence ici.</span>
           </h1>
           <p className="mt-6 max-w-lg text-base leading-7 text-[var(--lp-muted)] sm:text-lg sm:leading-8">
-            QCU, ressources pédagogiques, suivi des compétences et parcours AAC / CS : tout ce qu’il faut pour
-            accompagner vos élèves au même endroit.
+            Simplifiez le suivi pédagogique, accompagnez vos élèves et gérez votre auto-école avec un outil
+            moderne conçu pour les professionnels de la conduite.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <a
@@ -54,13 +54,18 @@ export function LandingHero({ shouldReduceMotion }) {
             >
               Demander une démonstration
             </a>
-            <a
+            <Link
               className="inline-flex h-12 w-full items-center justify-center rounded-[12px] border border-[var(--lp-border)] bg-[var(--lp-card)] px-6 text-sm font-semibold text-[var(--lp-ink)] transition hover:border-[#1769FF]/35 sm:w-auto"
-              href="#fonctionnalites"
+              to="/livret-numerique-auto-ecole"
             >
-              Découvrir Pedagogia Drive
-            </a>
+              Découvrir le livret numérique
+            </Link>
           </div>
+          <p className="mt-4 text-sm text-[var(--lp-muted)]">
+            <a className="font-semibold text-[#1769FF] underline-offset-4 transition hover:underline" href="#fonctionnalites">
+              Voir toutes les fonctionnalités →
+            </a>
+          </p>
           <p className="mt-5 text-sm text-[var(--lp-muted)]">Élèves • Enseignants • Secrétariat • Gérants</p>
         </motion.div>
 

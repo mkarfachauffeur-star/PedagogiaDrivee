@@ -22,7 +22,7 @@ export default {
     },
     {
       type: "p",
-      content: "Les comparateurs en ligne et les avis Google favorisent les établissements qui affichent clairement leurs outils numériques. La digitalisation devient un argument SEO local : « auto-école livret numérique + ville » attire des prospects qualifiés."
+      content: "Les comparateurs en ligne et les avis Google favorisent les établissements qui affichent clairement leurs outils numériques. La digitalisation devient un argument de visibilité locale : une auto-école équipée d'outils numériques attire les candidats de sa ville."
     },
     {
       type: "h2",

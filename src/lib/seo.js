@@ -42,9 +42,9 @@ export const SEO_DEFAULT_DESCRIPTION =
 export const SEO_PAGES = {
   home: {
     path: '/',
-    title: 'Livret numérique auto-école | Pedagogia Drive — suivi pédagogique REMC',
+    title: 'Livret numérique auto-école nouvelle génération | Pedagogia Drive',
     description:
-      'Livret numérique auto-école Pedagogia Drive : suivi REMC, QCM, compétences, messagerie et gestion d\'équipe. Remplacez le livret papier. Démonstration gratuite.',
+      'Découvrez Pedagogia Drive, le livret numérique nouvelle génération pour les auto-écoles : suivi pédagogique REMC, QCM, messagerie et gestion d\'équipe réunis dans un seul outil. Demandez votre démo !',
     ogType: 'website',
     imageAlt: 'Livret numérique auto-école Pedagogia Drive — suivi pédagogique REMC',
     keywords: SEO_KEYWORDS,
@@ -107,16 +107,16 @@ export const SEO_PAGES = {
   },
   blog: {
     path: '/blog',
-    title: 'Blog Pedagogia Drive | Conseils REMC et pédagogie',
+    title: 'Conseils auto-école et livret numérique | Blog Pedagogia Drive',
     description:
-      'Conseils et actualités pour les auto-écoles : REMC, formation des élèves, organisation de l\'équipe pédagogique et digitalisation.',
+      'Conseils pratiques pour gérants et enseignants d\'auto-école : livret numérique REMC, réussite des élèves, organisation et digitalisation. Des articles concrets, par Pedagogia Drive.',
     ogType: 'website',
   },
   livretNumerique: {
     path: '/livret-numerique-auto-ecole',
-    title: 'Livret numérique auto-école | Livret pédagogique d\'apprentissage — Pedagogia Drive',
+    title: 'Le livret numérique des auto-écoles | Pedagogia Drive',
     description:
-      'Découvrez le livret pédagogique numérique auto-école Pedagogia Drive : suivi REMC, QCM intégrés, espace élève et moniteur. Remplacez le livret papier par un livret numérique conforme.',
+      'Suivi REMC, QCM, espace élève et moniteur, planning et messagerie : le livret numérique qui remplace le livret papier dans votre auto-école. Demandez une démonstration.',
     ogType: 'website',
     keywords: SEO_KEYWORDS,
   },

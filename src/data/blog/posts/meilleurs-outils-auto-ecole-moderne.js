@@ -141,7 +141,7 @@ export default {
     },
     {
       question: "Faut-il un site web en plus du logiciel ?",
-      answer: "Oui pour l'acquisition locale (SEO, devis). Certains logiciels proposent des widgets de réservation à intégrer."
+      answer: "Oui pour l'acquisition locale (visibilité en ligne, devis). Certains logiciels proposent des widgets de réservation à intégrer."
     },
     {
       question: "Les outils gratuits suffisent-ils ?",

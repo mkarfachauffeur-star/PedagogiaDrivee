@@ -15,10 +15,10 @@ export default function LivretNumeriquePage() {
   return (
     <>
       <PageSeo {...page} jsonLd={jsonLd} />
-      <PublicPageLayout title="Livret numérique auto-école — livret pédagogique d'apprentissage">
+      <PublicPageLayout title="Le livret numérique pensé pour les auto-écoles">
         <p className="text-base font-semibold text-slate-700">
-          Pedagogia Drive est un <strong>livret pédagogique numérique auto-école</strong> conforme
-          REMC : suivi des compétences, QCM intégrés et espace élève en ligne.
+          Pedagogia Drive remplace le livret papier : suivi des compétences REMC, QCM et espace
+          élève en ligne, dans un outil pensé pour les auto-écoles.
         </p>
 
         {LIVRET_SEO_SECTIONS.map((section) => (

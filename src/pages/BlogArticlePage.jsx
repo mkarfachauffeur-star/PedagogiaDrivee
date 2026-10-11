@@ -92,6 +92,41 @@ export default function BlogArticlePage() {
 
         <BlogArticleContent article={article} isDark={isDark} skin={skin} />
 
+        <aside className={`mt-10 rounded-2xl border p-6 sm:p-8 ${isDark ? 'border-blue-400/25 bg-gradient-to-br from-[#0b2a52] via-[#103a75] to-[#0b2a52] text-white' : 'border-sky-200 bg-gradient-to-br from-sky-50 via-white to-blue-50'}`}>
+          <p className={`text-[11px] font-black uppercase tracking-[0.18em] ${isDark ? 'text-sky-300' : 'text-sky-700'}`}>
+            Pedagogia Drive
+          </p>
+          <p className={`mt-2 text-xl font-black sm:text-2xl ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            Le livret numérique de votre auto-école
+          </p>
+          <p className={`mt-2 text-sm leading-7 ${isDark ? 'text-sky-100/80' : 'text-slate-600'}`}>
+            Suivi REMC, QCM, messagerie et gestion d’équipe : remplacez le livret papier
+            par un logiciel pensé pour les auto-écoles.
+          </p>
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <Link
+              className={`inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-bold transition ${
+                isDark
+                  ? 'bg-sky-400 text-slate-950 hover:bg-sky-300'
+                  : 'bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg hover:brightness-110'
+              }`}
+              to="/livret-numerique-auto-ecole"
+            >
+              Découvrir le livret numérique
+            </Link>
+            <Link
+              className={`inline-flex h-11 items-center justify-center rounded-xl border px-5 text-sm font-bold transition ${
+                isDark
+                  ? 'border-white/25 text-white hover:bg-white/10'
+                  : 'border-slate-300 bg-white text-slate-800 hover:border-sky-400'
+              }`}
+              to="/#demonstration"
+            >
+              Demander une démonstration
+            </Link>
+          </div>
+        </aside>
+
         <BlogRelatedArticles articles={relatedPosts} isDark={isDark} skin={skin} />
       </div>
     </BlogMarketingLayout>
