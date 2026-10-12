@@ -18,6 +18,7 @@ import LoadingSpinner from './components/ui/LoadingSpinner'
 import ProtectedRoute from './components/ProtectedRoute'
 import AuthHashRedirect from './components/AuthHashRedirect'
 import ScrollToTop from './components/ScrollToTop'
+import { isNativeApp } from './lib/nativeApp'
 import Analytics from './components/analytics/Analytics'
 import { MarketingThemeProvider } from './hooks/useMarketingTheme'
 
@@ -156,20 +157,32 @@ function App() {
       <AuthHashRedirect />
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<ProfileSelection />} />
-        <Route path="/signup" element={<Navigate replace to="/#demonstration" />} />
+        {/* Dans l'app iPhone : connexion directe, aucune page du site vitrine. */}
+        {isNativeApp ? (
+          <>
+            <Route path="/" element={<Navigate replace to="/login" />} />
+            {['/signup', '/cgv', '/cookies', '/contact', '/livret-numerique-auto-ecole', '/blog', '/blog/:slug'].map((path) => (
+              <Route key={path} path={path} element={<Navigate replace to="/login" />} />
+            ))}
+          </>
+        ) : (
+          <>
+            <Route path="/" element={<ProfileSelection />} />
+            <Route path="/signup" element={<Navigate replace to="/#demonstration" />} />
+            <Route path="/cgv" element={<CgvPage />} />
+            <Route path="/cookies" element={<CookiesPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/livret-numerique-auto-ecole" element={<LivretNumeriquePage />} />
+            <Route path="/blog" element={<BlogListPage />} />
+            <Route path="/blog/:slug" element={<BlogArticlePage />} />
+          </>
+        )}
         <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
         <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
         <Route path="/confidentialite" element={<ConfidentialitePage />} />
         <Route path="/cgu" element={<CguPage />} />
-        <Route path="/cgv" element={<CgvPage />} />
-        <Route path="/cookies" element={<CookiesPage />} />
-        <Route path="/contact" element={<ContactPage />} />
         <Route path="/accept-invite" element={<AcceptInvitePage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/livret-numerique-auto-ecole" element={<LivretNumeriquePage />} />
-        <Route path="/blog" element={<BlogListPage />} />
-        <Route path="/blog/:slug" element={<BlogArticlePage />} />
 
         <Route path="/manager/dashboard" element={withProtectedLayout('manager', ManagerDashboardPage)} />
         <Route path="/manager/students" element={withProtectedLayout('manager', ManagerStudentsPage)} />

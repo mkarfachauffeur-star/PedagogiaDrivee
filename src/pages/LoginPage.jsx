@@ -16,6 +16,7 @@ import MarketingThemeToggle from '../components/marketing/MarketingThemeToggle'
 import PageSeo from '../components/seo/PageSeo'
 import StorePlatformBadges from '../components/StorePlatformBadges'
 import { useAuth } from '../context/AuthContext'
+import { isNativeApp } from '../lib/nativeApp'
 import { useMarketingTheme } from '../hooks/useMarketingTheme'
 import { trackLogin, trackFirstLogin } from '../lib/analytics'
 import { supabase } from '../lib/supabase'
@@ -348,18 +349,30 @@ export default function LoginPage() {
 
       <div className="login-page-frame relative z-10 mx-auto flex w-full max-w-[1280px] flex-col px-4 sm:px-6 lg:px-10 lg:py-10">
         <header className={headerClass}>
-          <Link aria-label="Retour à l'accueil" className="inline-flex" to="/">
-            <BrandLogo
-              animated={!shouldReduceMotion}
-              idPrefix="login"
-              variant={isDark ? 'marketing' : 'light'}
-            />
-          </Link>
-          <div className="ml-auto flex shrink-0 items-center gap-2">
-            <Link className={homeLinkClass} to="/">
-              <ArrowLeft className="h-4 w-4" />
-              Accueil
+          {isNativeApp ? (
+            <span className="inline-flex">
+              <BrandLogo
+                animated={!shouldReduceMotion}
+                idPrefix="login"
+                variant={isDark ? 'marketing' : 'light'}
+              />
+            </span>
+          ) : (
+            <Link aria-label="Retour à l'accueil" className="inline-flex" to="/">
+              <BrandLogo
+                animated={!shouldReduceMotion}
+                idPrefix="login"
+                variant={isDark ? 'marketing' : 'light'}
+              />
             </Link>
+          )}
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            {!isNativeApp && (
+              <Link className={homeLinkClass} to="/">
+                <ArrowLeft className="h-4 w-4" />
+                Accueil
+              </Link>
+            )}
             <MarketingThemeToggle className={skin.themeToggle} isDark={isDark} onToggle={toggleTheme} />
           </div>
         </header>
@@ -385,7 +398,9 @@ export default function LoginPage() {
               </span>
             </h1>
             <p className={`mt-5 max-w-md text-base leading-7 sm:text-lg ${skin.bodyMuted}`}>
-              La plateforme premium pensée pour les auto-écoles modernes.
+              {isNativeApp
+                ? 'Connectez-vous avec les identifiants fournis par votre auto-école.'
+                : 'La plateforme premium pensée pour les auto-écoles modernes.'}
             </p>
           </motion.div>
 
@@ -472,6 +487,10 @@ export default function LoginPage() {
                       <Mail className={inputIconClass} />
                       <input
                         type="email"
+                        autoComplete="username"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck={false}
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
                         placeholder="votre@email.com"
@@ -571,10 +590,12 @@ export default function LoginPage() {
                 )}
               </div>
 
-              <Link className={`mt-6 flex items-center justify-center gap-2 ${skin.loginBackLink}`} to="/">
-                <ArrowLeft className="h-4 w-4" />
-                Retour à la page d&apos;accueil
-              </Link>
+              {!isNativeApp && (
+                <Link className={`mt-6 flex items-center justify-center gap-2 ${skin.loginBackLink}`} to="/">
+                  <ArrowLeft className="h-4 w-4" />
+                  Retour à la page d&apos;accueil
+                </Link>
+              )}
             </div>
           </motion.div>
         </div>
@@ -594,21 +615,27 @@ export default function LoginPage() {
               <Link className={`transition ${isDark ? 'hover:text-white' : 'hover:text-slate-900'}`} to="/politique-confidentialite">
                 Politique de confidentialité
               </Link>
-              <Link className={`transition ${isDark ? 'hover:text-white' : 'hover:text-slate-900'}`} to="/contact">
-                Contact
-              </Link>
+              {!isNativeApp && (
+                <Link className={`transition ${isDark ? 'hover:text-white' : 'hover:text-slate-900'}`} to="/contact">
+                  Contact
+                </Link>
+              )}
             </nav>
-            <p
-              className={`mt-6 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] ${skin.loginMuted}`}
-            >
-              <Smartphone className={`h-4 w-4 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
-              Applications mobiles
-            </p>
-            <p className={`mt-2 max-w-md text-sm leading-6 ${skin.loginSubtle}`}>
-              Téléchargez PEDAGOGIA DRIVE sur votre smartphone pour réviser et suivre votre formation où que vous
-              soyez.
-            </p>
-            <StorePlatformBadges className="mt-5" size="large" />
+            {!isNativeApp && (
+              <>
+                <p
+                  className={`mt-6 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] ${skin.loginMuted}`}
+                >
+                  <Smartphone className={`h-4 w-4 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
+                  Applications mobiles
+                </p>
+                <p className={`mt-2 max-w-md text-sm leading-6 ${skin.loginSubtle}`}>
+                  Téléchargez PEDAGOGIA DRIVE sur votre smartphone pour réviser et suivre votre formation où que vous
+                  soyez.
+                </p>
+                <StorePlatformBadges className="mt-5" size="large" />
+              </>
+            )}
             <p className={`mt-8 text-xs ${skin.loginSubtle}`}>
               © {new Date().getFullYear()} Pedagogia Drive. Tous droits réservés.
             </p>
