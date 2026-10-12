@@ -617,7 +617,7 @@ export default function FleetManagementPage({ role = 'secretary' }) {
           />
         )}
       >
-        <form id="fleet-fuel-form" className="grid gap-4 md:grid-cols-2" onSubmit={saveFuel}>
+        <form id="fleet-fuel-form" className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={saveFuel}>
             {saveError && (
               <p className="md:col-span-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
                 {saveError}
@@ -685,7 +685,7 @@ export default function FleetManagementPage({ role = 'secretary' }) {
           />
         )}
       >
-        <form id="fleet-maintenance-form" className="grid gap-4 md:grid-cols-2" onSubmit={saveMaintenance}>
+        <form id="fleet-maintenance-form" className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={saveMaintenance}>
             {saveError && (
               <p className="md:col-span-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
                 {saveError}
@@ -716,7 +716,7 @@ export default function FleetManagementPage({ role = 'secretary' }) {
         )}
       >
         {vehicleForm && (
-        <form id="fleet-vehicle-form" className="grid gap-4 md:grid-cols-2" onSubmit={saveVehicle}>
+        <form id="fleet-vehicle-form" className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={saveVehicle}>
             <Field label="Marque *" onChange={(value) => setVehicleForm((current) => ({ ...current, brand: value }))} value={vehicleForm.brand} />
             <Field label="Modèle *" onChange={(value) => setVehicleForm((current) => ({ ...current, model: value }))} value={vehicleForm.model} />
             <Field label="Immatriculation *" onChange={(value) => setVehicleForm((current) => ({ ...current, plate: value }))} value={vehicleForm.plate} />
@@ -1127,7 +1127,10 @@ function InlineNotice({ label }) {
 }
 
 function formatDate(value) {
-  return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(`${value}T12:00:00`))
+  // Une date absente ou mal saisie ne doit pas faire planter toute la page.
+  const date = value ? new Date(`${value}T12:00:00`) : null
+  if (!date || Number.isNaN(date.getTime())) return 'Non renseigné'
+  return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }).format(date)
 }
 
 function isElectric(vehicle) {
