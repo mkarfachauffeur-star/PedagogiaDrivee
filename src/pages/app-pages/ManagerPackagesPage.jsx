@@ -284,7 +284,7 @@ export default function ManagerPackagesPage() {
     setSaveError(null)
 
     if (!canWrite) {
-      setSaveError('Modification impossible : abonnement ou accès en lecture seule.')
+      setSaveError('Modification impossible : accès en lecture seule.')
       return
     }
     if (!organizationId) {

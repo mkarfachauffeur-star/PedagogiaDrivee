@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import AppModal, { AppModalFooter } from '../ui/AppModal'
 import { useAuth } from '../../context/AuthContext'
+import { isNativeApp } from '../../lib/nativeApp'
 import {
   MANAGER_ONBOARDING_STEPS,
   completeManagerOnboarding,
@@ -178,7 +179,7 @@ export default function ManagerOnboardingTutorial() {
             {step.icon}
           </span>
           <p className="mt-4 text-base leading-relaxed text-slate-700">{step.description}</p>
-          {step.id === 'welcome' && trialEndLabel && (
+          {step.id === 'welcome' && trialEndLabel && !isNativeApp && (
             <p className="mt-3 text-sm font-bold text-cyan-800">
               Essai gratuit actif jusqu&apos;au {trialEndLabel}
             </p>
@@ -191,10 +192,12 @@ export default function ManagerOnboardingTutorial() {
               <span aria-hidden>•</span>
               <span>Menu latéral : accès rapide à toutes les sections de votre auto-école.</span>
             </li>
-            <li className="flex gap-2">
-              <span aria-hidden>•</span>
-              <span>Bandeau cyan : suivi de votre essai gratuit et du nombre d&apos;élèves.</span>
-            </li>
+            {!isNativeApp && (
+              <li className="flex gap-2">
+                <span aria-hidden>•</span>
+                <span>Bandeau cyan : suivi de votre essai gratuit et du nombre d&apos;élèves.</span>
+              </li>
+            )}
             <li className="flex gap-2">
               <span aria-hidden>•</span>
               <span>Cloche de notification : messages non lus de votre équipe.</span>

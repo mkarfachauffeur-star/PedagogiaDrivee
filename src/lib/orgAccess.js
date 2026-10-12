@@ -1,7 +1,10 @@
+import { isNativeApp } from './nativeApp'
 import { supabase } from './supabase'
 
-const READ_ONLY_MESSAGE =
-  'Compte en lecture seule — consultation et exports autorisés. Contactez PEDAGOGIA DRIVE pour réactiver votre abonnement.'
+// L'app iPhone ne parle pas d'abonnement : le contrat se gère hors de l'app.
+const READ_ONLY_MESSAGE = isNativeApp
+  ? 'Compte en lecture seule : consultation et exports autorisés.'
+  : 'Compte en lecture seule — consultation et exports autorisés. Contactez PEDAGOGIA DRIVE pour réactiver votre abonnement.'
 
 export function computeCanWrite(organization, subscription) {
   if (!organization) return false

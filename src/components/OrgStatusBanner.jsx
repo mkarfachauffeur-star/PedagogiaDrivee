@@ -1,4 +1,5 @@
 import { useAuth } from '../context/AuthContext'
+import { isNativeApp } from '../lib/nativeApp'
 
 export default function OrgStatusBanner() {
   const { organization, subscription, studentCount, canWrite, isTrial } = useAuth()
@@ -8,6 +9,16 @@ export default function OrgStatusBanner() {
   const trialEnd = subscription?.trial_ends_at ? new Date(subscription.trial_ends_at) : null
   const daysLeft = trialEnd ? Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000)) : null
   const maxStudents = subscription?.plan?.max_students
+
+  // Dans l'app iPhone, aucune mention d'essai ni d'abonnement : le contrat se gère hors de l'app.
+  if (isNativeApp) {
+    if (canWrite) return null
+    return (
+      <div className="border-b border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm font-bold text-amber-900">
+        Compte en lecture seule : consultation et exports autorisés.
+      </div>
+    )
+  }
 
   if (organization.status === 'suspended' || organization.status === 'cancelled') {
     return (
