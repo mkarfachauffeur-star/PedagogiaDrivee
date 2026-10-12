@@ -1,5 +1,7 @@
 /** @typedef {Record<string, string | number | boolean | undefined>} GtagEventParams */
 
+import { isNativeApp } from './nativeApp'
+
 const FALLBACK_MEASUREMENT_ID = ''
 
 let initialized = false
@@ -80,6 +82,10 @@ export function initGoogleAnalytics(measurementId = getGaMeasurementId()) {
     return false
   }
   if (!shouldSendAnalytics()) {
+    return false
+  }
+  // Pas de mesure d'audience Google dans l'app iPhone (déclaration de confidentialité Apple).
+  if (isNativeApp) {
     return false
   }
 
