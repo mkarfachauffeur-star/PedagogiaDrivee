@@ -6,7 +6,7 @@
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
-	                <key>CFBundleDisplayName</key>
+	                                <key>CFBundleDisplayName</key>
     <string>Pedagogia Drive</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
@@ -14,9 +14,9 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-	                <key>CFBundleName</key>
+	                                <key>CFBundleName</key>
     <string>Pedagogia Drive</string>
-	    <key>CFBundleIconName</key>
+	                    <key>CFBundleIconName</key>
     <string>AppIcon</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
@@ -26,6 +26,25 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -45,23 +64,23 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	                <key>UIViewControllerBasedStatusBarAppearance</key>
+	                                <key>UIViewControllerBasedStatusBarAppearance</key>
     <true/>
-                <key>ITSAppUsesNonExemptEncryption</key>
+                                <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
-                <key>UIRequiresFullScreen</key>
+                                <key>UIRequiresFullScreen</key>
     <false/>
-                <key>NSCameraUsageDescription</key>
+                                <key>NSCameraUsageDescription</key>
     <string>Pedagogia Drive utilise l’appareil photo pour joindre des documents et pièces aux dossiers élèves.</string>
-                <key>NSPhotoLibraryUsageDescription</key>
+                                <key>NSPhotoLibraryUsageDescription</key>
     <string>Pedagogia Drive accède à vos photos pour importer des documents (pièces d’identité, justificatifs, autorisations).</string>
-                <key>NSPhotoLibraryAddUsageDescription</key>
+                                <key>NSPhotoLibraryAddUsageDescription</key>
     <string>Pedagogia Drive peut enregistrer des documents exportés dans votre photothèque si vous le demandez.</string>
-                <key>NSMicrophoneUsageDescription</key>
+                                <key>NSMicrophoneUsageDescription</key>
     <string>Pedagogia Drive n’utilise pas le micro. Cette autorisation n’est requise que si vous enregistrez une note vocale depuis l’appareil.</string>
-                <key>NSLocationWhenInUseUsageDescription</key>
+                                <key>NSLocationWhenInUseUsageDescription</key>
     <string>Pedagogia Drive utilise votre position pendant un trajet de conduite accompagnée pour calculer les kilomètres réellement parcourus. Le suivi s’arrête lorsque vous terminez le trajet.</string>
-        <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+                        <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>Pendant un trajet de conduite accompagnée, Pedagogia Drive continue d’utiliser votre position lorsque l’iPhone est verrouillé ou lorsque l’application est en arrière-plan, afin de calculer les kilomètres réellement parcourus. Le suivi s’arrête dès que vous appuyez sur Arrêter le trajet. Pedagogia Drive ne suit pas votre position en dehors d’un trajet.</string>
     <key>UIBackgroundModes</key>
     <array>
