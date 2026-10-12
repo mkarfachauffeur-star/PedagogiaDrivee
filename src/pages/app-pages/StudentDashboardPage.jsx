@@ -132,7 +132,7 @@ export default function StudentDashboardPage() {
   return (
     <PageShell>
       <section className="pd-section-card">
-        <div className="grid gap-6 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white md:grid-cols-[1fr_280px] md:p-8">
+        <div className="grid grid-cols-1 gap-6 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white md:grid-cols-[1fr_280px] md:p-8">
           <div>
             <span className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
               {getTrackLabel(track)}
@@ -169,7 +169,7 @@ export default function StudentDashboardPage() {
 
       {isPermisB && (
         <>
-          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             <StatCard
               detail={
                 assessmentDone && assessment?.completed_at
@@ -224,7 +224,7 @@ export default function StudentDashboardPage() {
                   <h2 className="mt-1 text-2xl font-black text-slate-950">Préparation à l&apos;épreuve pratique</h2>
                 </div>
               </div>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {[
                   { label: 'Dernier score', value: `${practiceExamStats.lastScore}/31` },
                   { label: 'Meilleur score', value: `${practiceExamStats.bestScore}/31` },
@@ -245,7 +245,7 @@ export default function StudentDashboardPage() {
         </>
       )}
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {navLinks.map((link) => (
           <Link className="group card-tile" key={link.href} to={link.href}>
             <p className="text-base font-black text-slate-950 group-hover:text-cyan-800">{link.label}</p>

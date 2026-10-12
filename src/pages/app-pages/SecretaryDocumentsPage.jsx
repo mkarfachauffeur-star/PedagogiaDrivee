@@ -122,7 +122,7 @@ export default function SecretaryDocumentsPage() {
         <EmptyState title="Connexion requise" message="Connectez-vous avec votre compte pour gérer les documents." icon="📄" />
       ) : (
         <>
-          <section className="grid gap-6 xl:grid-cols-[420px_1fr]">
+          <section className="grid grid-cols-1 gap-6 xl:grid-cols-[420px_1fr]">
             <aside className="rounded-[2rem] border-2 border-slate-300 bg-white/85 p-5 shadow-[var(--shadow-card)] backdrop-blur-xl">
               <h2 className="text-2xl font-extrabold text-slate-950">Dossier élève</h2>
               <div className="mt-5">
@@ -162,7 +162,7 @@ export default function SecretaryDocumentsPage() {
 
             <form className="rounded-[2rem] border-2 border-slate-300 bg-white/85 p-5 shadow-[var(--shadow-card)] backdrop-blur-xl" onSubmit={saveDocument}>
               <h2 className="text-2xl font-extrabold text-slate-950">Déposer un document</h2>
-              <div className="mt-5 grid gap-4 md:grid-cols-2">
+              <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
                 <SelectField label="Type de document" onChange={(value) => updateForm('type', value)} value={form.type} options={DOCUMENT_CATEGORIES} />
                 <Field label="Référence document" onChange={(value) => updateForm('reference', value)} value={form.reference} />
                 <SelectField label="Statut" onChange={(value) => updateForm('status', value)} value={form.status} options={DOCUMENT_STATUSES} />
@@ -221,7 +221,7 @@ export default function SecretaryDocumentsPage() {
               </div>
               <span className="w-fit rounded-full border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-black text-cyan-700">{documents.length} pièces</span>
             </div>
-            <div className="mt-5 grid gap-3 md:grid-cols-2">
+            <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
               {documents.length === 0 && (
                 <EmptyState className="md:col-span-2" title="Aucun document disponible" message="Aucun document disponible pour le moment." icon="📄" />
               )}

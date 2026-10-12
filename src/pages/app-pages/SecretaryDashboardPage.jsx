@@ -69,7 +69,7 @@ export default function SecretaryDashboardPage() {
         <EmptyState title="Erreur de chargement" message={loadError || 'Données indisponibles.'} icon="⚠️" />
       ) : (
         <div className="flex flex-col gap-6">
-          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <KpiCard label="Leçons aujourd'hui" tone="cyan" value={String(dashboard.summary.todayLessons)} caption={`${dashboard.summary.weekLessons} sur 7 jours`} />
             <KpiCard label="Dossiers en attente" tone="amber" value={String(dashboard.summary.pendingDossiers)} caption="Inscriptions à finaliser" />
             <KpiCard label="Documents à traiter" tone="rose" value={String(dashboard.summary.documentsToReview)} caption="Pièces à compléter ou vérifier" />

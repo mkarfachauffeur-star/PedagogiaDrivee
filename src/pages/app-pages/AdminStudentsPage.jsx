@@ -316,7 +316,7 @@ export default function AdminStudentsPage() {
                         <summary className={`cursor-pointer text-sm font-bold ${assessmentStyles.summary}`}>
                           Évaluation de départ · {formatAssessmentStatus(assessmentStatus)}
                         </summary>
-                        <div className="mt-3 grid gap-2 pb-2 text-sm sm:grid-cols-2">
+                        <div className="mt-3 grid grid-cols-1 gap-2 pb-2 text-sm sm:grid-cols-2">
                           <p><span className="font-bold text-slate-500">Date :</span> {assessment?.completed_at ? formatDateFr(assessment.completed_at) : '—'}</p>
                           <p><span className="font-bold text-slate-500">Score obtenu :</span> {assessment?.status === 'completed' ? assessment.final_score : '—'}</p>
                           <p><span className="font-bold text-slate-500">Heures recommandées :</span> {assessment?.recommended_hours_min ? `${assessment.recommended_hours_min}${assessment.recommended_hours_max !== assessment.recommended_hours_min ? ` à ${assessment.recommended_hours_max}` : ''} h` : '—'}</p>

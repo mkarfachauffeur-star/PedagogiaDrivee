@@ -359,7 +359,7 @@ export default function ManagerPackagesPage() {
           </button>
         ) : null}
       >
-        <div className="mt-6 grid gap-3 sm:grid-cols-4">
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-4">
           {[
             { label: 'Formules', value: stats.total },
             { label: 'Actives', value: stats.active },
@@ -428,7 +428,7 @@ export default function ManagerPackagesPage() {
                     </p>
                   </div>
                 </div>
-                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                   {rows.map((pkg) => (
                     <PackageCard
                       key={pkg.id}
@@ -557,7 +557,7 @@ export default function ManagerPackagesPage() {
               <p className="mb-3 text-xs font-medium text-slate-500">
                 Cochez « inclus » si le rendez-vous est compris dans la formule. Sinon, indiquez le tarif TTC facturé à part.
               </p>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {PACKAGE_RVP_OPTIONS.map(({ key, label }) => {
                   const includedKey = `${key}Included`
                   const priceKey = `${key}Ttc`

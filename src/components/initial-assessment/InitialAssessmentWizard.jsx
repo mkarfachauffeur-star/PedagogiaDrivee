@@ -17,7 +17,7 @@ const PLACEHOLDER_MESSAGE = 'Cette section sera disponible prochainement.'
 
 function ModuleProgress({ modules, currentIndex }) {
   return (
-    <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+    <ol className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
       {modules.map((step, index) => {
         const active = index === currentIndex
         const done = index < currentIndex
@@ -149,7 +149,7 @@ function ResultsPanel({ answers, student, assessment, onExportPdf, exportingPdf,
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <article className="rounded-2xl border border-cyan-200 bg-cyan-50 p-4">
           <p className="text-sm font-semibold text-cyan-700">Score total</p>
           <p className="mt-1 text-4xl font-black text-cyan-950">{scores.finalScore} %</p>

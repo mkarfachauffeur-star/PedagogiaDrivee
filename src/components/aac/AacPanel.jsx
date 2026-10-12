@@ -813,7 +813,7 @@ export default function AacPanel({
             </div>
           </fieldset>
 
-          <div className="mt-5 grid gap-2 sm:grid-cols-2">
+          <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
             <button
               className="touch-manipulation rounded-xl bg-gradient-to-r from-sky-400 to-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_28px_rgba(56,132,244,0.35)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
               disabled={saving || tripActive}
@@ -833,7 +833,7 @@ export default function AacPanel({
           </div>
 
           {tripActive && (
-            <div className="mt-4 grid gap-2 sm:grid-cols-3">
+            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
               <KpiLight label="Distance" value={`${formatKm(liveKm)} km`} />
               <KpiLight label="Durée" value={formatDuration(elapsed)} />
               <KpiLight label="Positions" value={String(livePoints.length)} />
@@ -875,7 +875,7 @@ export default function AacPanel({
           Deux rendez-vous sont obligatoires. Un rendez-vous supplémentaire peut être organisé
           sur conseil de l’enseignant, à la demande de l’élève ou de l’accompagnateur.
         </p>
-        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {visibleRvp.map((item) => (
             <RvpCard
               isStaff={isStaff}

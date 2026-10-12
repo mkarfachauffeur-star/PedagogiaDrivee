@@ -31,7 +31,7 @@ export default function PlatformDashboardPage() {
       )}
 
       {metrics && (
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <Kpi hint="Revenu mensuel récurrent" label="MRR" value={formatPlatformEur(metrics.mrrCents, { fromCents: true })} />
           <Kpi hint="Revenu annuel récurrent" label="ARR" value={formatPlatformEur(metrics.arrCents, { fromCents: true })} />
           <Kpi label="Essais gratuits" value={metrics.trialCount} />

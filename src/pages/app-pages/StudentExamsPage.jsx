@@ -83,7 +83,7 @@ export default function StudentExamsPage() {
         </div>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {groupedCounts.map(({ category, count }) => (
           <article
             className={`group flex min-h-[176px] flex-col rounded-[1.5rem] border p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(15,23,42,0.14)] ${toneClasses(categoryTone(category))}`}
@@ -136,7 +136,7 @@ export default function StudentExamsPage() {
           </span>
         </div>
 
-        <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
           {filteredQuestions.map((question, index) => {
             const opened = Boolean(openedAnswers[question.id])
             return (

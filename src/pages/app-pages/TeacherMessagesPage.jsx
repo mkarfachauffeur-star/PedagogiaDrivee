@@ -119,7 +119,7 @@ export default function TeacherMessagesPage() {
       {!profileId ? (
         <EmptyState title="Connexion requise" message="Connectez-vous avec votre compte pour accéder à la messagerie." icon="💬" />
       ) : (
-        <div className="pd-msg-panel grid gap-0 lg:grid-cols-[320px_1fr]">
+        <div className="pd-msg-panel grid grid-cols-1 gap-0 lg:grid-cols-[320px_1fr]">
           <aside className="pd-msg-sidebar">
             <div className="flex items-center justify-between gap-2">
               <h2 className="pd-msg-sidebar-title">Conversations</h2>

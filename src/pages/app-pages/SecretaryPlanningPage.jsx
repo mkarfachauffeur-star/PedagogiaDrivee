@@ -161,7 +161,7 @@ export default function SecretaryPlanningPage() {
         </div>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Kpi label="Créneaux visibles" value={filteredSlots.length} />
         <Kpi label="Confirmés" value={confirmedCount} tone="emerald" />
         <Kpi label="En attente" value={filteredSlots.filter((slot) => slot.status === 'en attente').length} tone="amber" />
@@ -217,7 +217,7 @@ export default function SecretaryPlanningPage() {
               ))}
             </div>
           </div>
-          <div className="grid gap-3 md:grid-cols-3 xl:min-w-[620px]">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3 xl:min-w-[620px]">
             <Filter label="Enseignant" onChange={setTeacherFilter} options={teachers} value={teacherFilter} />
             <Filter label="Véhicule" onChange={setVehicleFilter} options={vehicles} value={vehicleFilter} />
             <Filter label="Catégorie" onChange={setCategoryFilter} options={categories} value={categoryFilter} />
@@ -285,10 +285,10 @@ export default function SecretaryPlanningPage() {
         </div>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1fr_420px]">
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_420px]">
         <div className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
           <h2 className="text-2xl font-extrabold text-slate-950">Tous les enseignants, véhicules et élèves</h2>
-          <div className="mt-5 grid gap-3 md:grid-cols-3">
+          <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
             <ResourceList title="Enseignants" items={teachers.slice(1)} />
             <ResourceList title="Véhicules" items={vehicles.slice(1)} />
             <ResourceList title="Élèves visibles" items={[...new Set(filteredSlots.map((slot) => slot.student))]} />

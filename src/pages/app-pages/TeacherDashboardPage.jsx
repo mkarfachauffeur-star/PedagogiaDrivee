@@ -40,7 +40,7 @@ export default function TeacherDashboardPage() {
         title="Tableau de bord"
       />
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
           { label: 'Élèves prêts', value: stats?.readyCount ?? 0 },
           { label: 'Élèves à risque', value: stats?.riskCount ?? 0 },

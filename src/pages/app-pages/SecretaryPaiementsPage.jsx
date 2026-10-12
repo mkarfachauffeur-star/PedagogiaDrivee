@@ -279,7 +279,7 @@ export default function SecretaryPaiementsPage() {
         </div>
       )}
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Kpi label="Total encaissé" value={formatEur(totals.paid)} />
         <Kpi label="Total dépenses" value={formatEur(totals.spent)} tone="rose" />
         <Kpi label="Solde net" value={formatEur(totals.net)} tone={totals.net >= 0 ? 'cyan' : 'rose'} />
@@ -298,7 +298,7 @@ export default function SecretaryPaiementsPage() {
       {loading ? (
         <p className="text-sm font-medium text-slate-500">Chargement…</p>
       ) : tab === 'payments' ? (
-        <section className="grid gap-6 xl:grid-cols-[1fr_420px]">
+        <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_420px]">
           <div className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <h2 className="text-2xl font-extrabold text-slate-950">Dossiers financiers</h2>
@@ -478,7 +478,7 @@ export default function SecretaryPaiementsPage() {
           </div>
           <div className="mt-5 rounded-[1.5rem] border border-cyan-100 bg-cyan-50/70 p-4">
             <p className="text-sm font-black text-cyan-800">Récapitulatif</p>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Info label="Contrat" value={formatEur(paymentFormSummary.contractTotal)} />
               <Info label="Déjà encaissé" value={formatEur(paymentFormSummary.alreadyPaid)} />
               <Info label="Reste avant" value={formatEur(paymentFormSummary.remainingBefore)} />

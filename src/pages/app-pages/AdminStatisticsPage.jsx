@@ -48,7 +48,7 @@ export default function AdminStatisticsPage() {
         <EmptyState title="Erreur de chargement" message={loadError} icon="⚠️" />
       ) : dashboard ? (
         <>
-          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             <Kpi label="CA mensuel" value={formatEur(dashboard.monthlyRevenue)} tone="cyan" />
             <Kpi label="CA annuel" value={formatEur(dashboard.annualRevenue)} tone="cyan" />
             <Kpi label="Élèves actifs" value={String(dashboard.activeStudents)} tone="indigo" />
@@ -85,7 +85,7 @@ export default function AdminStatisticsPage() {
           <section className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
             <h2 className="text-xl font-extrabold text-slate-950">Répartition des revenus</h2>
             <p className="mt-1 text-sm text-slate-500">Par nature d'encaissement enregistrée.</p>
-            <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {PAYMENT_NATURES.map((nature) => {
                 const amount = dashboard.revenueByNature?.[nature] || 0
                 const pct = revenueTotal > 0 ? Math.round((amount / revenueTotal) * 100) : 0
@@ -102,7 +102,7 @@ export default function AdminStatisticsPage() {
             </div>
           </section>
 
-          <section className="grid gap-4 sm:grid-cols-2">
+          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <article className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
               <p className="text-sm font-bold text-slate-500">Total encaissé</p>
               <p className="mt-2 text-3xl font-black text-emerald-600">{formatEur(dashboard.totalCollected)}</p>

@@ -240,7 +240,7 @@ export default function SecretaryExamsPage() {
         <Kpi label="Dossiers bloqués" value={stats.blocked} tone="rose" />
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1fr_420px]">
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_420px]">
         <div className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
           <h2 className="text-2xl font-extrabold text-slate-950">Sessions à venir</h2>
           <div className="mt-5 grid gap-3">

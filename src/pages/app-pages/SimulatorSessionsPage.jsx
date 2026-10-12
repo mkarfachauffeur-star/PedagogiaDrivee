@@ -276,7 +276,7 @@ export default function SimulatorSessionsPage({ readOnly = false }) {
 
       <section className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="block text-sm font-bold text-slate-700">
               Du
               <input className={inputClass} type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
@@ -375,7 +375,7 @@ export default function SimulatorSessionsPage({ readOnly = false }) {
         size="lg"
       >
         <form id={FORM_ID} className="space-y-5" onSubmit={saveSession}>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="block">
               <span className="text-sm font-bold text-slate-700">Élève</span>
               <select className={inputClass} value={form.studentId} onChange={(e) => updateField('studentId', e.target.value)}>
@@ -418,7 +418,7 @@ export default function SimulatorSessionsPage({ readOnly = false }) {
             {errors.supervisorId && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.supervisorId}</p>}
           </label>
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <label className="block">
               <span className="text-sm font-bold text-slate-700">Date</span>
               <input className={inputClass} type="date" value={form.sessionDate} onChange={(e) => updateField('sessionDate', e.target.value)} />

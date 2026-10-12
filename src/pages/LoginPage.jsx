@@ -377,7 +377,7 @@ export default function LoginPage() {
           </div>
         </header>
 
-        <div className="grid shrink-0 items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+        <div className="grid grid-cols-1 shrink-0 items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
           <motion.div
             className="flex flex-col justify-center lg:min-h-[calc(100vh-8rem)]"
             {...fadeUp(0)}

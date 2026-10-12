@@ -381,7 +381,7 @@ export default function AdminContractsPage() {
       ) : loadError ? (
         <EmptyState icon="⚠️" message={loadError} title="Erreur de chargement" />
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_1fr]">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,22rem)_1fr]">
           <article className="rounded-[1.75rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
             <div className="mb-5 flex items-start gap-4">
               <div className="grid h-12 w-12 place-items-center rounded-2xl bg-cyan-50 text-cyan-700">
@@ -416,7 +416,7 @@ export default function AdminContractsPage() {
                   </p>
                 </div>
               </div>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label className="block min-w-[12rem] text-sm font-bold text-slate-700">
                   Filtrer par membre
                   <select

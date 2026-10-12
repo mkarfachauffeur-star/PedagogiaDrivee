@@ -41,7 +41,7 @@ export default function PlatformPaymentsPage() {
         subtitle="Factures d'abonnement Pedagogia Drive émises aux auto-écoles — hors paiements élèves."
       />
 
-      <section className="grid gap-4 sm:grid-cols-3">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <SummaryCard
           label="Payées"
           count={summary.paidCount}

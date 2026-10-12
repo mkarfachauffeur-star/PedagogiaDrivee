@@ -111,7 +111,7 @@ export default function StudentContractPage() {
         <>
           <section className="pd-section-card pd-section-card-body">
             <h2 className="text-xl font-extrabold text-slate-950">Votre formule</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4">
                 <p className="text-sm font-semibold text-slate-500">Formule choisie</p>
                 <p className="mt-1 text-lg font-extrabold text-slate-950">{formuleLabel || '—'}</p>
@@ -161,7 +161,7 @@ export default function StudentContractPage() {
           {hasFinancialData && (
             <section className="pd-section-card pd-section-card-body">
               <h2 className="text-xl font-extrabold text-slate-950">Récapitulatif financier</h2>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <SummaryCard
                   hint={contractTotal > 0 ? 'Montant total du forfait' : 'Non renseigné par le secrétariat'}
                   label="Montant du contrat"

@@ -125,7 +125,7 @@ export default function SecretaryLicenseResultsPage() {
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[1fr_420px]">
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_420px]">
         <div className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
           <h2 className="text-2xl font-extrabold text-slate-950">Élèves concernés</h2>
           <div className="mt-5 grid gap-3">

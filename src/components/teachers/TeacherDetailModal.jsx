@@ -62,7 +62,7 @@ export default function TeacherDetailModal({ open, teacher, onClose, onEdit }) {
     >
       <section className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4">
         <h3 className="text-sm font-extrabold text-slate-900">Compte associé</h3>
-        <dl className="mt-3 grid gap-3 sm:grid-cols-2 text-sm">
+        <dl className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 text-sm">
           <div>
             <dt className="font-bold text-slate-500">E-mail compte</dt>
             <dd className="font-semibold text-slate-900">{teacher.email || '—'}</dd>
@@ -86,7 +86,7 @@ export default function TeacherDetailModal({ open, teacher, onClose, onEdit }) {
         </dl>
       </section>
 
-      <dl className="mt-6 grid gap-4 sm:grid-cols-2 text-sm">
+      <dl className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 text-sm">
         <div><dt className="font-bold text-slate-500">Type</dt><dd className="mt-1 font-semibold">{getResourceTypeLabel(teacher.resource_type)}</dd></div>
         <div><dt className="font-bold text-slate-500">Téléphone</dt><dd className="mt-1 font-semibold">{teacher.phone || '—'}</dd></div>
         {!isSimulator && (
@@ -111,7 +111,7 @@ export default function TeacherDetailModal({ open, teacher, onClose, onEdit }) {
         {!isSimulator && (authorizationUrls.rectoUrl || authorizationUrls.versoUrl) && (
           <div className="sm:col-span-2">
             <dt className="font-bold text-slate-500">Autorisation d&apos;enseigner</dt>
-            <dd className="mt-2 grid gap-3 sm:grid-cols-2">
+            <dd className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
               {authorizationUrls.rectoUrl && (
                 <a className="block overflow-hidden rounded-2xl border-2 border-slate-300 bg-white" href={authorizationUrls.rectoUrl} rel="noreferrer" target="_blank">
                   <img alt="Recto autorisation d'enseigner" className="max-h-44 w-full object-contain p-2" src={authorizationUrls.rectoUrl} />

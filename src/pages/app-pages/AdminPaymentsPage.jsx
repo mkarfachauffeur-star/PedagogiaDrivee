@@ -95,7 +95,7 @@ export default function AdminPaymentsPage() {
       )}
 
       {summary && (
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <Kpi label="Encaissements" value={formatEur(summary.totalIncome)} tone="cyan" />
           <Kpi label="Dépenses" value={formatEur(summary.totalExpenses)} tone="rose" />
           <Kpi label="Solde net" value={formatEur(summary.netBalance)} tone={summary.netBalance >= 0 ? 'cyan' : 'rose'} />
@@ -105,7 +105,7 @@ export default function AdminPaymentsPage() {
 
       <section className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <FilterField label="Du" type="date" value={dateFrom} onChange={setDateFrom} />
             <FilterField label="Au" type="date" value={dateTo} onChange={setDateTo} />
             <FilterField

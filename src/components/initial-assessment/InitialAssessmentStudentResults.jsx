@@ -87,7 +87,7 @@ export default function InitialAssessmentStudentResults({ assessment, onAssessme
 
   return (
     <div className="space-y-5">
-      <section className="grid gap-4 sm:grid-cols-2">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <article className="rounded-2xl border border-cyan-200 bg-cyan-50 p-4">
           <p className="text-sm font-semibold text-cyan-700">Score total</p>
           <p className="mt-1 text-4xl font-black text-cyan-950">{scores.finalScore} %</p>
@@ -182,7 +182,7 @@ export default function InitialAssessmentStudentResults({ assessment, onAssessme
                 <h3 className="font-extrabold text-slate-900">Module {module.moduleNumber} — {module.title}</h3>
                 <dl className="mt-3 space-y-2">
                   {[...fieldRows, ...ratingRows].map((row) => (
-                    <div className="grid gap-1 sm:grid-cols-[1fr_auto]" key={row.label}>
+                    <div className="grid grid-cols-1 gap-1 sm:grid-cols-[1fr_auto]" key={row.label}>
                       <dt className="text-sm text-slate-600">{row.label}</dt>
                       <dd className="text-sm font-bold text-slate-900 sm:text-right">{row.value}</dd>
                     </div>

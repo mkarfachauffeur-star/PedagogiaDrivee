@@ -73,7 +73,7 @@ export default function PlatformOrganizationsPage() {
 
       <section className="rounded-2xl border-2 border-slate-300 bg-white p-5">
         <h2 className="text-lg font-extrabold text-slate-950">Créer une auto-école</h2>
-        <form className="mt-4 grid gap-3 sm:grid-cols-3" onSubmit={handleCreate}>
+        <form className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3" onSubmit={handleCreate}>
           <input
             className="rounded-xl border-2 border-slate-300 px-3 py-2 text-sm"
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}

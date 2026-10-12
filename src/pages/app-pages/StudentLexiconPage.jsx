@@ -515,7 +515,7 @@ export default function StudentLexiconPage() {
       />
 
       {sectionTab === 'vocab' && (
-      <section className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <section className="grid grid-cols-1 min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0 overflow-hidden rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
           <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>

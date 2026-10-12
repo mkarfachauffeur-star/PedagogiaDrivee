@@ -83,7 +83,7 @@ function Hero({ hero, onAction }) {
       initial={{ opacity: 0, y: 12 }}
       transition={{ duration: 0.45 }}
     >
-      <div className="relative grid gap-6 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-4 text-white sm:p-6 md:grid-cols-[1fr_auto] md:p-8">
+      <div className="relative grid grid-cols-1 gap-6 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-4 text-white sm:p-6 md:grid-cols-[1fr_auto] md:p-8">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_88%_12%,rgba(239,68,68,0.18),transparent_42%),radial-gradient(circle_at_10%_90%,rgba(59,130,246,0.14),transparent_38%)]" />
         <div className="relative">
           {hero.eyebrow && (
@@ -151,7 +151,7 @@ function Metrics({ metrics = [], activeDetail, onSelect }) {
   if (!metrics.length) return null
 
   return (
-    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {metrics.map((metric, index) => {
         const styles = getTone(metric.tone)
         const active = activeDetail?.id === `metric-${metric.label}`
@@ -260,7 +260,7 @@ function CardSection({ section, activeDetail, onSelect }) {
               </div>
               {item.progress != null && <ProgressBar value={item.progress} tone={item.tone} />}
               {item.meta?.length > 0 && (
-                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {item.meta.map((meta) => (
                     <div
                       className="rounded-2xl border-2 border-slate-300 bg-slate-50 px-3 py-2"
@@ -464,7 +464,7 @@ function DetailPanel({ detail, onClose }) {
       {detail.progress != null && <ProgressBar value={detail.progress} tone={detail.tone} />}
 
       {detail.meta?.length > 0 && (
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {detail.meta.map((meta) => (
             <motion.div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4" key={meta.label}>
               <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{meta.label}</p>

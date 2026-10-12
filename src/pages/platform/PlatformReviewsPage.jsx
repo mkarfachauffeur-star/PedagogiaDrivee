@@ -204,7 +204,7 @@ export default function PlatformReviewsPage() {
 
       {dashboard && (
         <>
-          <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             <Kpi label="Moyenne générale" value={`${dashboard.average_rating} ★`} />
             <Kpi label="Total avis" value={dashboard.total_count} />
             <Kpi label="Aujourd'hui" value={dashboard.today_count} />
@@ -295,7 +295,7 @@ export default function PlatformReviewsPage() {
           </div>
         </div>
 
-        <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+        <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-6">
           <div className="xl:col-span-2">
             <ListSearchField onChange={setSearch} value={search} />
           </div>

@@ -428,14 +428,14 @@ export default function FleetManagementPage({ role = 'secretary' }) {
         role={role}
       />
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Kpi label="Véhicules suivis" value={vehicles.length} />
         <Kpi label="Coût carburant mois" value={`${stats.totalFuelCost.toFixed(2)} EUR`} tone="amber" />
         <Kpi label="Kilomètres mois" value={`${stats.totalKm} km`} tone="emerald" />
         <Kpi label="Coût moyen/km" value={`${stats.costPerKm.toFixed(2)} EUR`} tone="cyan" />
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1fr_420px]">
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_420px]">
         <div className="rounded-[2rem] border-2 border-slate-300 bg-white/85 p-5 shadow-[var(--shadow-card)] backdrop-blur-xl">
           <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>
@@ -486,7 +486,7 @@ export default function FleetManagementPage({ role = 'secretary' }) {
               )}
             </div>
           ) : (
-          <div className="mt-5 grid gap-4 lg:grid-cols-3">
+          <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-3">
             {vehicles.map((vehicle) => (
               <button
                 className={`rounded-[1.5rem] border p-4 text-left transition hover:-translate-y-1 hover:shadow-xl ${
@@ -539,7 +539,7 @@ export default function FleetManagementPage({ role = 'secretary' }) {
           </h2>
           <p className="mt-1 text-sm font-bold text-slate-500">{selectedVehicle.plate}</p>
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Info label="État général" value={selectedVehicle.generalState} />
             <Info label="Intérieur" value={selectedVehicle.interiorState} />
             <Info label="Extérieur" value={selectedVehicle.exteriorState} />
@@ -952,13 +952,13 @@ function ManagerStats({ fuelLogs, stats, vehicles }) {
         </span>
       </div>
 
-      <div className="mt-5 grid gap-4 lg:grid-cols-3">
+      <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Info label="Véhicule le plus utilisé" value={stats.mostUsed ? `${stats.mostUsed.brand} ${stats.mostUsed.model} · ${stats.mostUsed.monthlyKm} km` : '—'} />
         <Info label="Consomme le plus" value={stats.highestConsumption ? `${stats.highestConsumption.brand} ${stats.highestConsumption.model} · ${stats.highestConsumption.averageConsumption} L/100` : '—'} />
         <Info label="Historique flotte" value={`${vehicles.reduce((sum, vehicle) => sum + vehicle.mileage, 0).toLocaleString('fr-FR')} km cumulés`} />
       </div>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-2">
+      <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
         <BarChart title="Coût par véhicule" items={stats.vehicleCosts} suffix="EUR" />
         <BarChart title="Coût par enseignant" items={stats.teacherCosts} suffix="EUR" />
       </div>

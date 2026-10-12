@@ -2419,7 +2419,7 @@ export default function StudentLessonsPage() {
               style={{ WebkitOverflowScrolling: 'touch' }}
             >
             {moduleMode === 'lesson' ? (
-              <div className="grid gap-4 p-4 sm:gap-6 sm:p-5 lg:grid-cols-[minmax(0,1fr)_340px] lg:p-6">
+              <div className="grid grid-cols-1 gap-4 p-4 sm:gap-6 sm:p-5 lg:grid-cols-[minmax(0,1fr)_340px] lg:p-6">
                 <div className="order-last space-y-4 sm:space-y-5 lg:order-none">
                   {!openedCourseReadComplete && (
                     <p className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">
@@ -2507,7 +2507,7 @@ export default function StudentLessonsPage() {
                           {openedLesson.dashboardSection.image.caption}
                         </p>
                       </button>
-                      <div className="grid gap-3 p-4 sm:grid-cols-2">
+                      <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2">
                         {openedLesson.dashboardSection.lights.map((light) => (
                           <article
                             className="flex gap-3 rounded-2xl border-2 border-slate-300 bg-slate-50/80 p-4 transition hover:border-cyan-200 hover:bg-white"
@@ -2572,7 +2572,7 @@ export default function StudentLessonsPage() {
 
                   {openedLesson && (
                     <CollapsibleSection className="bg-cyan-50/70" kicker="Points essentiels" title="Conseils de sécurité">
-                      <div className="grid gap-3 p-4 sm:grid-cols-2">
+                      <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2">
                         {openedLesson.safetyAdvice.map((advice) => (
                           <div className="rounded-2xl border border-white bg-white/80 p-4 shadow-sm" key={advice}>
                             <p className="text-sm font-bold leading-6 text-slate-700">{advice}</p>

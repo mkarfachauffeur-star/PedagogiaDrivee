@@ -178,7 +178,7 @@ export default function TeacherFinancePage() {
         <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">{error}</div>
       )}
 
-      <section className="grid gap-4 sm:grid-cols-3">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Kpi label="Mes encaissements" value={formatEur(totals.collected)} />
         <Kpi label="Mes dépenses" value={formatEur(totals.spent)} tone="rose" />
         <Kpi label="Solde" value={formatEur(totals.net)} tone={totals.net >= 0 ? 'cyan' : 'rose'} />
@@ -248,7 +248,7 @@ export default function TeacherFinancePage() {
           />
         )}
       >
-        <form id="teacher-expense-form" onSubmit={saveExpense} className="grid gap-4 sm:grid-cols-2">
+        <form id="teacher-expense-form" onSubmit={saveExpense} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Select label="Catégorie *" options={EXPENSE_CATEGORIES} value={expenseForm.category} onChange={(v) => setExpenseForm((c) => ({ ...c, category: v }))} />
           <Field label="Montant (€) *" type="number" value={expenseForm.amount} onChange={(v) => setExpenseForm((c) => ({ ...c, amount: v }))} />
           <Field label="Date *" type="date" value={expenseForm.date} onChange={(v) => setExpenseForm((c) => ({ ...c, date: v }))} />
@@ -278,7 +278,7 @@ export default function TeacherFinancePage() {
           />
         )}
       >
-        <form id="teacher-payment-form" onSubmit={savePayment} className="grid gap-4 sm:grid-cols-2">
+        <form id="teacher-payment-form" onSubmit={savePayment} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="block sm:col-span-2">
             <span className="text-sm font-bold text-slate-700">Élève *</span>
             <select

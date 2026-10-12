@@ -101,7 +101,7 @@ export default function AdminDashboardPage() {
         <EmptyState title="Erreur de chargement" message={loadError || 'Données indisponibles.'} icon="⚠️" />
       ) : (
         <div className="flex flex-col gap-6">
-          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <KpiCard
               caption="Élèves en formation"
               hint={`${dashboard.summary.teacherCount} enseignant(s) actif(s)`}
@@ -272,7 +272,7 @@ export default function AdminDashboardPage() {
                 subtitle="Indicateurs financiers consolidés."
                 title="Synthèse financière"
               />
-              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <StatTile label="Total encaissé" value={formatEur(dashboard.finance.totalCollected)} />
                 <StatTile label="Panier moyen / élève" value={formatEur(dashboard.finance.averageBasket)} />
                 <StatTile label="Heures réalisées" value={`${dashboard.finance.hoursCompleted} h`} />

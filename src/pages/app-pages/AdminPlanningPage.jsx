@@ -197,7 +197,7 @@ export default function AdminPlanningPage() {
         </p>
       )}
 
-      <section className="grid gap-4 sm:grid-cols-3">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Kpi label="Créneaux cette semaine" value={appointments.length} />
         <Kpi label="Confirmés" value={confirmedCount} tone="emerald" />
         <Kpi label="Enseignants actifs" value={options.teachers.length} tone="cyan" />
@@ -239,7 +239,7 @@ export default function AdminPlanningPage() {
             </div>
             <h2 className="mt-3 text-xl font-extrabold text-slate-900">{formatWeekLabel(week.start, week.end)}</h2>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <FilterSelect
               label="Enseignant"
               value={teacherFilter}

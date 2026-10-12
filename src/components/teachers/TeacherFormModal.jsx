@@ -306,7 +306,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
           </label>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="block">
             <span className="text-sm font-bold text-slate-700">{isSimulator ? 'Nom du simulateur' : 'Nom'}</span>
             <input className={inputClass} value={form.lastName} onChange={(e) => update('lastName', e.target.value)} disabled={readOnly || !canWrite || busy} />
@@ -351,7 +351,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
         )}
 
         {!isSimulator && (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="block">
             <span className="text-sm font-bold text-slate-700">E-mail</span>
             <input
@@ -391,7 +391,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
         {!isSimulator && (
         <fieldset className="rounded-2xl border-2 border-slate-300 bg-slate-50/50 p-4">
           <legend className="px-1 text-sm font-bold text-slate-700">Adresse</legend>
-          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+          <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="block">
               <span className="text-sm font-bold text-slate-700">N° de rue</span>
               <input
@@ -442,7 +442,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
         </fieldset>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="block">
             <span className="text-sm font-bold text-slate-700">{getAuthorizationFieldLabel(form.resourceType)}</span>
             <input
@@ -467,7 +467,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
           <p className="mt-1 text-xs font-medium text-slate-500">
             Ajoutez le recto et le verso de la carte pour archivage dans le dossier moniteur.
           </p>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <ImageUploadField
               disabled={readOnly || !canWrite || busy}
               file={rectoFile}

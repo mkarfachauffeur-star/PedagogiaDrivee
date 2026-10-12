@@ -470,7 +470,7 @@ export default function TeacherStudentsPage() {
         </p>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr]">
         <aside className="card-panel flex flex-col gap-4">
           <div>
             <h2 className="text-lg font-extrabold text-slate-900">Liste élèves</h2>
@@ -655,7 +655,7 @@ export default function TeacherStudentsPage() {
 
                 {lessonSessionTab === 'lesson' && (
                 <form
-                  className="mt-4 grid gap-3 rounded-2xl border border-cyan-100 bg-cyan-50 p-4 md:grid-cols-2"
+                  className="mt-4 grid grid-cols-1 gap-3 rounded-2xl border border-cyan-100 bg-cyan-50 p-4 md:grid-cols-2"
                   onSubmit={handleCreateLesson}
                 >
                 <label className="text-sm font-bold text-slate-700">

@@ -105,7 +105,7 @@ export function PracticeExamGridEditor({ form, onChangeScore, onCommentChange, o
         <div className="border-b border-emerald-100 px-5 py-4">
           <h3 className="text-lg font-black text-slate-950">Bonifications</h3>
         </div>
-        <div className="grid gap-3 p-5 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-2">
           {[
             { key: 'bonusCourtesy', label: '+1 Courtoisie au volant' },
             { key: 'bonusEco', label: '+1 Conduite économique et respectueuse de l\'environnement' },

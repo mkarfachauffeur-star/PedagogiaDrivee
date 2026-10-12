@@ -34,7 +34,7 @@ function FormSection({ title, children }) {
   return (
     <section className="rounded-[1.75rem] border-2 border-slate-300 bg-white/80 p-5">
       <h3 className="mb-4 text-lg font-extrabold text-slate-950">{title}</h3>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">{children}</div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">{children}</div>
     </section>
   )
 }
@@ -220,7 +220,7 @@ export default function StudentRegistrationFormFields({
         </Field>
         <div className="md:col-span-2 xl:col-span-4">
           <p className="mb-3 text-sm font-bold text-slate-700">Documents fournis</p>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {DOCUMENT_OPTIONS.map((documentName) => (
               <button
                 key={documentName}

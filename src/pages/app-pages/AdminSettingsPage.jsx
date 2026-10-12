@@ -230,7 +230,7 @@ export default function AdminSettingsPage() {
                   value={form.address}
                   onChange={(v) => update('address', v)}
                 />
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field
                     disabled={!canWrite}
                     error={fieldErrors.postal_code}
@@ -248,7 +248,7 @@ export default function AdminSettingsPage() {
                     onChange={(v) => update('city', v)}
                   />
                 </div>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field
                     disabled={!canWrite}
                     error={fieldErrors.phone}
