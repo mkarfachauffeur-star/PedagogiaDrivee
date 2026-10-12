@@ -17,12 +17,14 @@ import { runExpirationRemindersCheck } from '../services/expirationReminders'
 import { runFleetMaintenanceRemindersCheck } from '../services/fleetMaintenanceReminders'
 import { getTrackLabel } from '../lib/studentTrack'
 import ManagerOnboardingTutorial from '../components/onboarding/ManagerOnboardingTutorial'
+import DeleteAccountModal from '../components/account/DeleteAccountModal'
 import { roleLabelFor } from '../lib/genderedRoles'
 
 export default function DashboardLayout({ role, children, fullWidth = false }) {
   const location = useLocation()
   const navigate = useNavigate()
   const { signOut, profileId, profile, user } = useAuth()
+  const [deleteAccountOpen, setDeleteAccountOpen] = useState(false)
   const config = NAVIGATION[role]
   const displayName =
     profile?.full_name?.trim()
@@ -283,6 +285,15 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
                 Déconnexion
               </span>
             </button>
+            {role !== 'super_admin' && (
+              <button
+                type="button"
+                onClick={() => setDeleteAccountOpen(true)}
+                className={`mt-2 w-full text-center text-xs font-medium text-slate-500 underline-offset-2 hover:text-red-600 hover:underline ${sidebarCollapsed ? 'lg:hidden' : ''}`}
+              >
+                Supprimer mon compte
+              </button>
+            )}
           </div>
         </div>
       </aside>
@@ -337,6 +348,17 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
       </div>
 
       {role === 'manager' && <ManagerOnboardingTutorial />}
+      {role !== 'super_admin' && (
+        <DeleteAccountModal
+          open={deleteAccountOpen}
+          onClose={() => setDeleteAccountOpen(false)}
+          onDeleted={async () => {
+            setDeleteAccountOpen(false)
+            await signOut()
+            navigate('/login', { replace: true })
+          }}
+        />
+      )}
     </div>
   )
 }

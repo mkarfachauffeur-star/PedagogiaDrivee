@@ -21,6 +21,9 @@ verify_jwt = true
 [functions.manage-user]
 verify_jwt = true
 
+[functions.delete-own-account]
+verify_jwt = true
+
 [functions.check-expiration-reminders]
 verify_jwt = false
 
