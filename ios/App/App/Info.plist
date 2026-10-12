@@ -5,7 +5,7 @@
     <key>CAPACITOR_DEBUG</key>
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>fr</string>
 	                                <key>CFBundleDisplayName</key>
     <string>Pedagogia Drive</string>
 	<key>CFBundleExecutable</key>
@@ -76,8 +76,6 @@
     <string>Pedagogia Drive accède à vos photos pour importer des documents (pièces d’identité, justificatifs, autorisations).</string>
                                 <key>NSPhotoLibraryAddUsageDescription</key>
     <string>Pedagogia Drive peut enregistrer des documents exportés dans votre photothèque si vous le demandez.</string>
-                                <key>NSMicrophoneUsageDescription</key>
-    <string>Pedagogia Drive n’utilise pas le micro. Cette autorisation n’est requise que si vous enregistrez une note vocale depuis l’appareil.</string>
                                 <key>NSLocationWhenInUseUsageDescription</key>
     <string>Pedagogia Drive utilise votre position pendant un trajet de conduite accompagnée pour calculer les kilomètres réellement parcourus. Le suivi s’arrête lorsque vous terminez le trajet.</string>
                         <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

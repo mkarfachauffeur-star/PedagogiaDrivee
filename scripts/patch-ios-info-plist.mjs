@@ -28,7 +28,6 @@ const entries = [
   ['NSCameraUsageDescription', 'Pedagogia Drive utilise l’appareil photo pour joindre des documents et pièces aux dossiers élèves.'],
   ['NSPhotoLibraryUsageDescription', 'Pedagogia Drive accède à vos photos pour importer des documents (pièces d’identité, justificatifs, autorisations).'],
   ['NSPhotoLibraryAddUsageDescription', 'Pedagogia Drive peut enregistrer des documents exportés dans votre photothèque si vous le demandez.'],
-  ['NSMicrophoneUsageDescription', 'Pedagogia Drive n’utilise pas le micro. Cette autorisation n’est requise que si vous enregistrez une note vocale depuis l’appareil.'],
   ['NSLocationWhenInUseUsageDescription', 'Pedagogia Drive utilise votre position pendant un trajet de conduite accompagnée pour calculer les kilomètres réellement parcourus. Le suivi s’arrête lorsque vous terminez le trajet.'],
   ['NSLocationAlwaysAndWhenInUseUsageDescription', 'Pendant un trajet de conduite accompagnée, Pedagogia Drive continue d’utiliser votre position lorsque l’iPhone est verrouillé ou lorsque l’application est en arrière-plan, afin de calculer les kilomètres réellement parcourus. Le suivi s’arrête dès que vous appuyez sur Arrêter le trajet. Pedagogia Drive ne suit pas votre position en dehors d’un trajet.'],
 ]
@@ -40,7 +39,7 @@ for (const [key, value] of entries) {
   if (xml.includes(`<key>${key}</key>`)) {
     xml = xml.replace(
       new RegExp(`<key>${key}</key>\\s*(<string>[\\s\\S]*?</string>|<true/>|<false/>)`),
-      block.trimEnd(),
+      `<key>${key}</key>\n    ${stringValue}`,
     )
   } else {
     xml = xml.replace('</dict>\n</plist>', `${block}</dict>\n</plist>`)
@@ -55,6 +54,9 @@ xml = xml.replace(
 \t\t<string>UIInterfaceOrientationPortrait</string>
 \t</array>`,
 )
+
+// Aucune fonction n'utilise le micro : l'autorisation ne doit pas être déclarée.
+xml = xml.replace(/\s*<key>NSMicrophoneUsageDescription<\/key>\s*<string>[\s\S]*?<\/string>/, '')
 
 xml = ensureBackgroundLocationMode(xml)
 
