@@ -13,8 +13,6 @@ import { useStudentTrack } from '../hooks/useStudentTrack'
 import { useProspectNotifications } from '../hooks/useProspectNotifications'
 import { usePlatformUnreadCount } from '../hooks/usePlatformUnreadCount'
 import { useUnreadCount } from '../hooks/useUnreadCount'
-import { runExpirationRemindersCheck } from '../services/expirationReminders'
-import { runFleetMaintenanceRemindersCheck } from '../services/fleetMaintenanceReminders'
 import { getTrackLabel } from '../lib/studentTrack'
 import ManagerOnboardingTutorial from '../components/onboarding/ManagerOnboardingTutorial'
 import DeleteAccountModal from '../components/account/DeleteAccountModal'
@@ -72,16 +70,6 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
     const raf = window.requestAnimationFrame(scrollNow)
     return () => window.cancelAnimationFrame(raf)
   }, [location.pathname, location.search, location.hash])
-
-  useEffect(() => {
-    if (!profileId || !['manager', 'secretary'].includes(role)) return
-    runExpirationRemindersCheck()
-  }, [profileId, role])
-
-  useEffect(() => {
-    if (!profileId || role !== 'manager') return
-    runFleetMaintenanceRemindersCheck()
-  }, [profileId, role])
 
   useEffect(() => {
     if (!sidebarOpen) return undefined
