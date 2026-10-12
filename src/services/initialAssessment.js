@@ -8,7 +8,8 @@ import { toUserError } from '../lib/userFacingError'
 import { resolveAcceptedRecommendedHours } from '../lib/initialAssessmentUtils'
 import { sumCompletedLessonHours } from './studentLessonObservations'
 
-const COMPLETED_APPOINTMENT_STATUSES = ['Réalisé', 'Realise', 'Confirmé', 'completed', 'done', 'Terminé']
+// « Effectué » est le statut posé par le planning ; « Confirmé » ne compte que si la leçon est passée.
+const COMPLETED_APPOINTMENT_STATUSES = ['Effectué', 'Effectue', 'Réalisé', 'Realise', 'Confirmé', 'completed', 'done', 'Terminé']
 
 export function formatAssessmentStatus(status) {
   const label = ASSESSMENT_STATUS_LABELS[status]
@@ -212,6 +213,7 @@ export async function getStudentHoursSummary(studentId) {
 
     const appointmentMinutes = (appointments || [])
       .filter((row) => {
+        if (row.status === 'Confirmé' && row.starts_at && new Date(row.starts_at) > new Date()) return false
         const kind = String(row.kind || '').toLowerCase()
         return !kind || kind.includes('leçon') || kind.includes('lecon') || kind === 'lesson'
       })
