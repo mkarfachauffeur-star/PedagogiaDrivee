@@ -153,7 +153,9 @@ export function AuthProvider({ children }) {
   }, [profile?.organization_id, isSuperAdmin])
 
   const signInWithPassword = useCallback(async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    // Le clavier iPhone ajoute une espace après une adresse suggérée.
+    const normalizedEmail = email.trim().toLowerCase()
+    const { data, error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password })
     if (error) return { error: new Error(getUserFacingError(error, 'login')), role: null, mustChangePassword: false }
     const mustChangePassword = Boolean(data.user?.user_metadata?.must_change_password)
     let nextRole = null
