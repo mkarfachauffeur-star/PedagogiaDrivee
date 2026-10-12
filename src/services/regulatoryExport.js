@@ -6,6 +6,7 @@ import { fetchExportStudents } from './adminExports'
 import { listTeachers } from './teachers'
 import { formatRecommendedHours } from '../lib/initialAssessmentUtils'
 import {
+  downloadBlob,
   downloadProfessionalCsv,
   downloadXlsxSheet,
   formatAmount,
@@ -692,7 +693,7 @@ export async function exportRegulatoryPdf(filters = {}) {
   doc.text(`Édité le ${generatedAt} via PEDAGOGIA DRIVE`, 14, signatureY + 12)
   doc.text(`Identifiant document : REG-${timestampForFilename()}`, 14, signatureY + 18)
 
-  doc.save(`dossier-reglementaire_${timestampForFilename()}.pdf`)
+  downloadBlob(`dossier-reglementaire_${timestampForFilename()}.pdf`, doc.output('blob'))
   await logExport('pdf', 'pdf', filters)
 }
 

@@ -1,6 +1,7 @@
 /** CSV UTF-8 BOM + séparateur point-virgule (Excel France). */
 
 import ExcelJS from 'exceljs'
+import { isNativeApp } from '../lib/nativeApp'
 
 function escapeCsvCell(value) {
   const text = value == null ? '' : String(value)
@@ -78,7 +79,51 @@ export function downloadCsv(filename, content) {
   downloadBlob(filename, blob)
 }
 
+// L'app iPhone ne gère pas les téléchargements de navigateur : le fichier passe par
+// la feuille de partage d'iOS (Enregistrer dans Fichiers, Mail, AirDrop…).
+function shareFileOnDevice(filename, blob) {
+  const file = new File([blob], filename, { type: blob.type || 'application/octet-stream' })
+  const share = () => navigator.share({ files: [file], title: filename })
+
+  share().catch((error) => {
+    if (error?.name === 'AbortError') return
+    // Le partage exige un geste récent de l'utilisateur : après une génération longue,
+    // on propose un bouton pour ouvrir la feuille de partage.
+    const overlay = document.createElement('div')
+    overlay.setAttribute('role', 'dialog')
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,0.45);padding:24px'
+    const card = document.createElement('div')
+    card.style.cssText = 'width:100%;max-width:340px;border-radius:16px;background:#fff;padding:20px;font-family:inherit;text-align:center'
+    const title = document.createElement('p')
+    title.textContent = 'Fichier prêt'
+    title.style.cssText = 'margin:0 0 4px;font-weight:700;font-size:16px;color:#0f172a'
+    const name = document.createElement('p')
+    name.textContent = filename
+    name.style.cssText = 'margin:0 0 16px;font-size:13px;color:#475569;word-break:break-all'
+    const open = document.createElement('button')
+    open.type = 'button'
+    open.textContent = 'Enregistrer ou partager'
+    open.style.cssText = 'display:block;width:100%;border:0;border-radius:12px;background:#2563eb;color:#fff;font-weight:700;font-size:15px;padding:12px'
+    const close = document.createElement('button')
+    close.type = 'button'
+    close.textContent = 'Fermer'
+    close.style.cssText = 'display:block;width:100%;margin-top:8px;border:0;background:none;color:#475569;font-size:14px;padding:10px'
+    const dismiss = () => overlay.remove()
+    open.addEventListener('click', () => {
+      share().catch(() => {}).finally(dismiss)
+    })
+    close.addEventListener('click', dismiss)
+    card.append(title, name, open, close)
+    overlay.append(card)
+    document.body.append(overlay)
+  })
+}
+
 export function downloadBlob(filename, blob) {
+  if (isNativeApp && typeof navigator.share === 'function') {
+    shareFileOnDevice(filename, blob)
+    return
+  }
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.style.display = 'none'

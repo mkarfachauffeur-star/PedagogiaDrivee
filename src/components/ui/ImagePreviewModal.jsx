@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
+import { downloadBlob } from '../../utils/csvExport'
 
 export function isImageAttachment({ mime_type: mime, file_name: name } = {}) {
   if ((mime || '').startsWith('image/')) return true
@@ -12,12 +13,7 @@ async function downloadAttachment(attachment) {
   try {
     const response = await fetch(attachment.url)
     const blob = await response.blob()
-    const objectUrl = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = objectUrl
-    link.download = attachment.file_name || 'fichier'
-    link.click()
-    URL.revokeObjectURL(objectUrl)
+    downloadBlob(attachment.file_name || 'fichier', blob)
   } catch {
     window.open(attachment.url, '_blank', 'noopener,noreferrer')
   }

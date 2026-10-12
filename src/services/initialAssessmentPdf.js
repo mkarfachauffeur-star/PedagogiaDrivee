@@ -1,4 +1,5 @@
 import { formatPersonName } from '../lib/staffAccounts'
+import { downloadBlob } from '../utils/csvExport'
 import {
   ASSESSMENT_MODULES,
   FSB_OPTIONS,
@@ -180,7 +181,7 @@ async function renderPdfFromElement(element, filename) {
     pageIndex += 1
   }
 
-  pdf.save(filename)
+  downloadBlob(filename, pdf.output('blob'))
 }
 
 /** Télécharge un PDF de l'évaluation de départ. */
