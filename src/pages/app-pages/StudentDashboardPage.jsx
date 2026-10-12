@@ -43,7 +43,7 @@ export default function StudentDashboardPage() {
   const { profile, profileId, user } = useAuth()
   const { student, track, isPermisB, loading: trackLoading } = useStudentTrack(profileId)
   const { studentId, unlockState, globalProgress, itemProgress, isCompetencyValidated, loading: remcLoading } = useRemcUnlock(profileId)
-  const [teacherName, setTeacherName] = useState('Non assigné')
+  const [teacherName, setTeacherName] = useState('non assigné')
   const [hoursSummary, setHoursSummary] = useState(null)
   const [practiceExamStats, setPracticeExamStats] = useState(null)
   const [practiceExams, setPracticeExams] = useState([])
@@ -62,9 +62,21 @@ export default function StudentDashboardPage() {
       `)
       .eq('profile_id', profileId)
       .maybeSingle()
-      .then(({ data }) => {
+      .then(async ({ data }) => {
         const referent = data?.student_assignments?.find((row) => row.is_referent)?.teacher
-        setTeacherName(referent?.full_name || 'Non assigné')
+        if (referent?.full_name) {
+          setTeacherName(referent.full_name)
+          return
+        }
+        // Repli : l'enseignant de la dernière leçon programmée.
+        const { data: lastLesson } = await supabase
+          .from('appointments')
+          .select('teacher:teacher_id(full_name)')
+          .not('teacher_id', 'is', null)
+          .order('starts_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+        setTeacherName(lastLesson?.teacher?.full_name || 'non assigné')
       })
   }, [profileId])
 
