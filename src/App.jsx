@@ -19,6 +19,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import AuthHashRedirect from './components/AuthHashRedirect'
 import ScrollToTop from './components/ScrollToTop'
 import { isNativeApp } from './lib/nativeApp'
+import OfflineBanner from './components/OfflineBanner'
 import Analytics from './components/analytics/Analytics'
 import { MarketingThemeProvider } from './hooks/useMarketingTheme'
 
@@ -155,6 +156,7 @@ function App() {
       <MarketingThemeProvider>
       <Analytics />
       <AuthHashRedirect />
+      <OfflineBanner />
       <ScrollToTop />
       <Routes>
         {/* Dans l'app iPhone : connexion directe, aucune page du site vitrine. */}
