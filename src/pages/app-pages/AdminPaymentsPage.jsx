@@ -171,7 +171,7 @@ export default function AdminPaymentsPage() {
       </section>
 
       {summary && (
-        <section className="grid gap-6 lg:grid-cols-2">
+        <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <BreakdownCard title="Encaissements par nature" items={summary.incomeByNature} tone="income" />
           <BreakdownCard title="Dépenses par catégorie" items={summary.expensesByCategory} tone="expense" />
         </section>

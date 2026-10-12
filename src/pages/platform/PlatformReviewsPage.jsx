@@ -213,7 +213,7 @@ export default function PlatformReviewsPage() {
             <Kpi label="Satisfaction (4-5★)" value={`${dashboard.satisfaction_percent} %`} hint="Pourcentage" />
           </section>
 
-          <section className="grid gap-6 lg:grid-cols-2">
+          <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <article className="rounded-2xl border-2 border-slate-300 bg-white p-5">
               <h2 className="text-xl font-extrabold text-slate-950">Répartition des notes</h2>
               <div className="mt-5">
@@ -228,7 +228,7 @@ export default function PlatformReviewsPage() {
             </article>
           </section>
 
-          <section className="grid gap-6 lg:grid-cols-2">
+          <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <TopList items={dashboard.top_rated_organizations} title="Top 10 — auto-écoles les mieux notées" />
             <TopList items={dashboard.top_volume_organizations} title="Top 10 — auto-écoles avec le plus d'avis" valueKey="count" />
           </section>

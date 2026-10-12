@@ -234,7 +234,7 @@ export default function SecretaryExamsPage() {
         <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">{loadError}</p>
       )}
 
-      <section className="grid gap-4 md:grid-cols-3">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Kpi label="Confirmés" value={stats.confirmed} />
         <Kpi label="À confirmer" value={stats.pending} tone="amber" />
         <Kpi label="Dossiers bloqués" value={stats.blocked} tone="rose" />
@@ -323,7 +323,7 @@ export default function SecretaryExamsPage() {
           />
         )}
       >
-        <form id="exam-form" className="grid gap-4 md:grid-cols-2" onSubmit={saveExam}>
+        <form id="exam-form" className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={saveExam}>
           <StudentSelect
             label="Élève *"
             onChange={handleStudentChange}

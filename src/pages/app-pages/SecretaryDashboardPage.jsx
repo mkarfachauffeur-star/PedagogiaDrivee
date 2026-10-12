@@ -76,7 +76,7 @@ export default function SecretaryDashboardPage() {
             <KpiCard label="Examens à venir" tone="violet" value={String(dashboard.summary.upcomingExams)} caption="Présentations planifiées" />
           </section>
 
-          <section className="grid gap-6 xl:grid-cols-2">
+          <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <article className="card-panel-lg">
               <SectionHeader
                 linkLabel="Voir le planning"
@@ -135,7 +135,7 @@ export default function SecretaryDashboardPage() {
             </article>
           </section>
 
-          <section className="grid gap-6 xl:grid-cols-2">
+          <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <article className="card-panel-lg">
               <SectionHeader
                 linkLabel="Inscriptions"

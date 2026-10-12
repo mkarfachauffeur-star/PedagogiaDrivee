@@ -348,7 +348,7 @@ export default function SecretaryPlanningPage() {
           />
         )}
       >
-        <form id="planning-slot-form" className="grid gap-4 md:grid-cols-2" onSubmit={saveSlot}>
+        <form id="planning-slot-form" className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={saveSlot}>
           <Select label="Élève" onChange={(value) => setForm((current) => ({ ...current, student: value }))} options={students} value={form.student} />
           <Field label="Date" onChange={(value) => setForm((current) => ({ ...current, date: value }))} type="date" value={form.date} />
           <Field label="Heure" onChange={(value) => setForm((current) => ({ ...current, start: value }))} type="time" value={form.start} />

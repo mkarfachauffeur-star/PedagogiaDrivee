@@ -482,7 +482,7 @@ function DetailPanel({ detail, onClose }) {
             setActionForm((current) => ({ ...current, saved: true }))
           }}
         >
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <label className="block">
               <span className="text-sm font-bold text-slate-700">Responsable</span>
               <input

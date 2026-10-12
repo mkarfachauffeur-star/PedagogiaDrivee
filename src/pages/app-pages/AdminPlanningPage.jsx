@@ -320,7 +320,7 @@ export default function AdminPlanningPage() {
             icon="📋"
           />
         ) : null}
-        <form id="planning-lesson-form" className="grid gap-4 md:grid-cols-2" onSubmit={saveLesson}>
+        <form id="planning-lesson-form" className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={saveLesson}>
           <Field label="Date *">
             <input className="pd-input mt-2 w-full" type="date" required value={form.date} onChange={(e) => setForm((c) => ({ ...c, date: e.target.value }))} />
           </Field>

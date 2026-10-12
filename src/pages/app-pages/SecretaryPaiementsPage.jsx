@@ -453,7 +453,7 @@ export default function SecretaryPaiementsPage() {
         )}
       >
         <form id="secretary-payment-form" onSubmit={savePayment}>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <label className="block md:col-span-2">
               <span className="text-sm font-bold text-slate-700">Élève (dossier) *</span>
               <select
@@ -504,7 +504,7 @@ export default function SecretaryPaiementsPage() {
         )}
       >
         <form id="secretary-expense-form" onSubmit={saveExpense}>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Select label="Catégorie *" options={EXPENSE_CATEGORIES} value={expenseForm.category} onChange={(v) => setExpenseForm((c) => ({ ...c, category: v }))} />
             <Field label="Montant (€) *" type="number" value={expenseForm.amount} onChange={(v) => setExpenseForm((c) => ({ ...c, amount: v }))} />
             <Field label="Date *" type="date" value={expenseForm.date} onChange={(v) => setExpenseForm((c) => ({ ...c, date: v }))} />

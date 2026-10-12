@@ -59,7 +59,7 @@ export default function PracticeExamDetail({ exam, exams = [], remcValidatedCoun
 
       {exams.length > 1 && <PracticeExamEvolutionChart exams={exams} />}
 
-      <section className="grid gap-4 lg:grid-cols-2">
+      <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <article className="rounded-[1.5rem] border border-emerald-200 bg-emerald-50/50 p-5">
           <h4 className="text-lg font-black text-slate-950">Points forts</h4>
           <ul className="mt-3 space-y-2">

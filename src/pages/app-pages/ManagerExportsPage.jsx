@@ -235,7 +235,7 @@ export default function ManagerExportsPage() {
             </div>
           </section>
 
-          <section className="grid gap-4 lg:grid-cols-2">
+          <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {Object.values(REGULATORY_EXPORTS).map((config) => (
               <RegulatoryExportCard
                 busyKey={busyKey}

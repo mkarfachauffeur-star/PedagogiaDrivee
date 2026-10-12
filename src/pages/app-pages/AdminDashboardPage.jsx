@@ -133,7 +133,7 @@ export default function AdminDashboardPage() {
             />
           </section>
 
-          <section className="grid gap-6 xl:grid-cols-3">
+          <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
             <article className="card-panel-lg xl:col-span-2">
               <SectionHeader
                 linkLabel="Voir les élèves"
@@ -201,7 +201,7 @@ export default function AdminDashboardPage() {
             </article>
           </section>
 
-          <section className="grid gap-6 xl:grid-cols-2">
+          <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <article className="card-panel-lg">
               <SectionHeader
                 linkLabel="Planning complet"
@@ -264,7 +264,7 @@ export default function AdminDashboardPage() {
             </article>
           </section>
 
-          <section className="grid gap-6 xl:grid-cols-3">
+          <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
             <article className="card-panel-lg xl:col-span-2">
               <SectionHeader
                 linkLabel="Évolution du CA"

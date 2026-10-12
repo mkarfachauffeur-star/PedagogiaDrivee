@@ -123,7 +123,7 @@ function RemcCompetencyCard({
             Passez chaque sous-compétence en « Validé » — la compétence {code} sera validée
             automatiquement lorsque toutes le seront.
           </p>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {items.map((item) => (
               <div className="rounded-xl border-2 border-slate-300 bg-white p-3" key={item.id}>
                 <p className="text-sm font-bold text-slate-700">
