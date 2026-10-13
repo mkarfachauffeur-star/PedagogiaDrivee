@@ -26,6 +26,9 @@ export function AuthProvider({ children }) {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false)
   const [supabaseRole, setSupabaseRole] = useState(null)
   const [loading, setLoading] = useState(true)
+  // Utilisateur dont le profil a fini de charger (succès ou échec) : évite
+  // d'afficher les pages avant que l'auto-école soit connue.
+  const [profileLoadedFor, setProfileLoadedFor] = useState(null)
 
   const loadProfile = useCallback(async (userId) => {
     if (!userId) {
@@ -34,6 +37,7 @@ export function AuthProvider({ children }) {
       setSubscription(null)
       setStudentCount(0)
       setIsSuperAdmin(false)
+      setProfileLoadedFor(null)
       return
     }
     try {
@@ -72,6 +76,8 @@ export function AuthProvider({ children }) {
         code: err?.code,
       })
       setProfile(null)
+    } finally {
+      setProfileLoadedFor(userId)
     }
   }, [])
 
@@ -229,6 +235,8 @@ export function AuthProvider({ children }) {
   )
   const isReadOnly = Boolean(organization) && !canWrite
 
+  const profilePending = Boolean(session?.user?.id) && profileLoadedFor !== session.user.id
+
   const value = useMemo(
     () => ({
       session,
@@ -246,13 +254,13 @@ export function AuthProvider({ children }) {
       role,
       mustChangePassword,
       isAuthenticated: Boolean(session),
-      loading,
+      loading: loading || profilePending,
       signInWithPassword,
       completePasswordChange,
       signOut,
       refreshOrg: loadProfile,
     }),
-    [session, profile, organization, subscription, studentCount, isSuperAdmin, canWrite, isReadOnly, isTrial, role, mustChangePassword, loading, signInWithPassword, completePasswordChange, signOut, loadProfile],
+    [session, profile, organization, subscription, studentCount, isSuperAdmin, canWrite, isReadOnly, isTrial, role, mustChangePassword, loading, profilePending, signInWithPassword, completePasswordChange, signOut, loadProfile],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
