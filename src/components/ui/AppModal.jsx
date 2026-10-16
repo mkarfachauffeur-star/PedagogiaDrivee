@@ -79,7 +79,7 @@ export default function AppModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 flex items-center justify-center overscroll-contain p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))] sm:p-4"
+      className="fixed inset-0 flex items-center justify-center overscroll-contain p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top,0px),var(--pd-safe-top,0px))] sm:p-4"
       style={{ zIndex }}
       role="dialog"
       aria-modal="true"

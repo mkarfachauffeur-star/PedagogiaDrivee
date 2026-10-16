@@ -90,7 +90,7 @@ export default function LandingHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b pt-[max(2.75rem,env(safe-area-inset-top,0px))] backdrop-blur-xl transition lg:pt-0 ${
+      className={`sticky top-0 z-50 border-b pt-[max(2.75rem,env(safe-area-inset-top,0px),var(--pd-safe-top,0px))] backdrop-blur-xl transition lg:pt-0 ${
         scrolled ? 'border-[var(--lp-border)] bg-[var(--lp-bg)]/80' : 'border-transparent bg-[var(--lp-bg)]/55'
       }`}
     >
