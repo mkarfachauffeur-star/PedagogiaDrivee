@@ -40,5 +40,7 @@ scripts/output/recette-credentials.md
 scripts/output/video-demo-credentials.json
 scripts/output/video-demo-credentials.md
 scripts/output/playwright-report/
+scripts/output/app-review-audit.txt
+scripts/output/app-review-audit.md
 scripts/output/test-recovery-link.txt
 .env*

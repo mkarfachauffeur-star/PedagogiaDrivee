@@ -21,6 +21,7 @@
     "create:super-admin": "node scripts/create-super-admin.mjs",
     "verify:demo-rls": "node scripts/verify-demo-rls.mjs",
     "audit:production": "node scripts/audit-production.mjs",
+    "audit:app-review": "node scripts/audit-app-review-readonly.mjs",
     "verify:post-migrations": "node scripts/verify-post-migrations.mjs",
     "verify:exports-schema": "node scripts/verify-exports-schema.mjs",
     "verify:remc-p2": "node scripts/verify-remc-p2.mjs",
