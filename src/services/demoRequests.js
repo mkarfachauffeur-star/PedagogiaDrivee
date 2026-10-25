@@ -30,7 +30,9 @@ export async function submitDemoRequest(payload) {
       prefecture_approval: patch.prefecture_approval,
       website: patch.website,
       approximate_students: payload.activeStudents?.trim() || null,
-      message: payload.message?.trim() || null,
+      message: [payload.offerName ? `Offre choisie : ${payload.offerName}` : null, payload.message?.trim() || null]
+        .filter(Boolean)
+        .join('\n') || null,
     }
 
     // INSERT seul : le RETURNING (.select) est bloqué par RLS pour anon et rôles non Super Admin.
@@ -40,12 +42,12 @@ export async function submitDemoRequest(payload) {
     trackSignUp({
       organizationName: row.school_name,
       email: row.email,
-      planSelected: 'starter',
+      planSelected: payload.offerId || 'starter',
     })
     trackAePendingValidation({
       organizationName: row.school_name,
       email: row.email,
-      planSelected: 'starter',
+      planSelected: payload.offerId || 'starter',
     })
 
     const { error: notifyError } = await supabase.functions.invoke('notify-demo-request', {

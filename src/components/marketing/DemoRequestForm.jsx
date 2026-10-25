@@ -3,6 +3,7 @@ import { ChevronDown } from 'lucide-react'
 import { trackBookDemo, trackDemoFormSubmit } from '../../lib/analytics'
 import { getUserFacingError } from '../../lib/userFacingError'
 import { submitDemoRequest } from '../../services/demoRequests'
+import { LANDING_OFFERS, landingOfferById } from './landing/landingOffers'
 import {
   isValidSiret,
   sanitizePhoneInput,
@@ -33,7 +34,12 @@ const emptyForm = {
   message: '',
 }
 
-export default function DemoRequestForm({ id = 'demonstration', isDark = true }) {
+export default function DemoRequestForm({
+  id = 'demonstration',
+  isDark = true,
+  selectedOfferId = null,
+  onSelectOffer,
+}) {
   const inputClass = isDark
     ? 'mt-2 min-h-12 w-full rounded-2xl border border-white/15 bg-white/[0.06] px-4 text-sm font-medium text-white outline-none placeholder:text-slate-500 focus:border-blue-400/50 focus:ring-2 focus:ring-blue-500/20'
     : 'mt-2 min-h-12 w-full rounded-2xl border border-[#07111F]/12 bg-white px-4 text-sm font-medium text-[#07111F] outline-none placeholder:text-[#5B6B80]/70 focus:border-[#1769FF] focus:ring-2 focus:ring-[#1769FF]/15'
@@ -62,6 +68,12 @@ export default function DemoRequestForm({ id = 'demonstration', isDark = true })
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+
+    if (!selectedOfferId) {
+      setFieldErrors({ offer: 'Choisissez une offre avant d’envoyer vos coordonnées.' })
+      setFeedback({ type: 'error', message: 'Choisissez une offre avant d’envoyer vos coordonnées.' })
+      return
+    }
 
     const { ok, errors, message } = validateOrgProfileForm({
       orgName: form.schoolName,
@@ -94,7 +106,12 @@ export default function DemoRequestForm({ id = 'demonstration', isDark = true })
 
     setSubmitting(true)
     setFeedback(null)
-    const { error } = await submitDemoRequest(form)
+    const offer = landingOfferById(selectedOfferId)
+    const { error } = await submitDemoRequest({
+      ...form,
+      offerId: offer?.id,
+      offerName: offer ? `${offer.name} — ${offer.price} ${offer.period}` : null,
+    })
     setSubmitting(false)
 
     if (error) {
@@ -131,11 +148,50 @@ export default function DemoRequestForm({ id = 'demonstration', isDark = true })
             Demander une démonstration
           </h2>
           <p className={`mt-3 text-sm leading-7 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-            Renseignez le profil de votre auto-école : nous vous présenterons Pedagogia Drive et les conditions d&apos;accès à la bêta privée.
+            L’offre choisie est indiquée ci-dessous. Renseignez ensuite les coordonnées de l’employeur.
           </p>
         </div>
 
         <form className="mx-auto mt-8 grid max-w-2xl gap-4 sm:grid-cols-2" noValidate onSubmit={handleSubmit}>
+          <fieldset className="sm:col-span-2">
+            <legend className={labelClass}>Offre *</legend>
+            <div className="mt-2 grid gap-2 sm:grid-cols-3">
+              {LANDING_OFFERS.map((offer) => {
+                const selected = selectedOfferId === offer.id
+                return (
+                  <label
+                    className={`flex cursor-pointer flex-col rounded-xl border px-3 py-3 text-left transition ${
+                      selected
+                        ? 'border-[#1769FF] bg-[#1769FF]/10 ring-2 ring-[#1769FF]'
+                        : isDark
+                          ? 'border-white/15 bg-white/[0.04] hover:border-white/30'
+                          : 'border-[#07111F]/12 bg-white hover:border-[#1769FF]/40'
+                    }`}
+                    key={offer.id}
+                  >
+                    <input
+                      checked={selected}
+                      className="sr-only"
+                      name="offer"
+                      onChange={() => onSelectOffer?.(offer.id)}
+                      type="radio"
+                      value={offer.id}
+                    />
+                    <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-[#0b1526]'}`}>{offer.name}</span>
+                    <span className={`mt-1 text-xs font-semibold ${isDark ? 'text-slate-300' : 'text-[#5b6b80]'}`}>
+                      {offer.price} · {offer.period}
+                    </span>
+                  </label>
+                )
+              })}
+            </div>
+            {fieldErrors.offer && <p className={errorClass}>{fieldErrors.offer}</p>}
+          </fieldset>
+
+          <p className={`sm:col-span-2 text-sm font-bold ${isDark ? 'text-white' : 'text-[#0b1526]'}`}>
+            Coordonnées de l’employeur
+          </p>
+
           <label className={`${labelClass} sm:col-span-2`}>
             Nom de l&apos;auto-école *
             <input
@@ -149,7 +205,7 @@ export default function DemoRequestForm({ id = 'demonstration', isDark = true })
           </label>
 
           <label className={`${labelClass} sm:col-span-2`}>
-            Nom du gérant *
+            Nom de l&apos;employeur *
             <input
               className={inputClass}
               onChange={(event) => update('contactName', event.target.value)}

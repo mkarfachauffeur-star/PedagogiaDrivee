@@ -7,6 +7,7 @@ import { LEGAL_ENTITY } from '../../../config/legal'
 import { trackDemoRequestClick } from '../../../lib/analytics'
 import { MARKETING_FAQ } from '../../../lib/marketingContent'
 import { LANDING_SCHEMAS, LANDING_VIDEO_PREVIEW } from './landingAssets'
+import { LANDING_OFFERS } from './landingOffers'
 import { isLandingHome, landingHashPath } from './landingNav'
 import {
   DeviceStage,
@@ -395,6 +396,81 @@ export function LandingFinalCta({ shouldReduceMotion }) {
           Demander une démonstration
         </a>
       </motion.div>
+    </section>
+  )
+}
+
+export function LandingPricing({ shouldReduceMotion, selectedOfferId = null, onSelectOffer }) {
+  const chooseOffer = (offer) => {
+    trackDemoRequestClick(`pricing_${offer.id}`)
+    onSelectOffer?.(offer.id)
+  }
+
+  return (
+    <section className="scroll-mt-24 px-4 py-16 sm:px-6 lg:px-8 lg:py-20" id="tarifs">
+      <div className="mx-auto max-w-[1280px]">
+        <motion.div className="mx-auto max-w-3xl text-center" {...reveal(shouldReduceMotion)}>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#1769FF]">Tarifs</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-[-0.045em] text-[var(--lp-ink)] sm:text-5xl lg:leading-[1.08]">
+            Des offres simples, sans option cachée.
+          </h2>
+          <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-[var(--lp-muted)] sm:text-lg">
+            Choisissez une offre, puis renseignez les coordonnées de l’auto-école.
+          </p>
+        </motion.div>
+
+        <div className="mx-auto mt-10 grid max-w-[1040px] items-stretch gap-4 lg:grid-cols-3">
+          {LANDING_OFFERS.map((plan, index) => {
+            const selected = selectedOfferId === plan.id
+            return (
+              <motion.button
+                aria-pressed={selected}
+                className={`flex cursor-pointer flex-col rounded-[22px] border bg-[var(--lp-card)] p-6 text-left transition hover:-translate-y-1 hover:shadow-[0_20px_40px_-28px_rgba(23,105,255,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1769FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--lp-bg)] sm:p-7 ${
+                  selected
+                    ? 'border-[#1769FF] ring-2 ring-[#1769FF]'
+                    : plan.highlighted
+                      ? 'border-[#1769FF]/45'
+                      : 'border-[var(--lp-border)] hover:border-[#1769FF]/35'
+                }`}
+                key={plan.id}
+                onClick={() => chooseOffer(plan)}
+                type="button"
+                {...reveal(shouldReduceMotion, index * 0.06)}
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#1769FF]">{plan.name}</p>
+                <p className="mt-5 flex items-baseline gap-2">
+                  <span className="text-[2.6rem] font-semibold leading-none tracking-[-0.04em] text-[var(--lp-ink)]">
+                    {plan.price}
+                  </span>
+                  <span className="text-sm font-medium text-[var(--lp-muted)]">{plan.period}</span>
+                </p>
+                <p className="mt-2 min-h-5 text-xs text-[var(--lp-muted)]">{plan.note || ''}</p>
+                <ul className="mt-6 flex-1 space-y-3">
+                  {plan.features.map((feature) => (
+                    <li className="flex items-start gap-2.5 text-sm text-[var(--lp-ink)]" key={feature}>
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#1769FF]" strokeWidth={2.5} />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <span
+                  className={`mt-8 inline-flex h-11 items-center justify-center rounded-[12px] text-sm font-semibold transition ${
+                    selected || plan.highlighted
+                      ? 'bg-[#1769FF] text-white'
+                      : 'border border-[var(--lp-border)] text-[var(--lp-ink)]'
+                  }`}
+                >
+                  {selected ? 'Offre sélectionnée' : 'Choisir cette offre'}
+                </span>
+              </motion.button>
+            )
+          })}
+        </div>
+        <p className="mx-auto mt-8 max-w-xl text-center text-[13px] leading-6 text-[var(--lp-muted)]">
+          Pendant la phase test, l’accès se fait sur invitation. Les abonnements seront commercialisés à partir du
+          premier trimestre 2027.
+        </p>
+      </div>
     </section>
   )
 }

@@ -1,5 +1,5 @@
 import { useReducedMotion } from 'framer-motion'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import DemoRequestForm from '../components/marketing/DemoRequestForm'
 import LandingHeader from '../components/marketing/landing/LandingHeader'
 import {
@@ -10,6 +10,7 @@ import {
   LandingFooter,
   LandingGpsSection,
   LandingHero,
+  LandingPricing,
   LandingQcuSection,
   LandingRolesSection,
   LandingTrustStrip,
@@ -23,6 +24,14 @@ export default function ProfileSelection() {
   const shouldReduceMotion = useReducedMotion()
   const { theme, isDark } = useMarketingTheme()
   const homeJsonLd = useMemo(() => buildHomeJsonLd(), [])
+  const [selectedOfferId, setSelectedOfferId] = useState(null)
+
+  const selectOffer = (offerId) => {
+    setSelectedOfferId(offerId)
+    window.setTimeout(() => {
+      document.getElementById('demonstration')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 50)
+  }
 
   useEffect(() => {
     if (window.location.hash !== '#demonstration') return
@@ -54,10 +63,19 @@ export default function ProfileSelection() {
         <LandingRolesSection shouldReduceMotion={shouldReduceMotion} />
         <LandingBenefitsSection shouldReduceMotion={shouldReduceMotion} />
         <LandingFinalCta shouldReduceMotion={shouldReduceMotion} />
+        <LandingPricing
+          onSelectOffer={selectOffer}
+          selectedOfferId={selectedOfferId}
+          shouldReduceMotion={shouldReduceMotion}
+        />
         <LandingFaq />
 
         <section className="relative overflow-hidden bg-[var(--lp-bg-alt)] px-4 py-14 sm:px-6 lg:px-8 lg:py-16" id="contact">
-          <DemoRequestForm isDark={isDark} />
+          <DemoRequestForm
+            isDark={isDark}
+            onSelectOffer={setSelectedOfferId}
+            selectedOfferId={selectedOfferId}
+          />
         </section>
       </main>
 
