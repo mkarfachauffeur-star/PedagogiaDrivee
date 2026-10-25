@@ -4,6 +4,7 @@ import { trackBookDemo, trackDemoFormSubmit } from '../../lib/analytics'
 import { getUserFacingError } from '../../lib/userFacingError'
 import { submitDemoRequest } from '../../services/demoRequests'
 import { LANDING_OFFERS, landingOfferById } from './landing/landingOffers'
+import { offerTheme } from './landing/landingOfferThemes'
 import {
   isValidSiret,
   sanitizePhoneInput,
@@ -158,11 +159,12 @@ export default function DemoRequestForm({
             <div className="mt-2 grid gap-2 sm:grid-cols-3">
               {LANDING_OFFERS.map((offer) => {
                 const selected = selectedOfferId === offer.id
+                const theme = offerTheme(offer.id)
                 return (
                   <label
-                    className={`flex cursor-pointer flex-col rounded-xl border px-3 py-3 text-left transition ${
+                    className={`relative flex cursor-pointer flex-col overflow-hidden rounded-xl border px-3 pb-3 pt-4 text-left transition ${
                       selected
-                        ? 'border-[#1769FF] bg-[#1769FF]/10 ring-2 ring-[#1769FF]'
+                        ? `${theme.ring} ${theme.tint}`
                         : isDark
                           ? 'border-white/15 bg-white/[0.04] hover:border-white/30'
                           : 'border-[#07111F]/12 bg-white hover:border-[#1769FF]/40'
@@ -177,7 +179,8 @@ export default function DemoRequestForm({
                       type="radio"
                       value={offer.id}
                     />
-                    <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-[#0b1526]'}`}>{offer.name}</span>
+                    <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1 ${theme.bar}`} />
+                    <span className={`text-sm font-bold ${theme.name}`}>{offer.name}</span>
                     <span className={`mt-1 text-xs font-semibold ${isDark ? 'text-slate-300' : 'text-[#5b6b80]'}`}>
                       {offer.price} · {offer.period}
                     </span>
