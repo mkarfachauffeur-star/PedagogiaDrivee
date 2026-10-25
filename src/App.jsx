@@ -41,6 +41,7 @@ import ManagerPackagesPage from './pages/app-pages/ManagerPackagesPage'
 import PlatformProtectedRoute from './components/PlatformProtectedRoute'
 import PlatformDashboardPage from './pages/platform/PlatformDashboardPage'
 import PlatformOrganizationsPage from './pages/platform/PlatformOrganizationsPage'
+import PlatformOrganizationDetailPage from './pages/platform/PlatformOrganizationDetailPage'
 import PlatformSubscriptionsPage from './pages/platform/PlatformSubscriptionsPage'
 import PlatformAuditPage from './pages/platform/PlatformAuditPage'
 import PlatformReviewsPage from './pages/platform/PlatformReviewsPage'
@@ -298,6 +299,7 @@ function App() {
         <Route path="/platform" element={<Navigate to="/platform/dashboard" replace />} />
         <Route path="/platform/dashboard" element={withPlatformLayout(PlatformDashboardPage)} />
         <Route path="/platform/organizations" element={withPlatformLayout(PlatformOrganizationsPage)} />
+        <Route path="/platform/organizations/:organizationId" element={withPlatformLayout(PlatformOrganizationDetailPage)} />
         <Route path="/platform/prospects" element={withPlatformLayout(PlatformProspectsPage)} />
         <Route path="/platform/demo-requests" element={<Navigate replace to="/platform/prospects" />} />
         <Route path="/platform/pricing" element={withPlatformLayout(PlatformPricingPage)} />

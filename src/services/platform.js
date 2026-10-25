@@ -16,6 +16,7 @@ import {
   resolveBillingStatus,
   resolveSubscriptionStatus,
 } from '../lib/platformPlans'
+import { isTestOrganization } from '../lib/platformTestData'
 
 export { formatPlatformEur }
 
@@ -69,7 +70,7 @@ export async function fetchPlatformSaasMetrics() {
       supabase
         .from('invoices')
         .select('id, status, amount_cents, due_at, paid_at, issued_at, organization_id'),
-      supabase.from('organizations').select('id, status, created_at, updated_at'),
+      supabase.from('organizations').select('id, name, email, status, created_at, updated_at'),
       supabase
         .from('plans')
         .select('id, code, name, price_cents, trial_days, metadata, is_active')
@@ -79,9 +80,14 @@ export async function fetchPlatformSaasMetrics() {
     const error = subsRes.error || invoicesRes.error || orgsRes.error || plansRes.error
     if (error) throw error
 
-    const subscriptions = subsRes.data || []
-    const invoices = invoicesRes.data || []
-    const organizations = orgsRes.data || []
+    const allOrganizations = orgsRes.data || []
+    const subscriptionByOrg = new Map((subsRes.data || []).map((sub) => [sub.organization?.id, sub]))
+    const testOrganizationIds = new Set(
+      allOrganizations.filter((org) => isTestOrganization(org, subscriptionByOrg.get(org.id))).map((org) => org.id),
+    )
+    const subscriptions = (subsRes.data || []).filter((sub) => !testOrganizationIds.has(sub.organization?.id))
+    const invoices = (invoicesRes.data || []).filter((row) => !testOrganizationIds.has(row.organization_id))
+    const organizations = allOrganizations.filter((org) => !testOrganizationIds.has(org.id))
     const saasPlans = plansRes.data || []
     const now = new Date()
     const today = now.toISOString().slice(0, 10)
@@ -178,6 +184,7 @@ export async function fetchPlatformSaasMetrics() {
       failedAmountCents: failedInvoices.reduce((sum, row) => sum + Number(row.amount_cents || 0), 0),
       saasPlans,
       trialDays: trialPlan?.trial_days ?? 30,
+      testOrganizationCount: testOrganizationIds.size,
       error: null,
     }
   } catch (error) {
@@ -220,7 +227,7 @@ export async function listAllOrganizations() {
       .from('organizations')
       .select(`
         id, name, email, phone, status, siret, prefecture_approval, created_at,
-        subscriptions(status, trial_ends_at, plan:plan_id(name, code))
+        subscriptions(id, status, trial_ends_at, current_period_end, metadata, plan:plan_id(name, code))
       `)
       .order('created_at', { ascending: false })
     if (error) throw error
@@ -397,6 +404,8 @@ export async function listAllSubscriptions() {
         paymentMethod: sub.metadata?.payment_method || lastInvoice?.metadata?.payment_method || '—',
         lastPaymentAt: lastInvoice?.paid_at || null,
         lastPaymentCents: lastInvoice?.amount_cents ?? null,
+        isTest: isTestOrganization(org, sub),
+        requestedPlan: sub.metadata?.requested_plan || null,
       }
     })
 
@@ -470,11 +479,10 @@ export async function updateSubscriptionBySuperAdmin(subscriptionId, payload) {
     if (payload.currentPeriodEnd !== undefined) patch.current_period_end = payload.currentPeriodEnd || null
     if (payload.status) patch.status = payload.status
 
-    if (payload.paymentMethod !== undefined) {
-      patch.metadata = {
-        ...(current.metadata || {}),
-        payment_method: payload.paymentMethod || null,
-      }
+    if (payload.paymentMethod !== undefined || payload.isTest !== undefined) {
+      patch.metadata = { ...(current.metadata || {}) }
+      if (payload.paymentMethod !== undefined) patch.metadata.payment_method = payload.paymentMethod || null
+      if (payload.isTest !== undefined) patch.metadata.is_test = Boolean(payload.isTest)
     }
 
     const { data, error } = await supabase
@@ -668,7 +676,7 @@ export async function savePlatformSettings(key, value) {
   }
 }
 
-export async function listAuditLogs({ organizationId, limit = 100 } = {}) {
+export async function listAuditLogs({ organizationId, action, dateFrom, dateTo, limit = 100 } = {}) {
   try {
     let query = supabase
       .from('audit_logs')
@@ -676,6 +684,9 @@ export async function listAuditLogs({ organizationId, limit = 100 } = {}) {
       .order('created_at', { ascending: false })
       .limit(limit)
     if (organizationId) query = query.eq('organization_id', organizationId)
+    if (action) query = query.eq('action', action)
+    if (dateFrom) query = query.gte('created_at', `${dateFrom}T00:00:00`)
+    if (dateTo) query = query.lte('created_at', `${dateTo}T23:59:59`)
     const { data, error } = await query
     if (error) throw error
     return { logs: data || [], error: null }
@@ -703,5 +714,65 @@ export async function checkIsSuperAdmin(userId) {
     return profile?.role === 'super_admin' && profile?.is_active !== false
   } catch {
     return false
+  }
+}
+
+/** Note l'offre choisie sur la page d'accueil dans l'abonnement créé à l'acceptation (l'essai reste inchangé). */
+export async function recordRequestedPlan(organizationId, planCode) {
+  try {
+    const { data: sub, error: readError } = await supabase
+      .from('subscriptions')
+      .select('id, metadata')
+      .eq('organization_id', organizationId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    if (readError) throw readError
+    if (!sub) return { error: null }
+    const { error } = await supabase
+      .from('subscriptions')
+      .update({ metadata: { ...(sub.metadata || {}), requested_plan: planCode }, updated_at: new Date().toISOString() })
+      .eq('id', sub.id)
+    if (error) throw error
+    return { error: null }
+  } catch (error) {
+    return { error }
+  }
+}
+
+/** Fiche d'une auto-école : établissement, abonnement, comptes, factures. */
+export async function getOrganizationOverview(organizationId) {
+  try {
+    const [orgRes, profilesRes, invoicesRes] = await Promise.all([
+      supabase
+        .from('organizations')
+        .select(`
+          id, name, manager_name, email, phone, status, siret, prefecture_approval, address, postal_code, city, created_at, updated_at,
+          subscriptions(id, status, trial_ends_at, current_period_start, current_period_end, metadata,
+            plan:plan_id(code, name, price_cents))
+        `)
+        .eq('id', organizationId)
+        .maybeSingle(),
+      supabase
+        .from('profiles')
+        .select('id, full_name, email, role, is_active, created_at')
+        .eq('organization_id', organizationId)
+        .order('created_at', { ascending: true }),
+      supabase
+        .from('invoices')
+        .select('id, invoice_number, amount_cents, status, issued_at, due_at, paid_at')
+        .eq('organization_id', organizationId)
+        .order('created_at', { ascending: false }),
+    ])
+    const error = orgRes.error || profilesRes.error || invoicesRes.error
+    if (error) throw error
+    return {
+      organization: orgRes.data,
+      profiles: profilesRes.data || [],
+      invoices: invoicesRes.data || [],
+      error: null,
+    }
+  } catch (error) {
+    return { organization: null, profiles: [], invoices: [], error }
   }
 }

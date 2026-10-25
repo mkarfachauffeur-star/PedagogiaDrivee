@@ -1,5 +1,6 @@
 import { trackAeApproved, trackBeginTrial } from '../lib/analytics'
 import { supabase } from '../lib/supabase'
+import { isTestProspect } from '../lib/platformTestData'
 
 export const PROSPECT_STATUS = {
   NEW: 'Nouvelle demande',
@@ -95,7 +96,15 @@ export async function listProspects() {
   return { prospects: direct.data || [], error: null }
 }
 
+/** Demandes à traiter, hors demandes de test : même règle que la page Demandes de démo. */
 export async function countNewProspects() {
+  const { prospects, error: listError } = await listProspects()
+  if (!listError) {
+    return prospects.filter(
+      (row) => !row.organization_id && (row.status || PROSPECT_STATUS.NEW) === PROSPECT_STATUS.NEW && !isTestProspect(row),
+    ).length
+  }
+
   const rpc = await supabase.rpc('platform_count_new_demo_requests')
   if (!rpc.error && rpc.data != null) {
     return Number(rpc.data) || 0

@@ -7,6 +7,7 @@ import PlatformNotificationBell from '../components/PlatformNotificationBell'
 import OrgStatusBanner from '../components/OrgStatusBanner'
 import PageSeo from '../components/seo/PageSeo'
 import { NAVIGATION } from '../config/navigation'
+import { navigationIconFor } from '../config/navigationIcons'
 import { useAuth } from '../context/AuthContext'
 import { SITE_NAME } from '../lib/seo'
 import { useStudentTrack } from '../hooks/useStudentTrack'
@@ -17,6 +18,12 @@ import { getTrackLabel } from '../lib/studentTrack'
 import ManagerOnboardingTutorial from '../components/onboarding/ManagerOnboardingTutorial'
 import DeleteAccountModal from '../components/account/DeleteAccountModal'
 import { roleLabelFor } from '../lib/genderedRoles'
+import { announcePresence, leavePresence } from '../services/presence'
+
+function initialsOf(name = '') {
+  const parts = String(name).trim().split(/\s+/).filter(Boolean)
+  return (parts.slice(0, 2).map((part) => part[0]).join('') || '?').toUpperCase()
+}
 
 export default function DashboardLayout({ role, children, fullWidth = false }) {
   const location = useLocation()
@@ -58,6 +65,12 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
   const { newCount: newProspectCount } = useProspectNotifications()
   const { count: platformNotificationCount } = usePlatformUnreadCount(role === 'super_admin' ? profileId : null)
 
+  // Présence en direct, visible par le Super Admin (comptes d'auto-école uniquement).
+  useEffect(() => {
+    if (role === 'super_admin' || !profileId) return undefined
+    return announcePresence({ profileId, role })
+  }, [role, profileId])
+
   // Chaque navigation repart du haut (inclut les changements de query/hash).
   useEffect(() => {
     const scrollNow = () => {
@@ -98,7 +111,6 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
   }
 
   const closeSidebar = () => setSidebarOpen(false)
-  const activeItem = items.find((item) => location.pathname === item.href)
 
   const isMessagesNavItem = (href) => href.endsWith('/messages')
 
@@ -155,13 +167,13 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
 
       <aside
         className={`app-sidebar fixed left-0 top-0 z-[80] h-[100dvh] max-h-[100dvh] overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] lg:pointer-events-auto lg:sticky lg:z-50 lg:h-screen lg:max-h-screen lg:shrink-0 ${sidebarCollapsed ? 'lg:w-[84px]' : 'lg:w-[280px]'} w-[min(280px,100vw)]
-          border-r border-blue-100/90 bg-white text-slate-800 shadow-[var(--shadow-sidebar)]
+          border-r border-slate-200 bg-white text-slate-800
           transition-all duration-300 ease-out
           ${sidebarOpen ? 'is-open translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         <button
           aria-label={sidebarCollapsed ? 'Déplier le menu' : 'Replier le menu'}
-          className="absolute -right-4 top-8 z-[90] hidden h-8 w-8 items-center justify-center rounded-full border border-blue-100 bg-white text-slate-500 shadow-md transition hover:border-blue-300 hover:text-blue-600 lg:flex"
+          className="absolute -right-3.5 top-7 z-[90] hidden h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-slate-900 lg:flex"
           onClick={() => setSidebarCollapsed((current) => !current)}
           title={sidebarCollapsed ? 'Déplier le menu' : 'Replier le menu'}
           type="button"
@@ -171,13 +183,13 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
 
         <div className="flex h-full max-h-[100dvh] min-h-0 flex-col">
           <div
-            className={`border-b border-blue-50 px-5 py-5 transition-all duration-300 ${sidebarCollapsed ? 'lg:flex lg:justify-center lg:px-3' : ''}`}
+            className={`border-b border-slate-100 px-5 py-5 transition-all duration-300 ${sidebarCollapsed ? 'lg:flex lg:justify-center lg:px-3' : ''}`}
           >
             <Link aria-label="PEDAGOGIA DRIVE" onClick={closeSidebar} to="/">
-              <BrandLogo animated={false} compact={sidebarCollapsed} idPrefix={`sidebar-${role}`} variant="light" />
+              <BrandLogo animated={false} compact={sidebarCollapsed} idPrefix={`sidebar-${role}`} lightMark variant="light" />
             </Link>
             {!sidebarCollapsed && (
-              <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
+              <p className="mt-3 text-xs font-medium text-slate-500">
                 {config.spaceLabel || 'Espace professionnel'}
               </p>
             )}
@@ -185,47 +197,46 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
 
           {sidebarUser && (
             <div
-              className={`mx-4 mt-4 rounded-2xl border border-blue-100/80 bg-blue-50/70 p-3 text-center transition-all duration-300 ${sidebarCollapsed ? 'lg:mx-3 lg:px-2' : ''}`}
+              className={`mx-3 mt-3 rounded-lg bg-slate-50 px-3 py-2.5 transition-all duration-300 ${sidebarCollapsed ? 'lg:hidden' : ''}`}
             >
               <div
                 className={`min-w-0 transition-all duration-300 ${sidebarCollapsed ? 'lg:hidden' : ''}`}
               >
                 <p className="truncate text-sm font-semibold text-slate-900">{sidebarUser.name}</p>
                 {sidebarUser.role && (
-                  <p className="text-xs text-slate-500">{sidebarUser.role}</p>
+                  <p className="truncate text-xs text-slate-500">{sidebarUser.role}</p>
                 )}
               </div>
             </div>
           )}
 
           <nav
-            className={`flex-1 space-y-1 overflow-y-auto px-3 py-4 ${sidebarCollapsed ? 'lg:px-2' : ''}`}
+            className={`flex-1 space-y-0.5 overflow-y-auto px-3 py-4 ${sidebarCollapsed ? 'lg:px-2' : ''}`}
             aria-label="Navigation principale"
           >
             {items.map((item) => {
-              const active = location.pathname === item.href
+              const active = location.pathname === item.href || location.pathname.startsWith(`${item.href}/`)
               const showMessagesBadge = isMessagesNavItem(item.href)
               const showProspectBadge = role === 'super_admin' && item.badgeKey === 'prospects' && newProspectCount > 0
               const showReviewBadge = role === 'super_admin' && item.badgeKey === 'reviews' && platformNotificationCount > 0
+              const NavIcon = navigationIconFor(item.href)
               return (
                 <Link
                   key={item.href}
                   title={item.label}
                   to={item.href}
                   onClick={closeSidebar}
-                  className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${sidebarCollapsed ? 'lg:justify-center lg:px-2' : ''} ${
+                  aria-current={active ? 'page' : undefined}
+                  className={`group relative flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors ${sidebarCollapsed ? 'lg:justify-center lg:px-2' : ''} ${
                     active
-                      ? 'border-2 border-blue-300 bg-blue-50 text-blue-700 shadow-sm shadow-blue-500/10'
-                      : 'border border-transparent text-slate-600 hover:border-blue-100 hover:bg-blue-50/80 hover:text-slate-900'
+                      ? 'bg-blue-50 text-[#1769FF]'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                   }`}
                 >
-                  {active && (
-                    <span className="absolute inset-y-2 left-0 w-1 rounded-full bg-gradient-to-b from-blue-500 to-blue-400" />
-                  )}
                   <span
-                    className={`pd-nav-icon relative ${active ? 'border-blue-300 bg-blue-50 text-blue-600' : 'group-hover:border-blue-300 group-hover:bg-white'}`}
+                    className={`relative flex h-5 w-5 shrink-0 items-center justify-center ${active ? 'text-[#1769FF]' : 'text-slate-400 group-hover:text-slate-600'}`}
                   >
-                    {item.icon}
+                    {NavIcon ? <NavIcon aria-hidden="true" className="h-[18px] w-[18px]" strokeWidth={1.9} /> : item.icon}
                     {showMessagesBadge && sidebarCollapsed && (
                       <span className="hidden lg:block">{renderUnreadBadge(true)}</span>
                     )}
@@ -255,18 +266,19 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
             })}
           </nav>
 
-          <div className={`border-t border-blue-50 p-4 ${sidebarCollapsed ? 'lg:px-3' : ''}`}>
+          <div className={`border-t border-slate-100 p-3 ${sidebarCollapsed ? 'lg:px-2' : ''}`}>
             <button
               type="button"
               onClick={async () => {
+                await leavePresence()
                 await signOut()
                 navigate('/login', { replace: true })
               }}
-              className={`flex w-full items-center justify-center gap-2 rounded-xl border border-blue-100 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600 ${sidebarCollapsed ? 'lg:px-2' : ''}`}
+              className={`flex h-10 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium text-slate-600 transition hover:bg-rose-50 hover:text-rose-700 ${sidebarCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
               title="Déconnexion"
               aria-label="Déconnexion"
             >
-              <LogOut className="h-4 w-4 shrink-0" />
+              <LogOut aria-hidden="true" className="h-[18px] w-[18px] shrink-0" strokeWidth={1.9} />
               <span
                 className={`truncate transition-all duration-300 ${sidebarCollapsed ? 'lg:w-0 lg:opacity-0 lg:pointer-events-none' : 'opacity-100'}`}
               >
@@ -292,19 +304,17 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-100 bg-white text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-600 lg:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 lg:hidden"
               aria-label="Ouvrir le menu"
             >
               <Menu className="h-4 w-4" />
             </button>
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">
-                {activeItem?.label || 'Tableau de bord'}
-              </p>
-              <p className="truncate text-sm font-semibold text-slate-900">
+              {/* Le titre de la page est déjà dans son en-tête : la barre indique seulement l'espace. */}
+              <p className="truncate text-sm font-medium text-slate-700">
                 {role === 'student' && !trackLoading
                   ? (studentFullName || getTrackLabel(track))
-                  : (sidebarUser?.name || 'PEDAGOGIA DRIVE')}
+                  : (config?.spaceLabel || sidebarUser?.role || 'Pedagogia Drive')}
               </p>
               {role === 'student' && !trackLoading && studentIdentity && (
                 <p className="max-w-[14rem] truncate text-[11px] font-medium text-slate-500 sm:max-w-xs">
@@ -320,7 +330,10 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
               <NotificationBell role={role} unreadCount={notificationCount} />
             )}
             {sidebarUser && (
-              <div className="hidden items-center rounded-xl border border-blue-100 bg-white px-3 py-2 shadow-sm sm:flex">
+              <div className="hidden items-center gap-2.5 pl-1 sm:flex">
+                <span aria-hidden="true" className="grid h-8 w-8 place-items-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600">
+                  {initialsOf(sidebarUser.name)}
+                </span>
                 <span className="text-sm font-medium text-slate-700">{sidebarUser.name}</span>
               </div>
             )}

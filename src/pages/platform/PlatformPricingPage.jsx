@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import PageHero from '../../components/ui/PageHero'
+import Notice from '../../components/ui/Notice'
+import PageHeader from '../../components/ui/PageHeader'
+import { ui } from '../../components/ui/styles'
+import { useConfirm } from '../../components/ui/useConfirm'
+import { LANDING_OFFERS } from '../../components/marketing/landing/landingOffers'
 import { formatPlatformEur } from '../../lib/platformPlans'
 import { listPlatformPlans, updateSaasPlan } from '../../services/platform'
 
@@ -7,6 +11,7 @@ export default function PlatformPricingPage() {
   const [plans, setPlans] = useState([])
   const [saving, setSaving] = useState(false)
   const [feedback, setFeedback] = useState(null)
+  const [confirm, confirmDialog] = useConfirm()
 
   const refresh = useCallback(async () => {
     const { plans: rows } = await listPlatformPlans()
@@ -19,13 +24,20 @@ export default function PlatformPricingPage() {
 
   const handleSave = async (event) => {
     event.preventDefault()
-    setSaving(true)
-    setFeedback(null)
-
     const form = new FormData(event.currentTarget)
     const trialDays = Number(form.get('trial_days'))
     const starterEur = Number(form.get('starter_eur'))
     const premiumEur = Number(form.get('premium_eur'))
+
+    const ok = await confirm({
+      title: 'Enregistrer les nouveaux tarifs ?',
+      description: `Essai ${trialDays} jours, Starter ${formatPlatformEur(starterEur)} par mois, Premium ${formatPlatformEur(premiumEur)} par mois. Ces prix s’appliquent aux prochaines factures.`,
+      confirmLabel: 'Enregistrer',
+      requireIdentity: true,
+    })
+    if (!ok) return
+    setSaving(true)
+    setFeedback(null)
 
     const trial = plans.find((p) => p.code === 'trial')
     const starter = plans.find((p) => p.code === 'starter')
@@ -42,7 +54,7 @@ export default function PlatformPricingPage() {
     if (failed) {
       setFeedback({ type: 'error', message: 'Enregistrement partiel ou impossible. Vérifiez vos droits Super Admin.' })
     } else {
-      setFeedback({ type: 'ok', message: 'Tarifs SaaS mis à jour en base de données.' })
+      setFeedback({ type: 'ok', message: 'Tarifs enregistrés.' })
     }
     refresh()
   }
@@ -51,43 +63,44 @@ export default function PlatformPricingPage() {
   const starter = plans.find((p) => p.code === 'starter')
   const premium = plans.find((p) => p.code === 'premium')
 
+  // Les prix de la page d'accueil sont écrits dans landingOffers.js : on signale tout écart avec la base.
+  const landingEuros = (id) => Number(String(LANDING_OFFERS.find((offer) => offer.id === id)?.price || '').replace(/[^\d,]/g, '').replace(',', '.'))
+  const gaps = [
+    { plan: starter, id: 'starter', name: 'Starter' },
+    { plan: premium, id: 'premium', name: 'Premium' },
+  ].filter(({ plan, id }) => plan && Number.isFinite(landingEuros(id)) && landingEuros(id) * 100 !== Number(plan.price_cents))
+
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
-      <PageHero
-        eyebrow="Super Admin — Confidentiel"
-        title="Tarifs SaaS"
-        subtitle="Ces tarifs ne sont jamais affichés sur le site public. Stockés dans la table plans."
+      <PageHeader
+        description="Prix facturés aux auto-écoles, enregistrés dans la table plans. Ils doivent rester identiques à ceux affichés sur la page d’accueil."
+        title="Tarifs"
       />
 
-      {feedback && (
-        <p
-          className={`rounded-xl border-2 px-4 py-3 text-sm font-bold ${
-            feedback.type === 'ok'
-              ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
-              : 'border-rose-200 bg-rose-50 text-rose-800'
-          }`}
-        >
-          {feedback.message}
-        </p>
-      )}
+      {feedback && <Notice tone={feedback.type === 'ok' ? 'success' : 'danger'}>{feedback.message}</Notice>}
 
-      <form className="rounded-2xl border-2 border-slate-300 bg-white p-6 space-y-5" onSubmit={handleSave}>
-        <label className="block text-sm font-bold text-slate-700">
-          Durée essai gratuit (jours)
-          <input
-            className="mt-2 w-full rounded-xl border-2 border-slate-300 px-4 py-3"
-            defaultValue={trial?.trial_days ?? 30}
-            min={1}
-            name="trial_days"
-            required
-            type="number"
-          />
+      {gaps.length > 0 ? (
+        <Notice tone="warning">
+          La page d’accueil n’affiche pas les mêmes prix :{' '}
+          {gaps
+            .map(({ plan, id, name }) => `${name} ${formatPlatformEur(landingEuros(id))} sur le site, ${formatPlatformEur(plan.price_cents, { fromCents: true })} ici`)
+            .join(' ; ')}
+          . Les prix du site se modifient dans le fichier landingOffers.js, puis demandent une mise en ligne.
+        </Notice>
+      ) : plans.length > 0 ? (
+        <Notice tone="success">Les prix sont identiques à ceux affichés sur la page d’accueil.</Notice>
+      ) : null}
+
+      <form className={`${ui.card} ${ui.cardBody} space-y-5`} onSubmit={handleSave}>
+        <label className={ui.label}>
+          Durée de l’essai gratuit (jours)
+          <input className={ui.input} defaultValue={trial?.trial_days ?? 30} min={1} name="trial_days" required type="number" />
         </label>
 
-        <label className="block text-sm font-bold text-slate-700">
-          Starter — € / mois (engagement annuel)
+        <label className={ui.label}>
+          Starter, prix mensuel en euros
           <input
-            className="mt-2 w-full rounded-xl border-2 border-slate-300 px-4 py-3"
+            className={ui.input}
             defaultValue={starter ? starter.price_cents / 100 : ''}
             min={0}
             name="starter_eur"
@@ -95,15 +108,16 @@ export default function PlatformPricingPage() {
             step="0.01"
             type="number"
           />
-          {starter && (
-            <p className="mt-1 text-xs text-slate-500">Actuel : {formatPlatformEur(starter.price_cents, { fromCents: true })}/mois</p>
-          )}
+          <span className={`block ${ui.hint}`}>
+            Engagement annuel.
+            {starter ? ` Prix actuel : ${formatPlatformEur(starter.price_cents, { fromCents: true })} par mois.` : ''}
+          </span>
         </label>
 
-        <label className="block text-sm font-bold text-slate-700">
-          Premium — € / mois (engagement annuel)
+        <label className={ui.label}>
+          Premium, prix mensuel en euros
           <input
-            className="mt-2 w-full rounded-xl border-2 border-slate-300 px-4 py-3"
+            className={ui.input}
             defaultValue={premium ? premium.price_cents / 100 : ''}
             min={0}
             name="premium_eur"
@@ -111,19 +125,19 @@ export default function PlatformPricingPage() {
             step="0.01"
             type="number"
           />
-          {premium && (
-            <p className="mt-1 text-xs text-slate-500">Actuel : {formatPlatformEur(premium.price_cents, { fromCents: true })}/mois</p>
-          )}
+          <span className={`block ${ui.hint}`}>
+            Engagement annuel.
+            {premium ? ` Prix actuel : ${formatPlatformEur(premium.price_cents, { fromCents: true })} par mois.` : ''}
+          </span>
         </label>
 
-        <button
-          className="rounded-xl bg-cyan-600 px-6 py-3 text-sm font-black text-white hover:bg-cyan-700 disabled:opacity-60"
-          disabled={saving || !plans.length}
-          type="submit"
-        >
-          {saving ? 'Enregistrement…' : 'Enregistrer les tarifs'}
-        </button>
+        <div className="border-t border-slate-100 pt-5">
+          <button className={ui.btnPrimary} disabled={saving || !plans.length} type="submit">
+            {saving ? 'Enregistrement…' : 'Enregistrer les tarifs'}
+          </button>
+        </div>
       </form>
+      {confirmDialog}
     </div>
   )
 }

@@ -1,24 +1,19 @@
 /** Helpers SaaS — les tarifs sont lus depuis la table `plans` (jamais codés en dur). */
 
+import { formatDate, formatDateTime, formatEuros } from './format'
+
 export const PAYING_PLAN_CODES = new Set(['starter', 'premium', 'monthly'])
 
 export function formatPlatformEur(centsOrEuros, { fromCents = false } = {}) {
-  const value = fromCents ? Number(centsOrEuros || 0) / 100 : Number(centsOrEuros || 0)
-  return `${value.toLocaleString('fr-FR')} €`
+  return formatEuros(Number(centsOrEuros || 0), { fromCents })
 }
 
 export function formatPlatformDate(value) {
-  if (!value) return '—'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '—'
-  return date.toLocaleDateString('fr-FR')
+  return formatDate(value)
 }
 
 export function formatPlatformDateTime(value) {
-  if (!value) return '—'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '—'
-  return date.toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })
+  return formatDateTime(value)
 }
 
 export function resolveSubscriptionStatus(org, sub, plan, now = new Date()) {

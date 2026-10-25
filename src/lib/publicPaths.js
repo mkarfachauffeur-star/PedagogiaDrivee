@@ -128,6 +128,7 @@ export function normalizePathname(pathname) {
 export function isKnownAppPath(pathname) {
   const path = normalizePathname(pathname)
   if (EXACT_PATHS.has(path)) return true
+  if (/^\/platform\/organizations\/[0-9a-f-]{8,}$/i.test(path)) return true
   if (!path.startsWith('/blog/')) return false
   const slug = path.slice('/blog/'.length)
   return slug.length > 0 && !slug.includes('/') && BLOG_SLUG_SET.has(slug)
