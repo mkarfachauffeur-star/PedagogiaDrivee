@@ -1,6 +1,4 @@
-import { Link } from 'react-router-dom'
-
-export default function MarketingFaq({ items, skin, isDark, showBlogLink = false }) {
+export default function MarketingFaq({ items, skin, isDark }) {
   return (
     <section aria-labelledby="faq-heading" className="mx-auto max-w-3xl" id="faq">
       <div className="text-center">
@@ -36,16 +34,6 @@ export default function MarketingFaq({ items, skin, isDark, showBlogLink = false
           </details>
         ))}
       </div>
-
-      {showBlogLink && (
-        <p className={`mt-8 text-center text-sm ${skin.bodyMuted}`}>
-          Guides et conseils pour gérants d&apos;auto-école sur{' '}
-          <Link className={`font-bold underline ${isDark ? 'text-blue-300' : 'text-blue-600'}`} to="/blog">
-            notre blog
-          </Link>
-          .
-        </p>
-      )}
     </section>
   )
 }

@@ -471,9 +471,6 @@ export function LandingFooter({ isDark }) {
           <FooterHashLink className={linkClass} hash="#fonctionnalites">
             Fonctionnalités
           </FooterHashLink>
-          <Link className={linkClass} to="/blog">
-            Blog
-          </Link>
           <FooterHashLink className={linkClass} hash="#faq">
             FAQ
           </FooterHashLink>

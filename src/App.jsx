@@ -12,6 +12,7 @@ import ContactPage from './pages/ContactPage'
 import LivretNumeriquePage from './pages/LivretNumeriquePage'
 import BlogListPage from './pages/BlogListPage'
 import BlogArticlePage from './pages/BlogArticlePage'
+import NotFoundPage from './pages/NotFoundPage'
 import AcceptInvitePage from './pages/AcceptInvitePage'
 import DashboardLayout from './layouts/DashboardLayout'
 import LoadingSpinner from './components/ui/LoadingSpinner'
@@ -186,6 +187,7 @@ function App() {
         <Route path="/accept-invite" element={<AcceptInvitePage />} />
         <Route path="/login" element={<LoginPage />} />
 
+        <Route path="/manager" element={<Navigate replace to="/manager/dashboard" />} />
         <Route path="/manager/dashboard" element={withProtectedLayout('manager', ManagerDashboardPage)} />
         <Route path="/manager/students" element={withProtectedLayout('manager', ManagerStudentsPage)} />
         <Route path="/manager/pre-registrations" element={withProtectedLayout('manager', () => <PreRegistrationsPage roleLabel="Gérant" />)} />
@@ -204,6 +206,7 @@ function App() {
         <Route path="/manager/settings" element={withProtectedLayout('manager', ManagerSettingsPage)} />
         <Route path="/manager/settings/pricing" element={<Navigate replace to="/manager/packages" />} />
 
+        <Route path="/student" element={<Navigate replace to="/student/dashboard" />} />
         <Route path="/student/dashboard" element={withStudentLayout(StudentDashboardPage)} />
         <Route
           path="/student/lessons"
@@ -232,6 +235,7 @@ function App() {
           element={withStudentLayout(StudentMessagesPage)}
         />
 
+        <Route path="/teacher" element={<Navigate replace to="/teacher/dashboard" />} />
         <Route path="/teacher/dashboard" element={withProtectedLayout('teacher', TeacherDashboardPage)} />
         <Route path="/teacher/planning" element={withProtectedLayout('teacher', TeacherPlanningPage)} />
         <Route path="/teacher/students" element={withProtectedLayout('teacher', TeacherStudentsPage)} />
@@ -245,6 +249,7 @@ function App() {
         <Route path="/teacher/finance" element={withProtectedLayout('teacher', TeacherFinancePage)} />
         <Route path="/teacher/profile" element={withProtectedLayout('teacher', TeacherProfilePage)} />
 
+        <Route path="/secretary" element={<Navigate replace to="/secretary/dashboard" />} />
         <Route
           path="/secretary/dashboard"
           element={withProtectedLayout('secretary', SecretaryDashboardPage)}
@@ -302,6 +307,8 @@ function App() {
         <Route path="/platform/payments" element={withPlatformLayout(PlatformPaymentsPage)} />
         <Route path="/platform/audit" element={withPlatformLayout(PlatformAuditPage)} />
         <Route path="/platform/reviews" element={withPlatformLayout(PlatformReviewsPage)} />
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       </MarketingThemeProvider>
     </BrowserRouter>

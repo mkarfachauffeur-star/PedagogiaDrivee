@@ -1,4 +1,19 @@
 {
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": {
+            "eq": "pedagogia-drive.fr"
+          }
+        }
+      ],
+      "destination": "https://www.pedagogia-drive.fr/:path*",
+      "statusCode": 301
+    }
+  ],
   "rewrites": [
     {
       "source": "/((?!assets/).*)",

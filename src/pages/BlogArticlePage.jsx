@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react'
-import { Link, Navigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
+import NotFoundPage from './NotFoundPage'
 import { Calendar, Clock, UserRound } from 'lucide-react'
 import BlogArticleContent from '../components/blog/BlogArticleContent'
 import BlogRelatedArticles from '../components/blog/BlogRelatedArticles'
@@ -29,7 +30,7 @@ export default function BlogArticlePage() {
   }, [slug])
 
   if (!article) {
-    return <Navigate replace to="/blog" />
+    return <NotFoundPage />
   }
 
   const readingTime = getReadingTimeMinutes(article)
