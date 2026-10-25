@@ -1756,6 +1756,10 @@
   --lp-section: #f6f8fb;
   --lp-accent: #1769ff;
   --lp-border-strong: rgba(7, 17, 31, 0.18);
+  --lp-accent-soft: rgba(23, 105, 255, 0.08);
+  --lp-offer-trial: #059669;
+  --lp-offer-starter: #1769ff;
+  --lp-offer-premium: #7c3aed;
   color: var(--lp-ink);
   background: var(--lp-bg);
 }
@@ -1776,6 +1780,10 @@
   --lp-section: #071023;
   --lp-accent: #6ea6ff;
   --lp-border-strong: rgba(255, 255, 255, 0.22);
+  --lp-accent-soft: rgba(110, 166, 255, 0.14);
+  --lp-offer-trial: #34d399;
+  --lp-offer-starter: #6ea6ff;
+  --lp-offer-premium: #a78bfa;
 }
 
 /* La page de connexion suit la zone visible. Sans ça, le clavier iOS

@@ -13,7 +13,7 @@ export const LANDING_OFFERS = [
     price: '79 €',
     period: 'par mois',
     note: 'Engagement annuel, facturation mensuelle',
-    features: ['Jusqu’à 50 élèves', 'Toutes les fonctionnalités'],
+    features: ['Jusqu’à 50 élèves par an', 'Toutes les fonctionnalités'],
     highlighted: true,
   },
   {
