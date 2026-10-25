@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion'
 
-function LogoMark({ compact }) {
+function LogoMark({ compact, light }) {
   return (
     <img
       alt=""
       className={`shrink-0 object-contain ${compact ? 'h-10 w-10' : 'h-12 w-12 sm:h-[3.25rem] sm:w-[3.25rem]'}`}
       draggable="false"
-      src="/brand/pedagogia-drive-p-mark.png"
+      src={light ? '/brand/pedagogia-drive-p-mark-light.png' : '/brand/pedagogia-drive-p-mark.png'}
     />
   )
 }
@@ -45,10 +45,11 @@ export default function BrandLogo({
   animated = true,
   variant = 'marketing',
   idPrefix = 'pd',
+  lightMark = false,
 }) {
   const content = (
     <>
-      <LogoMark compact={compact} idPrefix={idPrefix} />
+      <LogoMark compact={compact} idPrefix={idPrefix} light={lightMark} />
       {!compact && <LogoText variant={variant} />}
     </>
   )

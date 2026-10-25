@@ -815,11 +815,7 @@
 @layer components {
   .pd-shell {
     @apply relative min-h-screen w-full text-slate-900;
-    background-color: #f0f7ff;
-    background-image:
-      radial-gradient(circle at 14% 10%, rgba(59, 130, 246, 0.08), transparent 38%),
-      radial-gradient(circle at 86% 14%, rgba(125, 211, 252, 0.1), transparent 34%),
-      linear-gradient(180deg, #f0f7ff 0%, #e8f2ff 50%, #eef6ff 100%);
+    background-color: #f6f8fb;
   }
 
   @media (max-width: 767px) {
@@ -1477,7 +1473,7 @@
   }
 
   .pd-topbar {
-    @apply sticky top-0 z-30 flex items-center justify-between border-b border-slate-300 bg-white/95 py-3.5 backdrop-blur-xl px-4 sm:px-5 md:px-6;
+    @apply sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white/95 py-3 backdrop-blur-xl px-4 sm:px-5 md:px-6;
     padding-top: max(0.875rem, env(safe-area-inset-top, 0px));
   }
 
@@ -1753,6 +1749,13 @@
   --lp-red: #ef3340;
   --lp-halo: rgba(23, 105, 255, 0.16);
   --lp-halo-2: rgba(124, 58, 237, 0.1);
+  --lp-frame: #ffffff;
+  --lp-frame-bar: #f1f4f8;
+  --lp-frame-border: rgba(7, 17, 31, 0.1);
+  --lp-frame-dot: #d7dde6;
+  --lp-section: #f6f8fb;
+  --lp-accent: #1769ff;
+  --lp-border-strong: rgba(7, 17, 31, 0.18);
   color: var(--lp-ink);
   background: var(--lp-bg);
 }
@@ -1766,69 +1769,13 @@
   --lp-border: rgba(255, 255, 255, 0.1);
   --lp-halo: rgba(23, 105, 255, 0.28);
   --lp-halo-2: rgba(124, 58, 237, 0.18);
-}
-
-.landing-accent-text {
-  background: linear-gradient(135deg, #1769ff, #7c3aed, #ef3340);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.landing-glow-hero {
-  background:
-    radial-gradient(ellipse 62% 58% at 82% 28%, var(--lp-halo), transparent 62%),
-    radial-gradient(ellipse 40% 36% at 12% 12%, var(--lp-halo-2), transparent 60%);
-}
-
-.landing-glow-gps {
-  background:
-    radial-gradient(ellipse 58% 70% at 18% 40%, var(--lp-halo), transparent 64%),
-    radial-gradient(ellipse 48% 55% at 88% 70%, var(--lp-halo-2), transparent 62%);
-}
-
-.landing-glow-cta {
-  background:
-    radial-gradient(ellipse 55% 70% at 18% 0%, rgba(23, 105, 255, 0.32), transparent 58%),
-    radial-gradient(ellipse 45% 55% at 82% 20%, rgba(124, 58, 237, 0.24), transparent 56%),
-    radial-gradient(ellipse 40% 50% at 50% 100%, rgba(239, 51, 64, 0.16), transparent 58%);
-}
-
-.landing-device-halo {
-  pointer-events: none;
-  position: absolute;
-  inset: -12% -8% -18%;
-  border-radius: 46%;
-  background: radial-gradient(circle at 50% 38%, var(--lp-halo), var(--lp-halo-2) 42%, transparent 70%);
-  filter: blur(18px);
-}
-
-.landing-shot-glow {
-  pointer-events: none;
-  position: absolute;
-  inset: -16% -8%;
-  border-radius: 42%;
-  filter: blur(22px);
-}
-
-.landing-shot-glow-blue {
-  background: radial-gradient(circle at 50% 42%, var(--lp-halo), transparent 68%);
-}
-
-.landing-shot-glow-violet {
-  background: radial-gradient(circle at 48% 40%, var(--lp-halo-2), transparent 68%);
-}
-
-.landing-shot-glow-red {
-  background: radial-gradient(circle at 50% 40%, rgba(239, 51, 64, 0.14), transparent 68%);
-}
-
-.landing-hide-scrollbar {
-  scrollbar-width: none;
-}
-
-.landing-hide-scrollbar::-webkit-scrollbar {
-  display: none;
+  --lp-frame: #0e1a33;
+  --lp-frame-bar: rgba(255, 255, 255, 0.06);
+  --lp-frame-border: rgba(255, 255, 255, 0.12);
+  --lp-frame-dot: rgba(255, 255, 255, 0.18);
+  --lp-section: #071023;
+  --lp-accent: #6ea6ff;
+  --lp-border-strong: rgba(255, 255, 255, 0.22);
 }
 
 /* La page de connexion suit la zone visible. Sans ça, le clavier iOS

@@ -3,7 +3,8 @@ export const LANDING_HOME_LINK = { label: 'Accueil', href: '/', route: true }
 export const LANDING_NAV_LINKS = [
   LANDING_HOME_LINK,
   { label: 'Fonctionnalités', href: '#fonctionnalites' },
-  { label: 'Pour les auto-écoles', href: '#comment-ca-marche' },
+  { label: 'Pour qui', href: '#pour-qui' },
+  { label: 'Tarifs', href: '#tarifs' },
   { label: 'FAQ', href: '#faq' },
 ]
 

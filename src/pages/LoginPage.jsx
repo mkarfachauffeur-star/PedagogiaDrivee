@@ -1,102 +1,93 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import {
-  ArrowLeft,
-  ArrowRight,
-  Eye,
-  EyeOff,
-  LockKeyhole,
-  Mail,
-  ShieldCheck,
-  Smartphone,
-} from 'lucide-react'
+import { ArrowLeft, Check, Eye, EyeOff } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import BrandLogo from '../components/BrandLogo'
 import MarketingThemeToggle from '../components/marketing/MarketingThemeToggle'
 import PageSeo from '../components/seo/PageSeo'
-import StorePlatformBadges from '../components/StorePlatformBadges'
 import { useAuth } from '../context/AuthContext'
-import { isNativeApp } from '../lib/nativeApp'
+import { StatusBar, Style } from '@capacitor/status-bar'
+import { isIOS, isNativeApp } from '../lib/nativeApp'
 import { useMarketingTheme } from '../hooks/useMarketingTheme'
 import { trackLogin, trackFirstLogin } from '../lib/analytics'
 import { supabase } from '../lib/supabase'
 import { getUserFacingError } from '../lib/userFacingError'
-import { marketingSkin } from '../lib/marketingTheme'
 import { breadcrumbsForPage, buildPageJsonLd, SEO_PAGES } from '../lib/seo'
 import { roleDestinations } from '../utils/authSession'
 import { applyRememberMePreference, readRememberedEmail } from '../utils/rememberSession'
 import { isPasswordPolicyMet, PASSWORD_POLICY_HINT, validatePassword } from '../lib/passwordPolicy'
 
-function LoginRoadArt() {
-  return (
-    <>
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-0 flex justify-center opacity-80"
-      >
-        <svg
-        className="h-[min(52vh,480px)] w-full max-w-4xl"
-        fill="none"
-        preserveAspectRatio="xMidYMax meet"
-        viewBox="0 0 800 480"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <linearGradient id="login-road-blue" x1="0" x2="1" y1="1" y2="0">
-            <stop offset="0%" stopColor="#1d4ed8" stopOpacity="0" />
-            <stop offset="45%" stopColor="#3b82f6" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#60a5fa" stopOpacity="0.2" />
-          </linearGradient>
-          <linearGradient id="login-road-red" x1="1" x2="0" y1="1" y2="0">
-            <stop offset="0%" stopColor="#b91c1c" stopOpacity="0" />
-            <stop offset="45%" stopColor="#ef4444" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#f87171" stopOpacity="0.2" />
-          </linearGradient>
-          <linearGradient id="login-road-surface" x1="400" x2="400" y1="120" y2="480" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#0f172a" />
-            <stop offset="1" stopColor="#020617" />
-          </linearGradient>
-          <filter id="login-road-glow-blue">
-            <feGaussianBlur result="blur" stdDeviation="8" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-          <filter id="login-road-glow-red">
-            <feGaussianBlur result="blur" stdDeviation="8" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
+const PANEL_POINTS = [
+  'Livret d’apprentissage et compétences REMC',
+  'Planning, QCU et messagerie',
+  'Un espace par rôle : gérant, secrétariat, enseignant, élève',
+]
 
-        <path d="M120 480 L320 140 L480 140 L680 480 Z" fill="url(#login-road-surface)" opacity="0.95" />
-        <path
-          d="M120 480 L320 140 L400 140 L400 480 Z"
-          filter="url(#login-road-glow-blue)"
-          stroke="url(#login-road-blue)"
-          strokeWidth="3"
-        />
-        <path
-          d="M680 480 L480 140 L400 140 L400 480 Z"
-          filter="url(#login-road-glow-red)"
-          stroke="url(#login-road-red)"
-          strokeWidth="3"
-        />
-        <line stroke="rgba(255,255,255,0.35)" strokeDasharray="10 14" strokeWidth="2" x1="400" x2="400" y1="160" y2="470" />
-        <line opacity="0.5" stroke="rgba(59,130,246,0.25)" strokeWidth="1" x1="200" x2="360" y1="480" y2="200" />
-        <line opacity="0.5" stroke="rgba(59,130,246,0.25)" strokeWidth="1" x1="280" x2="380" y1="480" y2="260" />
-        <line opacity="0.5" stroke="rgba(239,68,68,0.25)" strokeWidth="1" x1="600" x2="440" y1="480" y2="200" />
-        <line opacity="0.5" stroke="rgba(239,68,68,0.25)" strokeWidth="1" x1="520" x2="420" y1="480" y2="260" />
-        </svg>
+/** Panneau de marque affiché à gauche du formulaire sur grand écran (site web uniquement). */
+function BrandPanel() {
+  return (
+    <aside className="relative hidden w-[44%] max-w-[560px] shrink-0 flex-col justify-between overflow-hidden bg-[#0b1628] px-12 py-12 text-white lg:flex">
+      <Link aria-label="Retour à l'accueil" className="inline-flex self-start" to="/">
+        <BrandLogo animated={false} idPrefix="login-panel" variant="marketing" />
+      </Link>
+      <div>
+        <p className="text-[13px] font-semibold text-[#6ea6ff]">Logiciel pour auto-écoles</p>
+        <p className="mt-4 max-w-sm text-[2rem] font-semibold leading-tight tracking-[-0.03em]">
+          Le livret d’apprentissage numérique de votre auto-école.
+        </p>
+        <ul className="mt-8 space-y-3">
+          {PANEL_POINTS.map((item) => (
+            <li className="flex gap-3 text-[15px] leading-6 text-white/75" key={item}>
+              <Check aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-[#6ea6ff]" strokeWidth={2.5} />
+              {item}
+            </li>
+          ))}
+        </ul>
       </div>
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-0 h-32 bg-gradient-to-t from-[#030712] via-[#030712]/90 to-transparent"
-      />
-    </>
+      <nav aria-label="Liens légaux" className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-white/50">
+        <Link className="transition hover:text-white" to="/mentions-legales">
+          Mentions légales
+        </Link>
+        <Link className="transition hover:text-white" to="/politique-confidentialite">
+          Confidentialité
+        </Link>
+        <Link className="transition hover:text-white" to="/contact">
+          Contact
+        </Link>
+      </nav>
+    </aside>
+  )
+}
+
+function PasswordField({ id, label, value, onChange, visible, onToggle, autoComplete, placeholder, inputClass, toggleClass, labelClass, minLength }) {
+  return (
+    <div>
+      <label className={labelClass} htmlFor={id}>
+        {label}
+      </label>
+      <div className="relative mt-1.5">
+        <input
+          autoComplete={autoComplete}
+          className={`${inputClass} pr-12`}
+          id={id}
+          minLength={minLength}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+          type={visible ? 'text' : 'password'}
+          value={value}
+        />
+        {onToggle ? (
+          <button
+            aria-label={visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+            className={toggleClass}
+            onClick={onToggle}
+            type="button"
+          >
+            {visible ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+          </button>
+        ) : null}
+      </div>
+    </div>
   )
 }
 
@@ -105,7 +96,6 @@ export default function LoginPage() {
   const location = useLocation()
   const { signInWithPassword, completePasswordChange, isAuthenticated, loading, mustChangePassword: sessionMustChange, role: sessionRole } = useAuth()
   const { isDark, toggleTheme } = useMarketingTheme()
-  const skin = marketingSkin(isDark ? 'dark' : 'light')
   const shouldReduceMotion = useReducedMotion()
   const [authError, setAuthError] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -162,7 +152,7 @@ export default function LoginPage() {
   useEffect(() => {
     const previousBodyBg = document.body.style.backgroundColor
     const previousHtmlBg = document.documentElement.style.backgroundColor
-    const pageBg = isDark ? '#030712' : '#ffffff'
+    const pageBg = isDark ? '#050b18' : '#ffffff'
 
     document.body.classList.add('login-page-active')
     document.body.style.backgroundColor = pageBg
@@ -172,6 +162,16 @@ export default function LoginPage() {
       document.body.classList.remove('login-page-active')
       document.body.style.backgroundColor = previousBodyBg
       document.documentElement.style.backgroundColor = previousHtmlBg
+    }
+  }, [isDark])
+
+  // iPhone : la page passe sous la barre d'état (contentInset 'never').
+  // Texte clair sur le fond sombre, texte foncé sur le fond clair ; retour au réglage de l'app ensuite.
+  useEffect(() => {
+    if (!isNativeApp || !isIOS) return undefined
+    StatusBar.setStyle({ style: isDark ? Style.Dark : Style.Light }).catch(() => {})
+    return () => {
+      StatusBar.setStyle({ style: Style.Light }).catch(() => {})
     }
   }, [isDark])
 
@@ -310,337 +310,273 @@ export default function LoginPage() {
     shouldReduceMotion
       ? {}
       : {
-          initial: { opacity: 0, y: 16 },
+          initial: { opacity: 0, y: 8 },
           animate: { opacity: 1, y: 0 },
-          transition: { duration: 0.45, delay, ease: 'easeOut' },
+          transition: { duration: 0.35, delay, ease: 'easeOut' },
         }
 
-  const inputIconClass = isDark ? 'h-4 w-4 shrink-0 text-blue-400' : 'h-4 w-4 shrink-0 text-blue-600'
-  const passwordToggleClass = isDark
-    ? 'shrink-0 text-slate-500 transition hover:text-slate-300'
-    : 'shrink-0 text-slate-400 transition hover:text-slate-600'
-  const checkboxClass = isDark
-    ? 'h-4 w-4 rounded border-white/20 bg-[#070d18] text-blue-500'
-    : 'h-4 w-4 rounded border-2 border-slate-400 bg-white text-blue-600'
-  const headerClass = isDark
-    ? 'sticky top-0 z-30 -mx-4 mb-6 flex flex-wrap items-center justify-between gap-2 border-b border-white/10 bg-[#030712]/95 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))] backdrop-blur-md sm:-mx-6 sm:px-6 lg:static lg:mx-0 lg:mb-10 lg:border-transparent lg:bg-transparent lg:px-0 lg:pt-0 lg:backdrop-blur-none'
-    : 'sticky top-0 z-30 -mx-4 mb-6 flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))] sm:-mx-6 sm:px-6 lg:static lg:mx-0 lg:mb-10 lg:border-transparent lg:px-0 lg:pt-0'
-  const homeLinkClass = isDark
-    ? 'inline-flex h-11 shrink-0 items-center gap-1.5 rounded-2xl border border-white/15 bg-white/5 px-3 text-sm font-bold text-white transition hover:bg-white/10'
-    : 'inline-flex h-11 shrink-0 items-center gap-1.5 rounded-2xl border-2 border-slate-300 bg-white px-3 text-sm font-bold text-slate-800 shadow-sm transition hover:bg-slate-50'
+  const t = isDark
+    ? {
+        page: 'bg-[#050b18] text-white',
+        title: 'text-white',
+        muted: 'text-slate-400',
+        label: 'block text-sm font-medium text-slate-200',
+        input:
+          'block h-12 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3.5 text-[16px] text-white outline-none transition placeholder:text-slate-500 focus:border-[#6ea6ff] focus:ring-2 focus:ring-[#1769FF]/30',
+        toggle: 'absolute inset-y-0 right-0 grid w-12 place-items-center text-slate-400 transition hover:text-white',
+        checkbox: 'h-4 w-4 rounded border-white/30 bg-transparent accent-[#1769FF]',
+        link: 'font-medium text-[#6ea6ff] transition hover:text-white',
+        box: 'rounded-lg border border-white/12 bg-white/[0.04] p-4 text-sm leading-6 text-slate-300',
+        error: 'rounded-lg border border-rose-400/30 bg-rose-500/10 px-3.5 py-3 text-sm text-rose-200',
+        divider: 'border-white/10',
+        toggleTheme: 'inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/5 hover:text-white',
+        back: 'inline-flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium text-slate-300 transition hover:bg-white/5 hover:text-white',
+      }
+    : {
+        page: 'bg-white text-slate-900',
+        title: 'text-slate-950',
+        muted: 'text-slate-500',
+        label: 'block text-sm font-medium text-slate-700',
+        input:
+          'block h-12 w-full rounded-lg border border-slate-300 bg-white px-3.5 text-[16px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#1769FF] focus:ring-2 focus:ring-[#1769FF]/20',
+        toggle: 'absolute inset-y-0 right-0 grid w-12 place-items-center text-slate-400 transition hover:text-slate-700',
+        checkbox: 'h-4 w-4 rounded border-slate-300 accent-[#1769FF]',
+        link: 'font-medium text-[#1769FF] transition hover:text-[#0f4fc7]',
+        box: 'rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-600',
+        error: 'rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-3 text-sm text-rose-700',
+        divider: 'border-slate-200',
+        toggleTheme: 'inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-900',
+        back: 'inline-flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900',
+      }
+  const primaryButton =
+    'flex h-12 w-full items-center justify-center rounded-lg bg-[#1769FF] text-[15px] font-semibold text-white transition hover:bg-[#145fe8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1769FF] disabled:cursor-not-allowed disabled:opacity-50'
+  const mobileLogo = <BrandLogo animated={false} idPrefix="login" lightMark={!isDark} variant={isDark ? 'marketing' : 'light'} />
 
   // Restauration de session en cours : éviter d'afficher le formulaire à
   // tort avant la redirection vers l'espace du rôle.
   if (loading && !sessionMustChange) {
     return (
-      <div className={`login-page-shell fixed z-[200] flex items-center justify-center ${isDark ? 'bg-[#030712] text-white' : 'bg-white text-slate-900'}`}>
-        <p className="text-sm font-medium opacity-80">Ouverture de votre espace…</p>
+      <div className={`login-page-shell fixed z-[200] flex items-center justify-center ${t.page}`}>
+        <p className={`text-sm ${t.muted}`}>Ouverture de votre espace…</p>
       </div>
     )
   }
 
   return (
-    <div
-      className={`login-page-shell fixed z-[200] ${isDark ? 'bg-[#030712] text-white' : 'bg-white text-slate-900'}`}
-    >
+    <div className={`login-page-shell fixed z-[200] ${t.page}`}>
       <PageSeo {...loginPage} jsonLd={loginJsonLd} />
-      <div aria-hidden className={skin.ambient.replace(' -z-10', '')} />
-      {isDark && <LoginRoadArt />}
 
-      <div className="login-page-frame relative z-10 mx-auto flex w-full max-w-[1280px] flex-col px-4 sm:px-6 lg:px-10 lg:py-10">
-        <header className={headerClass}>
-          {isNativeApp ? (
-            <span className="inline-flex">
-              <BrandLogo
-                animated={!shouldReduceMotion}
-                idPrefix="login"
-                variant={isDark ? 'marketing' : 'light'}
-              />
-            </span>
-          ) : (
-            <Link aria-label="Retour à l'accueil" className="inline-flex" to="/">
-              <BrandLogo
-                animated={!shouldReduceMotion}
-                idPrefix="login"
-                variant={isDark ? 'marketing' : 'light'}
-              />
-            </Link>
-          )}
-          <div className="ml-auto flex shrink-0 items-center gap-2">
-            {!isNativeApp && (
-              <Link className={homeLinkClass} to="/">
-                <ArrowLeft className="h-4 w-4" />
-                Accueil
+      <div className="relative flex min-h-full">
+        {!isNativeApp && <BrandPanel />}
+
+        <div className="login-page-frame flex min-w-0 flex-1 flex-col px-5 pt-[max(1rem,env(safe-area-inset-top,0px))] sm:px-8">
+          <header className="flex h-14 items-center justify-between gap-3">
+            {isNativeApp ? (
+              <span className="inline-flex">{mobileLogo}</span>
+            ) : (
+              <Link aria-label="Retour à l'accueil" className="inline-flex lg:hidden" to="/">
+                {mobileLogo}
               </Link>
             )}
-            <MarketingThemeToggle className={skin.themeToggle} isDark={isDark} onToggle={toggleTheme} />
-          </div>
-        </header>
-
-        <div className="grid grid-cols-1 shrink-0 items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
-          <motion.div
-            className="flex flex-col justify-center lg:min-h-[calc(100vh-8rem)]"
-            {...fadeUp(0)}
-          >
-            <p className={skin.loginHeroBadge}>
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Accès privé sécurisé
-            </p>
-
-            <h1
-              className={`mt-6 max-w-lg text-3xl font-black leading-tight tracking-[-0.04em] sm:text-5xl lg:text-[3.25rem] lg:leading-[1.1] ${skin.heading}`}
-            >
-              Bienvenue sur{' '}
-              <span className="mt-1 inline-block leading-none">
-                <span className={isDark ? 'text-white' : 'text-[#07111f]'}>PEDAGOGIA </span>
-                <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">DRI</span>
-                <span className="bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">VE</span>
-              </span>
-            </h1>
-            <p className={`mt-5 max-w-md text-base leading-7 sm:text-lg ${skin.bodyMuted}`}>
-              {isNativeApp
-                ? 'Connectez-vous avec les identifiants fournis par votre auto-école.'
-                : 'La plateforme premium pensée pour les auto-écoles modernes.'}
-            </p>
-          </motion.div>
-
-          <motion.div className="flex items-center justify-center" {...fadeUp(0.1)}>
-            <div className="relative w-full max-w-md">
-              {isDark && (
-                <>
-                  <div className="absolute -inset-[1px] rounded-[1.75rem] bg-gradient-to-br from-blue-500/70 via-violet-500/40 to-red-500/70 opacity-80 blur-[1px]" />
-                  <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-blue-600/15 via-transparent to-red-600/15 blur-2xl" />
-                </>
+            <div className="ml-auto flex items-center gap-1">
+              {!isNativeApp && (
+                <Link className={t.back} to="/">
+                  <ArrowLeft aria-hidden="true" className="h-4 w-4" />
+                  Accueil
+                </Link>
               )}
+              <MarketingThemeToggle className={t.toggleTheme} isDark={isDark} onToggle={toggleTheme} />
+            </div>
+          </header>
 
-              <div className={skin.loginFormCard}>
-                {isDark && (
-                  <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-blue-500/60 via-violet-400/30 to-red-500/60" />
-                )}
-
-                {mustChangePassword ? (
-                  <form className="grid gap-4" onSubmit={handlePasswordChange}>
-                    <div className={skin.loginForgotBox}>
-                      <p className={`font-black ${skin.heading}`}>Changement de mot de passe obligatoire</p>
-                      <p className="mt-2 text-sm">
-                        Pour des raisons de sécurité, définissez un nouveau mot de passe personnel avant d&apos;accéder à votre espace.
+          <main className="flex flex-1 items-center justify-center py-10">
+            <motion.div className="w-full max-w-[400px]" {...fadeUp(0)}>
+              {mustChangePassword ? (
+                <>
+                  <h1 className={`text-[1.75rem] font-semibold tracking-[-0.025em] ${t.title}`}>Nouveau mot de passe</h1>
+                  <p className={`mt-2 text-[15px] leading-6 ${t.muted}`}>
+                    Pour des raisons de sécurité, définissez un mot de passe personnel avant d&apos;accéder à votre espace.
+                  </p>
+                  <form className="mt-8 grid gap-5" noValidate onSubmit={handlePasswordChange}>
+                    <PasswordField
+                      autoComplete="new-password"
+                      id="login-new-password"
+                      inputClass={t.input}
+                      label="Nouveau mot de passe"
+                      labelClass={t.label}
+                      minLength={8}
+                      onChange={setNewPassword}
+                      onToggle={() => setShowNewPassword((current) => !current)}
+                      placeholder="Ex. Pedagogia1"
+                      toggleClass={t.toggle}
+                      value={newPassword}
+                      visible={showNewPassword}
+                    />
+                    <PasswordField
+                      autoComplete="new-password"
+                      id="login-confirm-password"
+                      inputClass={t.input}
+                      label="Confirmer le mot de passe"
+                      labelClass={t.label}
+                      minLength={8}
+                      onChange={setConfirmPassword}
+                      placeholder="Répétez le mot de passe"
+                      value={confirmPassword}
+                      visible={showNewPassword}
+                    />
+                    <p className={`-mt-2 text-xs leading-5 ${t.muted}`}>{PASSWORD_POLICY_HINT}</p>
+                    {authError && (
+                      <p className={t.error} role="alert">
+                        {authError}
                       </p>
-                      <p className="mt-2 text-xs font-semibold opacity-80">{PASSWORD_POLICY_HINT}</p>
-                    </div>
-                    <label className={skin.loginLabel}>
-                      Nouveau mot de passe
-                      <span className={skin.loginInputWrap}>
-                        <LockKeyhole className={inputIconClass} />
-                        <input
-                          autoComplete="new-password"
-                          className={skin.loginInput}
-                          minLength={8}
-                          onChange={(event) => setNewPassword(event.target.value)}
-                          placeholder="Ex. Pedagogia1"
-                          required
-                          type={showNewPassword ? 'text' : 'password'}
-                          value={newPassword}
-                        />
-                        <button
-                          aria-label={showNewPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
-                          className={passwordToggleClass}
-                          onClick={() => setShowNewPassword((current) => !current)}
-                          type="button"
-                        >
-                          {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </button>
-                      </span>
-                    </label>
-                    <label className={skin.loginLabel}>
-                      Confirmer le mot de passe
-                      <span className={skin.loginInputWrap}>
-                        <LockKeyhole className={inputIconClass} />
-                        <input
-                          autoComplete="new-password"
-                          className={skin.loginInput}
-                          minLength={8}
-                          onChange={(event) => setConfirmPassword(event.target.value)}
-                          placeholder="Répétez le mot de passe"
-                          required
-                          type={showNewPassword ? 'text' : 'password'}
-                          value={confirmPassword}
-                        />
-                      </span>
-                    </label>
-                    {authError && <p className={skin.loginError}>{authError}</p>}
+                    )}
                     <button
-                      className="group mt-1 flex w-full overflow-hidden rounded-xl shadow-lg shadow-blue-900/30 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
+                      className={primaryButton}
                       disabled={submitting || !isPasswordPolicyMet(newPassword) || !confirmPassword}
                       type="submit"
                     >
-                      <span className="flex flex-1 items-center justify-center gap-2 bg-gradient-to-r from-blue-600 via-blue-500 to-red-500 py-3.5 text-sm font-black text-white">
-                        Enregistrer et continuer
-                        <ArrowRight className="h-4 w-4" />
-                      </span>
+                      {submitting ? 'Enregistrement…' : 'Enregistrer et continuer'}
                     </button>
                   </form>
-                ) : (
-                <form className="grid gap-4" onSubmit={handleSubmit}>
-                  <label className={skin.loginLabel}>
-                    E-mail
-                    <span className={skin.loginInputWrap}>
-                      <Mail className={inputIconClass} />
+                </>
+              ) : (
+                <>
+                  <h1 className={`text-[1.75rem] font-semibold tracking-[-0.025em] ${t.title}`}>Connexion</h1>
+                  <p className={`mt-2 text-[15px] leading-6 ${t.muted}`}>
+                    Connectez-vous avec les identifiants fournis par votre auto-école.
+                  </p>
+
+                  <form className="mt-8 grid gap-5" noValidate onSubmit={handleSubmit}>
+                    <div>
+                      <label className={t.label} htmlFor="login-email">
+                        Adresse e-mail
+                      </label>
                       <input
-                        type="email"
-                        autoComplete="username"
                         autoCapitalize="none"
+                        autoComplete="username"
                         autoCorrect="off"
-                        spellCheck={false}
-                        value={email}
+                        className={`mt-1.5 ${t.input}`}
+                        id="login-email"
+                        inputMode="email"
                         onChange={(event) => setEmail(event.target.value)}
-                        placeholder="votre@email.com"
-                        className={skin.loginInput}
+                        placeholder="nom@auto-ecole.fr"
+                        spellCheck={false}
+                        type="email"
+                        value={email}
                       />
-                    </span>
-                  </label>
+                    </div>
 
-                  <label className={skin.loginLabel}>
-                    Mot de passe
-                    <span className={skin.loginInputWrap}>
-                      <LockKeyhole className={inputIconClass} />
-                      <input
-                        autoComplete="current-password"
-                        type={showPassword ? 'text' : 'password'}
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                        placeholder="••••••••"
-                        className={skin.loginInput}
-                      />
-                      <button
-                        aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
-                        className={passwordToggleClass}
-                        onClick={() => setShowPassword((current) => !current)}
-                        type="button"
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </span>
-                  </label>
+                    <div>
+                      <div className="flex items-center justify-between gap-3">
+                        <label className={t.label} htmlFor="login-password">
+                          Mot de passe
+                        </label>
+                        <button className={`text-sm ${t.link}`} onClick={() => setForgotOpen(true)} type="button">
+                          Mot de passe oublié ?
+                        </button>
+                      </div>
+                      <div className="relative mt-1.5">
+                        <input
+                          autoComplete="current-password"
+                          className={`${t.input} pr-12`}
+                          id="login-password"
+                          onChange={(event) => setPassword(event.target.value)}
+                          type={showPassword ? 'text' : 'password'}
+                          value={password}
+                        />
+                        <button
+                          aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                          className={t.toggle}
+                          onClick={() => setShowPassword((current) => !current)}
+                          type="button"
+                        >
+                          {showPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+                        </button>
+                      </div>
+                    </div>
 
-                  <div className={`flex flex-wrap items-center justify-between gap-3 text-sm ${skin.loginMuted}`}>
-                    <label className={`inline-flex cursor-pointer items-center gap-2 ${skin.loginMuted}`}>
+                    {forgotOpen && (
+                      <div className={t.box}>
+                        <p className={`font-semibold ${t.title}`}>Réinitialiser le mot de passe</p>
+                        {forgotSent ? (
+                          <p className="mt-1">
+                            Si un compte existe pour <strong>{email.trim()}</strong>, un e-mail contenant un lien de
+                            réinitialisation vient d&apos;être envoyé. Pensez à vérifier vos courriers indésirables.
+                          </p>
+                        ) : (
+                          <p className="mt-1">
+                            Un lien sécurisé sera envoyé à l&apos;adresse e-mail saisie ci-dessus.
+                          </p>
+                        )}
+                        <div className="mt-3 flex items-center gap-4">
+                          {!forgotSent && (
+                            <button
+                              className="inline-flex h-9 items-center rounded-lg bg-[#1769FF] px-3.5 text-sm font-semibold text-white transition hover:bg-[#145fe8] disabled:opacity-50"
+                              disabled={forgotSending || !email.trim()}
+                              onClick={handleForgotPassword}
+                              type="button"
+                            >
+                              {forgotSending ? 'Envoi…' : 'Envoyer le lien'}
+                            </button>
+                          )}
+                          <button
+                            className={`text-sm ${t.link}`}
+                            onClick={() => {
+                              setForgotOpen(false)
+                              setForgotSent(false)
+                            }}
+                            type="button"
+                          >
+                            Fermer
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    <label className={`inline-flex cursor-pointer items-center gap-2.5 text-sm ${t.muted}`}>
                       <input
                         checked={rememberMe}
-                        className={checkboxClass}
+                        className={t.checkbox}
                         onChange={(event) => setRememberMe(event.target.checked)}
                         type="checkbox"
                       />
-                      Se souvenir de moi
+                      Rester connecté sur cet appareil
                     </label>
-                    <button className={skin.loginLink} onClick={() => setForgotOpen(true)} type="button">
-                      Mot de passe oublié ?
+
+                    {authError && (
+                      <p className={t.error} role="alert">
+                        {authError}
+                      </p>
+                    )}
+
+                    <button className={primaryButton} disabled={!canSubmit || submitting} type="submit">
+                      {submitting ? 'Connexion…' : 'Se connecter'}
                     </button>
-                  </div>
+                  </form>
 
-                  {forgotOpen && (
-                    <div className={skin.loginForgotBox}>
-                      <p className={`font-black ${skin.heading}`}>Réinitialisation du mot de passe</p>
-                      {forgotSent ? (
-                        <p className="mt-2">
-                          Si un compte existe pour <strong>{email.trim()}</strong>, un e-mail avec un lien de
-                          réinitialisation vient d&apos;être envoyé. Vérifiez vos spams.
-                        </p>
-                      ) : (
-                        <>
-                          <p className="mt-2">
-                            Un lien sécurisé sera envoyé à l&apos;adresse saisie ci-dessus pour définir un nouveau mot de passe.
-                          </p>
-                          <button
-                            className={`mt-3 rounded-lg bg-blue-600 px-4 py-2 text-xs font-bold text-white transition hover:bg-blue-500 disabled:opacity-50`}
-                            disabled={forgotSending || !email.trim()}
-                            onClick={handleForgotPassword}
-                            type="button"
-                          >
-                            {forgotSending ? 'Envoi…' : 'Envoyer le lien'}
-                          </button>
-                        </>
-                      )}
-                      <button
-                        className={`mt-3 text-xs font-bold underline ${skin.loginLink}`}
-                        onClick={() => { setForgotOpen(false); setForgotSent(false) }}
-                        type="button"
-                      >
-                        Fermer
-                      </button>
-                    </div>
+                  {!isNativeApp && (
+                    <p className={`mt-8 border-t pt-6 text-sm ${t.divider} ${t.muted}`}>
+                      Votre auto-école n&apos;utilise pas encore Pedagogia Drive ?{' '}
+                      <Link className={t.link} to="/#demonstration">
+                        Demander une démonstration
+                      </Link>
+                    </p>
                   )}
-
-                  {authError && <p className={skin.loginError}>{authError}</p>}
-
-                  <button
-                    type="submit"
-                    disabled={!canSubmit || submitting}
-                    className="group mt-1 flex w-full overflow-hidden rounded-xl shadow-lg shadow-blue-900/30 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
-                  >
-                    <span className="flex w-full items-center justify-center gap-2 bg-gradient-to-r from-blue-600 via-blue-500 to-red-500 py-3.5 text-sm font-black text-white">
-                      {submitting ? 'Connexion…' : 'Connexion'}
-                      <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                    </span>
-                  </button>
-
-                  <p className={`text-center text-xs ${skin.loginSubtle}`}>
-                    Redirection automatique vers votre espace après connexion.
-                  </p>
-                </form>
-                )}
-              </div>
-
-              {!isNativeApp && (
-                <Link className={`mt-6 flex items-center justify-center gap-2 ${skin.loginBackLink}`} to="/">
-                  <ArrowLeft className="h-4 w-4" />
-                  Retour à la page d&apos;accueil
-                </Link>
+                </>
               )}
-            </div>
-          </motion.div>
+            </motion.div>
+          </main>
+
+          <footer className={`flex flex-wrap items-center justify-center gap-x-5 gap-y-2 pb-2 text-xs ${t.muted} ${isNativeApp ? '' : 'lg:hidden'}`}>
+            <Link className="transition hover:underline" to="/mentions-legales">
+              Mentions légales
+            </Link>
+            <Link className="transition hover:underline" to="/politique-confidentialite">
+              Confidentialité
+            </Link>
+            <span>© {new Date().getFullYear()} Pedagogia Drive</span>
+          </footer>
         </div>
-
-        <motion.footer
-          className={`relative z-10 mt-auto border-t pt-8 sm:pt-10 ${skin.loginFooterBorder}`}
-          {...fadeUp(0.2)}
-        >
-          <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
-            <nav
-              aria-label="Liens légaux"
-              className={`flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm font-semibold ${skin.loginMuted}`}
-            >
-              <Link className={`transition ${isDark ? 'hover:text-white' : 'hover:text-slate-900'}`} to="/mentions-legales">
-                Mentions légales
-              </Link>
-              <Link className={`transition ${isDark ? 'hover:text-white' : 'hover:text-slate-900'}`} to="/politique-confidentialite">
-                Politique de confidentialité
-              </Link>
-              {!isNativeApp && (
-                <Link className={`transition ${isDark ? 'hover:text-white' : 'hover:text-slate-900'}`} to="/contact">
-                  Contact
-                </Link>
-              )}
-            </nav>
-            {!isNativeApp && (
-              <>
-                <p
-                  className={`mt-6 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] ${skin.loginMuted}`}
-                >
-                  <Smartphone className={`h-4 w-4 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
-                  Applications mobiles
-                </p>
-                <p className={`mt-2 max-w-md text-sm leading-6 ${skin.loginSubtle}`}>
-                  Téléchargez PEDAGOGIA DRIVE sur votre smartphone pour réviser et suivre votre formation où que vous
-                  soyez.
-                </p>
-                <StorePlatformBadges className="mt-5" size="large" />
-              </>
-            )}
-            <p className={`mt-8 text-xs ${skin.loginSubtle}`}>
-              © {new Date().getFullYear()} Pedagogia Drive. Tous droits réservés.
-            </p>
-          </div>
-        </motion.footer>
       </div>
     </div>
   )
