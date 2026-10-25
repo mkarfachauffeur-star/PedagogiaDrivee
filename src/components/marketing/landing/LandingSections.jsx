@@ -8,16 +8,7 @@ import { MARKETING_FAQ } from '../../../lib/marketingContent'
 import { LANDING_OFFERS } from './landingOffers'
 import { BTN_PRIMARY, BTN_SECONDARY } from './landingStyles'
 import { isLandingHome, landingHashPath } from './landingNav'
-import {
-  AacPreview,
-  BrowserFrame,
-  CompetencyPreview,
-  ManagerPreview,
-  PhoneFrame,
-  QcuPreview,
-  StudentDashboardPreview,
-  TeacherStudentsPreview,
-} from './LandingVisuals'
+import { BrowserFrame, PhoneFrame, QcuPreview, StudentDashboardPreview } from './LandingVisuals'
 
 
 const CONTAINER = 'mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8'
@@ -130,6 +121,18 @@ function FeatureRow({ eyebrow, title, text, items, visual, caption, reverse = fa
   )
 }
 
+/** Fonctionnalité présentée par le texte seul, sans aperçu d'écran. */
+function FeatureText({ eyebrow, title, text, items, shouldReduceMotion, delay = 0 }) {
+  return (
+    <motion.article className="rounded-xl border border-[var(--lp-border)] bg-[var(--lp-card)] p-6 sm:p-8" {...reveal(shouldReduceMotion, delay)}>
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <h3 className="mt-3 text-xl font-semibold tracking-[-0.02em] text-[var(--lp-ink)] sm:text-2xl">{title}</h3>
+      <p className={`mt-3 ${LEAD}`}>{text}</p>
+      <CheckList items={items} />
+    </motion.article>
+  )
+}
+
 const MORE_FEATURES = [
   { title: 'Planning des leçons', text: 'Planning global, planning de chaque enseignant et de chaque élève.' },
   { title: 'Évaluation de départ', text: 'Réalisée avant les premières leçons, conservée dans le dossier.' },
@@ -149,25 +152,7 @@ export function LandingFeatures({ shouldReduceMotion }) {
           Pedagogia Drive remplace le livret papier et réunit les outils dont l’auto-école se sert chaque jour.
         </SectionHeader>
 
-        <div className="mt-16 space-y-20 lg:space-y-28">
-          <FeatureRow
-            caption="Compétence 1 du livret. Aperçu de l’interface, données fictives."
-            eyebrow="Livret REMC"
-            items={[
-              'Statut de chaque objectif : non abordé, en cours, validé',
-              'Commentaires de l’enseignant après chaque leçon',
-              'Historique des leçons consultable par l’élève',
-            ]}
-            shouldReduceMotion={shouldReduceMotion}
-            text="Le livret reprend les objectifs du référentiel REMC. La compétence 1 est disponible aujourd’hui ; le contenu des compétences 2 à 4 est en cours de rédaction."
-            title="Un livret d’apprentissage à jour après chaque leçon"
-            visual={
-              <BrowserFrame label="pedagogia-drive.fr/student/lessons">
-                <CompetencyPreview />
-              </BrowserFrame>
-            }
-          />
-
+        <div className="mt-16">
           <FeatureRow
             caption="QCU sur les voyants du tableau de bord, contenu réel de la compétence 1."
             eyebrow="QCU"
@@ -182,9 +167,22 @@ export function LandingFeatures({ shouldReduceMotion }) {
               </PhoneFrame>
             }
           />
+        </div>
 
-          <FeatureRow
-            caption="Suivi de la conduite accompagnée. Aperçu de l’interface, données fictives."
+        <div className="mt-20 grid gap-6 lg:mt-24 lg:grid-cols-2">
+          <FeatureText
+            eyebrow="Livret REMC"
+            items={[
+              'Statut de chaque objectif : non abordé, en cours, validé',
+              'Commentaires de l’enseignant après chaque leçon',
+              'Historique des leçons consultable par l’élève',
+            ]}
+            shouldReduceMotion={shouldReduceMotion}
+            text="Le livret reprend les objectifs du référentiel REMC. La compétence 1 est disponible aujourd’hui ; le contenu des compétences 2 à 4 est en cours de rédaction."
+            title="Un livret d’apprentissage à jour après chaque leçon"
+          />
+          <FeatureText
+            delay={0.06}
             eyebrow="Conduite accompagnée (AAC)"
             items={[
               'Durée et distance de chaque trajet',
@@ -192,13 +190,8 @@ export function LandingFeatures({ shouldReduceMotion }) {
               'Progression vers les 3 000 km obligatoires',
             ]}
             shouldReduceMotion={shouldReduceMotion}
-            text="Chaque trajet de conduite accompagnée est enregistré avec sa durée et sa distance. Pedagogia Drive additionne le temps et les kilomètres parcourus pour suivre l’objectif des 3 000 km obligatoires."
+            text="Chaque trajet de conduite accompagnée est enregistré avec sa durée et sa distance. Pedagogia Drive additionne le temps et les kilomètres pour suivre l’objectif des 3 000 km obligatoires."
             title="Le compteur des 3 000 km de l’AAC"
-            visual={
-              <PhoneFrame>
-                <AacPreview />
-              </PhoneFrame>
-            }
           />
         </div>
 
@@ -245,26 +238,10 @@ export function LandingRoles({ shouldReduceMotion }) {
           Chaque utilisateur se connecte avec son propre compte et ne voit que ce qui relève de son rôle.
         </SectionHeader>
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-2">
-          <motion.figure className="min-w-0" {...reveal(shouldReduceMotion)}>
-            <BrowserFrame label="pedagogia-drive.fr/teacher/students">
-              <TeacherStudentsPreview />
-            </BrowserFrame>
-            <figcaption>
-              <Caption>Espace enseignant. Données fictives.</Caption>
-            </figcaption>
-          </motion.figure>
-          <motion.figure className="min-w-0" {...reveal(shouldReduceMotion, 0.06)}>
-            <BrowserFrame label="pedagogia-drive.fr/manager/dashboard">
-              <ManagerPreview />
-            </BrowserFrame>
-            <figcaption>
-              <Caption>Espace gérant. Données fictives.</Caption>
-            </figcaption>
-          </motion.figure>
-        </div>
-
-        <div className="mt-14 grid gap-px overflow-hidden rounded-xl border border-[var(--lp-border)] bg-[var(--lp-border)] sm:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          className="mt-12 grid gap-px overflow-hidden rounded-xl border border-[var(--lp-border)] bg-[var(--lp-border)] sm:grid-cols-2 lg:grid-cols-4"
+          {...reveal(shouldReduceMotion)}
+        >
           {ROLES.map((item) => (
             <div className="bg-[var(--lp-card)] p-6" key={item.role}>
               <h3 className="text-base font-semibold text-[var(--lp-ink)]">{item.role}</h3>
@@ -277,7 +254,7 @@ export function LandingRoles({ shouldReduceMotion }) {
               </ul>
             </div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   )
