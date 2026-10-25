@@ -3,7 +3,7 @@ export const LANDING_HOME_LINK = { label: 'Accueil', href: '/', route: true }
 export const LANDING_NAV_LINKS = [
   LANDING_HOME_LINK,
   { label: 'Fonctionnalités', href: '#fonctionnalites' },
-  { label: 'Pour qui', href: '#pour-qui' },
+  { label: 'Pour qui\u00a0?', href: '#pour-qui' },
   { label: 'Tarifs', href: '#tarifs' },
   { label: 'FAQ', href: '#faq' },
 ]
