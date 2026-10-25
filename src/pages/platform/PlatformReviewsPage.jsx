@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import PageHero from '../../components/ui/PageHero'
+import { CalendarCheck, CalendarDays, MessageSquareText, Smile, Star, Sun } from 'lucide-react'
 import EmptyState from '../../components/ui/EmptyState'
 import ListSearchField from '../../components/ui/ListSearchField'
+import Notice from '../../components/ui/Notice'
+import PageHeader from '../../components/ui/PageHeader'
+import StatCard from '../../components/ui/StatCard'
+import { ui } from '../../components/ui/styles'
+import { formatDateTime, formatNumber, formatPercent, formatRating } from '../../lib/format'
 import { supabase } from '../../lib/supabase'
 import {
   exportReviewsCsv,
@@ -12,59 +17,43 @@ import {
   listPlatformReviews,
 } from '../../services/platformReviews'
 
-const STAR_ROWS = [
-  { key: '5', label: '★★★★★' },
-  { key: '4', label: '★★★★☆' },
-  { key: '3', label: '★★★☆☆' },
-  { key: '2', label: '★★☆☆☆' },
-  { key: '1', label: '★☆☆☆☆' },
-]
-
+const STAR_ROWS = ['5', '4', '3', '2', '1']
 const PLATFORM_OPTIONS = ['Web', 'Android', 'iOS']
+const MONTHS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.']
 
-function formatDateTime(value) {
-  if (!value) return '—'
-  try {
-    return new Date(value).toLocaleString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  } catch {
-    return value
-  }
+function monthLabel(value = '') {
+  const month = Number(String(value).slice(5, 7))
+  return MONTHS[month - 1] || value
 }
 
-function Kpi({ label, value, hint }) {
+function Panel({ title, children }) {
   return (
-    <article className="rounded-2xl border-2 border-slate-300 bg-white p-5">
-      <p className="text-sm font-bold text-slate-500">{label}</p>
-      {hint && <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{hint}</p>}
-      <p className="mt-2 text-2xl font-black text-cyan-700">{value}</p>
-    </article>
+    <section className={`${ui.card} ${ui.cardBody}`}>
+      <h2 className={ui.sectionTitle}>{title}</h2>
+      <div className="mt-4">{children}</div>
+    </section>
   )
 }
 
 function DistributionChart({ distribution, total }) {
-  const max = Math.max(...STAR_ROWS.map((row) => distribution?.[row.key] || 0), 1)
+  const max = Math.max(...STAR_ROWS.map((key) => distribution?.[key] || 0), 1)
   return (
-    <div className="grid gap-3">
-      {STAR_ROWS.map((row) => {
-        const count = distribution?.[row.key] || 0
-        const width = `${Math.max(4, (count / max) * 100)}%`
+    <div className="grid gap-2.5">
+      {STAR_ROWS.map((key) => {
+        const count = distribution?.[key] || 0
         return (
-          <div key={row.key} className="grid grid-cols-[88px_1fr_48px] items-center gap-3">
-            <span className="text-sm font-bold text-amber-600">{row.label}</span>
-            <div className="h-3 rounded-full bg-slate-100">
-              <div className="h-3 rounded-full bg-amber-400 transition-all" style={{ width }} />
+          <div className="grid grid-cols-[72px_1fr_40px] items-center gap-3" key={key}>
+            <span className="text-sm text-slate-600">
+              {key} étoile{key === '1' ? '' : 's'}
+            </span>
+            <div className="h-2 rounded-full bg-slate-100">
+              <div className="h-2 rounded-full bg-amber-400" style={{ width: `${(count / max) * 100}%` }} />
             </div>
-            <span className="text-right text-sm font-bold text-slate-600">{count}</span>
+            <span className="text-right text-sm font-medium tabular-nums text-slate-900">{formatNumber(count)}</span>
           </div>
         )
       })}
-      <p className="text-xs text-slate-500">{total} avis au total</p>
+      <p className="mt-1 text-xs text-slate-500">{formatNumber(total)} avis au total</p>
     </div>
   )
 }
@@ -78,16 +67,16 @@ function MonthlyChart({ monthly }) {
   }
 
   return (
-    <div className="flex h-48 items-end gap-2 overflow-x-auto pb-2">
+    <div className="flex h-44 items-end gap-2 overflow-x-auto pb-1">
       {rows.map((row) => (
-        <div key={row.month} className="flex min-w-[52px] flex-col items-center gap-2">
-          <span className="text-[10px] font-bold text-slate-500">{row.count}</span>
+        <div className="flex min-w-[44px] flex-1 flex-col items-center gap-1.5" key={row.month}>
+          <span className="text-xs font-medium tabular-nums text-slate-700">{row.count}</span>
           <div
-            className="w-10 rounded-t-xl bg-cyan-600 transition-all"
-            style={{ height: `${Math.max(8, ((row.count || 0) / max) * 140)}px` }}
-            title={`Moyenne ${row.average}`}
+            className="w-full max-w-[36px] rounded-t-md bg-[#1769FF]"
+            style={{ height: `${Math.max(4, ((row.count || 0) / max) * 120)}px` }}
+            title={`Note moyenne : ${formatRating(row.average)}`}
           />
-          <span className="text-[10px] font-semibold text-slate-500">{row.month?.slice(5)}</span>
+          <span className="text-xs text-slate-500">{monthLabel(row.month)}</span>
         </div>
       ))}
     </div>
@@ -97,25 +86,25 @@ function MonthlyChart({ monthly }) {
 function TopList({ title, items, valueKey = 'average' }) {
   const rows = Array.isArray(items) ? items : []
   return (
-    <section className="rounded-2xl border-2 border-slate-300 bg-white p-5">
-      <h3 className="text-lg font-extrabold text-slate-950">{title}</h3>
+    <Panel title={title}>
       {rows.length === 0 ? (
-        <p className="mt-3 text-sm text-slate-500">Aucune donnée.</p>
+        <p className="text-sm text-slate-500">Aucune donnée.</p>
       ) : (
-        <ol className="mt-4 space-y-2">
+        <ol className="divide-y divide-slate-100">
           {rows.map((row, index) => (
-            <li key={`${row.organization_id}-${index}`} className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2 text-sm">
-              <span className="font-bold text-slate-800">
-                {index + 1}. {row.school_name}
+            <li className="flex items-center justify-between gap-3 py-2.5 text-sm" key={`${row.organization_id}-${index}`}>
+              <span className="min-w-0 truncate text-slate-700">
+                <span className="mr-2 tabular-nums text-slate-400">{index + 1}.</span>
+                {row.school_name}
               </span>
-              <span className="shrink-0 font-black text-cyan-700">
-                {valueKey === 'count' ? `${row.count} avis` : `${row.average} ★`}
+              <span className="shrink-0 font-medium tabular-nums text-slate-900">
+                {valueKey === 'count' ? `${formatNumber(row.count)} avis` : formatRating(row.average)}
               </span>
             </li>
           ))}
         </ol>
       )}
-    </section>
+    </Panel>
   )
 }
 
@@ -192,106 +181,89 @@ export default function PlatformReviewsPage() {
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
-      <PageHero
-        eyebrow="Super Admin"
+      <PageHeader
+        description="Notes et commentaires laissés par les élèves 15 jours après la création de leur compte."
         title="Avis utilisateurs"
-        subtitle="Notes et commentaires laissés par les élèves 15 jours après la création de leur compte."
       />
 
-      {loadError && (
-        <EmptyState icon="⚠️" message={loadError} title="Erreur de chargement" />
-      )}
+      {loadError && <Notice tone="danger">{loadError}</Notice>}
 
       {dashboard && (
         <>
-          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-            <Kpi label="Moyenne générale" value={`${dashboard.average_rating} ★`} />
-            <Kpi label="Total avis" value={dashboard.total_count} />
-            <Kpi label="Aujourd'hui" value={dashboard.today_count} />
-            <Kpi label="Cette semaine" value={dashboard.week_count} />
-            <Kpi label="Ce mois" value={dashboard.month_count} />
-            <Kpi label="Satisfaction (4-5★)" value={`${dashboard.satisfaction_percent} %`} hint="Pourcentage" />
+          <section className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
+            <StatCard accent="amber" icon={Star} label="Note moyenne" value={formatRating(dashboard.average_rating)} />
+            <StatCard accent="emerald" detail="4 ou 5 étoiles" icon={Smile} label="Satisfaction" value={formatPercent(dashboard.satisfaction_percent)} />
+            <StatCard accent="blue" icon={MessageSquareText} label="Total des avis" value={formatNumber(dashboard.total_count)} />
+            <StatCard accent="sky" icon={Sun} label="Aujourd’hui" value={formatNumber(dashboard.today_count)} />
+            <StatCard accent="sky" icon={CalendarCheck} label="Cette semaine" value={formatNumber(dashboard.week_count)} />
+            <StatCard accent="sky" icon={CalendarDays} label="Ce mois-ci" value={formatNumber(dashboard.month_count)} />
           </section>
 
           <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <article className="rounded-2xl border-2 border-slate-300 bg-white p-5">
-              <h2 className="text-xl font-extrabold text-slate-950">Répartition des notes</h2>
-              <div className="mt-5">
-                <DistributionChart distribution={distribution} total={totalReviews} />
-              </div>
-            </article>
-            <article className="rounded-2xl border-2 border-slate-300 bg-white p-5">
-              <h2 className="text-xl font-extrabold text-slate-950">Évolution mensuelle</h2>
-              <div className="mt-5">
-                <MonthlyChart monthly={dashboard.monthly_evolution} />
-              </div>
-            </article>
+            <Panel title="Répartition des notes">
+              <DistributionChart distribution={distribution} total={totalReviews} />
+            </Panel>
+            <Panel title="Nombre d’avis par mois">
+              <MonthlyChart monthly={dashboard.monthly_evolution} />
+            </Panel>
           </section>
 
           <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <TopList items={dashboard.top_rated_organizations} title="Top 10 — auto-écoles les mieux notées" />
-            <TopList items={dashboard.top_volume_organizations} title="Top 10 — auto-écoles avec le plus d'avis" valueKey="count" />
+            <TopList items={dashboard.top_rated_organizations} title="Auto-écoles les mieux notées" />
+            <TopList items={dashboard.top_volume_organizations} title="Auto-écoles avec le plus d’avis" valueKey="count" />
           </section>
 
           {Array.isArray(dashboard.average_by_organization) && dashboard.average_by_organization.length > 0 && (
-            <section className="rounded-2xl border-2 border-slate-300 bg-white p-5">
-              <h2 className="text-xl font-extrabold text-slate-950">Note moyenne par auto-école</h2>
-              <div className="mt-4 overflow-x-auto">
-                <table className="min-w-full text-left text-sm">
+            <Panel title="Note moyenne par auto-école">
+              <div className="-mx-5 overflow-x-auto sm:-mx-6">
+                <table className={ui.table}>
                   <thead>
-                    <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
-                      <th className="px-3 py-2">Auto-école</th>
-                      <th className="px-3 py-2">Moyenne</th>
-                      <th className="px-3 py-2">Nombre d&apos;avis</th>
+                    <tr>
+                      <th className={ui.th}>Auto-école</th>
+                      <th className={`${ui.th} text-right`}>Note moyenne</th>
+                      <th className={`${ui.th} text-right`}>Nombre d’avis</th>
                     </tr>
                   </thead>
                   <tbody>
                     {dashboard.average_by_organization.map((row) => (
-                      <tr key={row.organization_id} className="border-b border-slate-100">
-                        <td className="px-3 py-2 font-semibold text-slate-800">{row.school_name}</td>
-                        <td className="px-3 py-2 font-black text-amber-600">{row.average} ★</td>
-                        <td className="px-3 py-2 text-slate-600">{row.count}</td>
+                      <tr className={ui.tr} key={row.organization_id}>
+                        <td className={ui.tdStrong}>{row.school_name}</td>
+                        <td className={ui.tdNumber}>{formatRating(row.average)}</td>
+                        <td className={ui.tdNumber}>{formatNumber(row.count)}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-            </section>
+            </Panel>
           )}
         </>
       )}
 
-      <section className="rounded-2xl border-2 border-slate-300 bg-white p-5">
+      <section className={`${ui.card} ${ui.cardBody}`}>
         <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
           <div>
-            <h2 className="text-2xl font-extrabold text-slate-950">Liste complète</h2>
-            <p className="mt-1 text-sm text-slate-500">{total} évaluation(s) correspondant aux filtres.</p>
+            <h2 className={ui.sectionTitle}>Tous les avis</h2>
+            <p className={ui.sectionText}>
+              {formatNumber(total)} avis correspond{total > 1 ? 'ent' : ''} aux filtres.
+            </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button
-              className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-              disabled={exportBusy || !reviews.length}
-              onClick={() => runExport('csv')}
-              type="button"
-            >
-              {exportBusy === 'csv' ? 'Export…' : 'Export CSV'}
-            </button>
-            <button
-              className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-              disabled={exportBusy || !reviews.length}
-              onClick={() => runExport('xlsx')}
-              type="button"
-            >
-              {exportBusy === 'xlsx' ? 'Export…' : 'Export Excel'}
-            </button>
-            <button
-              className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-              disabled={exportBusy || !reviews.length}
-              onClick={() => runExport('pdf')}
-              type="button"
-            >
-              {exportBusy === 'pdf' ? 'Export…' : 'Export PDF'}
-            </button>
+            {[
+              { format: 'csv', label: 'CSV' },
+              { format: 'xlsx', label: 'Excel' },
+              { format: 'pdf', label: 'PDF' },
+            ].map((item) => (
+              <button
+                className={ui.btnSmall}
+                disabled={exportBusy || !reviews.length}
+                key={item.format}
+                onClick={() => runExport(item.format)}
+                type="button"
+              >
+                {exportBusy === item.format ? 'Export…' : `Exporter en ${item.label}`}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -300,77 +272,87 @@ export default function PlatformReviewsPage() {
             <ListSearchField onChange={setSearch} value={search} />
           </div>
           <select
-            className="min-h-11 rounded-2xl border-2 border-slate-300 bg-white px-3 text-sm font-medium text-slate-800"
+            aria-label="Auto-école"
+            className={`${ui.input} mt-0`}
             onChange={(event) => setOrganizationId(event.target.value)}
             value={organizationId}
           >
             <option value="">Toutes les auto-écoles</option>
             {organizations.map((org) => (
-              <option key={org.id} value={org.id}>{org.name}</option>
+              <option key={org.id} value={org.id}>
+                {org.name}
+              </option>
             ))}
           </select>
-          <select
-            className="min-h-11 rounded-2xl border-2 border-slate-300 bg-white px-3 text-sm font-medium text-slate-800"
-            onChange={(event) => setRating(event.target.value)}
-            value={rating}
-          >
+          <select aria-label="Note" className={`${ui.input} mt-0`} onChange={(event) => setRating(event.target.value)} value={rating}>
             <option value="">Toutes les notes</option>
             {[5, 4, 3, 2, 1].map((value) => (
-              <option key={value} value={value}>{value} étoile{value > 1 ? 's' : ''}</option>
+              <option key={value} value={value}>
+                {value} étoile{value > 1 ? 's' : ''}
+              </option>
             ))}
           </select>
           <select
-            className="min-h-11 rounded-2xl border-2 border-slate-300 bg-white px-3 text-sm font-medium text-slate-800"
+            aria-label="Plateforme"
+            className={`${ui.input} mt-0`}
             onChange={(event) => setPlatform(event.target.value)}
             value={platform}
           >
             <option value="">Toutes les plateformes</option>
             {PLATFORM_OPTIONS.map((value) => (
-              <option key={value} value={value}>{value}</option>
+              <option key={value} value={value}>
+                {value}
+              </option>
             ))}
           </select>
-          <input
-            className="min-h-11 rounded-2xl border-2 border-slate-300 bg-white px-3 text-sm font-medium text-slate-800"
-            onChange={(event) => setDateFrom(event.target.value)}
-            type="date"
-            value={dateFrom}
-          />
-          <input
-            className="min-h-11 rounded-2xl border-2 border-slate-300 bg-white px-3 text-sm font-medium text-slate-800"
-            onChange={(event) => setDateTo(event.target.value)}
-            type="date"
-            value={dateTo}
-          />
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              aria-label="Du"
+              className={`${ui.input} mt-0`}
+              onChange={(event) => setDateFrom(event.target.value)}
+              type="date"
+              value={dateFrom}
+            />
+            <input
+              aria-label="Au"
+              className={`${ui.input} mt-0`}
+              onChange={(event) => setDateTo(event.target.value)}
+              type="date"
+              value={dateTo}
+            />
+          </div>
         </div>
 
-        <div className="mt-5 overflow-x-auto">
+        <div className="-mx-5 mt-5 overflow-x-auto sm:-mx-6">
           {loading ? (
-            <p className="text-sm text-slate-500">Chargement…</p>
+            <p className="px-6 py-6 text-sm text-slate-500">Chargement…</p>
           ) : reviews.length === 0 ? (
             <EmptyState icon="⭐" message="Aucun avis ne correspond aux filtres sélectionnés." title="Aucun avis" />
           ) : (
-            <table className="min-w-full border-collapse text-left text-sm">
+            <table className={`${ui.table} min-w-[900px]`}>
               <thead>
-                <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
-                  <th className="px-3 py-3">Date</th>
-                  <th className="px-3 py-3">Élève</th>
-                  <th className="px-3 py-3">Auto-école</th>
-                  <th className="px-3 py-3">Étoiles</th>
-                  <th className="px-3 py-3">Commentaire</th>
-                  <th className="px-3 py-3">Plateforme</th>
-                  <th className="px-3 py-3">Version</th>
+                <tr>
+                  <th className={ui.th}>Date</th>
+                  <th className={ui.th}>Élève</th>
+                  <th className={ui.th}>Auto-école</th>
+                  <th className={ui.th}>Note</th>
+                  <th className={ui.th}>Commentaire</th>
+                  <th className={ui.th}>Plateforme</th>
+                  <th className={ui.th}>Version</th>
                 </tr>
               </thead>
               <tbody>
                 {reviews.map((review) => (
-                  <tr key={review.id} className="border-b border-slate-100 align-top">
-                    <td className="px-3 py-3 whitespace-nowrap text-slate-600">{formatDateTime(review.created_at)}</td>
-                    <td className="px-3 py-3 font-bold text-slate-900">{review.student_name}</td>
-                    <td className="px-3 py-3 text-slate-700">{review.school_name}</td>
-                    <td className="px-3 py-3 font-black text-amber-600">{review.rating} ★</td>
-                    <td className="px-3 py-3 max-w-xs text-slate-600">{review.comment || '—'}</td>
-                    <td className="px-3 py-3 text-slate-600">{review.platform}</td>
-                    <td className="px-3 py-3 text-slate-600">{review.app_version}</td>
+                  <tr className={`${ui.tr} align-top`} key={review.id}>
+                    <td className={`${ui.tdMuted} whitespace-nowrap tabular-nums`}>{formatDateTime(review.created_at)}</td>
+                    <td className={ui.tdStrong}>{review.student_name}</td>
+                    <td className={ui.td}>{review.school_name}</td>
+                    <td className={`${ui.td} whitespace-nowrap font-medium tabular-nums text-slate-900`}>
+                      {formatRating(review.rating)}
+                    </td>
+                    <td className={`${ui.td} max-w-xs`}>{review.comment || '—'}</td>
+                    <td className={ui.tdMuted}>{review.platform}</td>
+                    <td className={`${ui.tdMuted} tabular-nums`}>{review.app_version}</td>
                   </tr>
                 ))}
               </tbody>

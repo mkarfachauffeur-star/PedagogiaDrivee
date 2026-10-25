@@ -309,7 +309,7 @@ async function sendWelcomeEmail(
     <h2>Bienvenue sur Pedagogia Drive</h2>
     <p>Bonjour ${escapeHtml(payload.contactName)},</p>
     <p>Votre demande de démonstration pour <strong>${escapeHtml(payload.schoolName)}</strong> a été acceptée.</p>
-    <p>Votre essai gratuit <strong>Starter</strong> de 30 jours est activé du <strong>${escapeHtml(formatFrDate(payload.trialStartedAt))}</strong> au <strong>${escapeHtml(formatFrDate(payload.trialEndsAt))}</strong>.</p>
+    <p>Votre essai gratuit de 30 jours, avec toutes les fonctionnalités, est activé du <strong>${escapeHtml(formatFrDate(payload.trialStartedAt))}</strong> au <strong>${escapeHtml(formatFrDate(payload.trialEndsAt))}</strong>.</p>
     <p>Pour accéder à votre espace gérant, définissez votre mot de passe via le lien sécurisé ci-dessous :</p>
     <p><a href="${escapeHtml(payload.activateLink)}" style="display:inline-block;padding:12px 24px;background:#0891b2;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold">Définir mon mot de passe</a></p>
     <p style="font-size:13px;color:#64748b">Identifiant : ${escapeHtml(payload.email)}</p>

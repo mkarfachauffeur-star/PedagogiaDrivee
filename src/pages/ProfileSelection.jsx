@@ -1,19 +1,16 @@
 import { useReducedMotion } from 'framer-motion'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import DemoRequestForm from '../components/marketing/DemoRequestForm'
 import LandingHeader from '../components/marketing/landing/LandingHeader'
 import {
-  LandingAllInOneSection,
-  LandingBenefitsSection,
+  LandingComparison,
   LandingFaq,
-  LandingFinalCta,
+  LandingFeatures,
   LandingFooter,
-  LandingGpsSection,
   LandingHero,
-  LandingQcuSection,
-  LandingRolesSection,
-  LandingTrustStrip,
-  LandingVideosSection,
+  LandingPricing,
+  LandingReassurance,
+  LandingRoles,
 } from '../components/marketing/landing/LandingSections'
 import PageSeo from '../components/seo/PageSeo'
 import { useMarketingTheme } from '../hooks/useMarketingTheme'
@@ -23,6 +20,14 @@ export default function ProfileSelection() {
   const shouldReduceMotion = useReducedMotion()
   const { theme, isDark } = useMarketingTheme()
   const homeJsonLd = useMemo(() => buildHomeJsonLd(), [])
+  const [selectedOfferId, setSelectedOfferId] = useState(null)
+
+  const selectOffer = (offerId) => {
+    setSelectedOfferId(offerId)
+    window.setTimeout(() => {
+      document.getElementById('demonstration')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 50)
+  }
 
   useEffect(() => {
     if (window.location.hash !== '#demonstration') return
@@ -46,18 +51,23 @@ export default function ProfileSelection() {
 
       <main id="main-content">
         <LandingHero shouldReduceMotion={shouldReduceMotion} />
-        <LandingTrustStrip shouldReduceMotion={shouldReduceMotion} />
-        <LandingQcuSection shouldReduceMotion={shouldReduceMotion} />
-        <LandingVideosSection shouldReduceMotion={shouldReduceMotion} />
-        <LandingGpsSection shouldReduceMotion={shouldReduceMotion} />
-        <LandingAllInOneSection shouldReduceMotion={shouldReduceMotion} />
-        <LandingRolesSection shouldReduceMotion={shouldReduceMotion} />
-        <LandingBenefitsSection shouldReduceMotion={shouldReduceMotion} />
-        <LandingFinalCta shouldReduceMotion={shouldReduceMotion} />
+        <LandingFeatures shouldReduceMotion={shouldReduceMotion} />
+        <LandingRoles shouldReduceMotion={shouldReduceMotion} />
+        <LandingComparison shouldReduceMotion={shouldReduceMotion} />
+        <LandingPricing
+          onSelectOffer={selectOffer}
+          selectedOfferId={selectedOfferId}
+          shouldReduceMotion={shouldReduceMotion}
+        />
+        <LandingReassurance shouldReduceMotion={shouldReduceMotion} />
         <LandingFaq />
 
-        <section className="relative overflow-hidden bg-[var(--lp-bg-alt)] px-4 py-14 sm:px-6 lg:px-8 lg:py-16" id="contact">
-          <DemoRequestForm isDark={isDark} />
+        <section className="border-t border-[var(--lp-border)] bg-[var(--lp-section)] px-4 py-20 sm:px-6 lg:px-8 lg:py-28" id="contact">
+          <DemoRequestForm
+            isDark={isDark}
+            onSelectOffer={setSelectedOfferId}
+            selectedOfferId={selectedOfferId}
+          />
         </section>
       </main>
 

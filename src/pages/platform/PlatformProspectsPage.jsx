@@ -1,19 +1,33 @@
-import { useCallback, useEffect, useState } from 'react'
-import PageHero from '../../components/ui/PageHero'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import Notice from '../../components/ui/Notice'
+import PageHeader from '../../components/ui/PageHeader'
+import StatusBadge from '../../components/ui/StatusBadge'
+import { ui } from '../../components/ui/styles'
+import { TestDataToggle } from '../../components/ui/TableTools'
+import { useConfirm } from '../../components/ui/useConfirm'
+import { isTestProspect } from '../../lib/platformTestData'
 import { BETA_PILOT_ORG_LIMIT } from '../../config/beta'
 import { formatPlatformDateTime } from '../../lib/platformPlans'
 import { supabase } from '../../lib/supabase'
 import { fetchBetaPilotStatus } from '../../services/beta'
 import { acceptProspect, deleteProspectRecord, listProspects, refuseProspect, resendManagerInvite } from '../../services/prospects'
-import { deleteOrganization } from '../../services/platform'
+import { deleteOrganization, recordRequestedPlan } from '../../services/platform'
 import { useProspectNotifications } from '../../hooks/useProspectNotifications'
 
-const STATUS_BADGE = {
-  'Nouvelle demande': 'bg-amber-100 text-amber-900',
-  Refusée: 'bg-rose-100 text-rose-900',
-  Acceptée: 'bg-cyan-100 text-cyan-900',
-  'Essai gratuit': 'bg-cyan-100 text-cyan-900',
+const STATUS_TONE = {
+  'Nouvelle demande': 'warning',
+  Refusée: 'neutral',
+  Acceptée: 'success',
+  'Essai gratuit': 'info',
 }
+
+/** Offre choisie sur la page d'accueil, enregistrée en tête du message (« Offre choisie : … »). */
+function chosenOffer(message) {
+  const match = /^Offre choisie : ([^—\n]+)/m.exec(message || '')
+  return match ? match[1].trim() : null
+}
+
+const OFFER_CODES = { 'Essai gratuit': 'trial', Starter: 'starter', Premium: 'premium' }
 
 const TERMINAL_STATUSES = new Set(['Refusée', 'Acceptée', 'Essai gratuit'])
 
@@ -24,6 +38,8 @@ export default function PlatformProspectsPage() {
   const [feedback, setFeedback] = useState(null)
   const [busyId, setBusyId] = useState(null)
   const [pilotStatus, setPilotStatus] = useState(null)
+  const [showTest, setShowTest] = useState(false)
+  const [confirm, confirmDialog] = useConfirm()
   const { refresh: refreshBadge } = useProspectNotifications()
 
   const refreshPilotStatus = useCallback(async () => {
@@ -78,13 +94,26 @@ export default function PlatformProspectsPage() {
       })
       return
     }
-    if (
-      !window.confirm(
-        `Accepter « ${prospect.school_name} » ?\n\nCréation de l'auto-école, du compte gérant (${prospect.email}), essai 30 jours Starter et envoi d'un lien sécurisé pour définir le mot de passe.`,
-      )
-    ) {
-      return
-    }
+    const offer = chosenOffer(prospect.message)
+    const accepted = await confirm({
+      title: `Accepter « ${prospect.school_name} » ?`,
+      description: (
+        <>
+          <p>
+            L’auto-école et le compte gérant ({prospect.email}) seront créés, avec un essai gratuit de 30 jours. Un lien
+            sécurisé sera envoyé pour définir le mot de passe.
+          </p>
+          {offer && offer !== 'Essai gratuit' ? (
+            <p className="mt-2">
+              Offre demandée : <strong className="font-semibold text-slate-900">{offer}</strong>. Elle sera notée sur
+              l’abonnement et proposée à la fin de l’essai.
+            </p>
+          ) : null}
+        </>
+      ),
+      confirmLabel: 'Accepter la demande',
+    })
+    if (!accepted) return
     setBusyId(prospect.id)
     setFeedback(null)
     const { data, error } = await acceptProspect(prospect.id)
@@ -97,6 +126,10 @@ export default function PlatformProspectsPage() {
       })
       return
     }
+    const offerCode = OFFER_CODES[offer]
+    if (data?.organization_id && offerCode && offerCode !== 'trial') {
+      await recordRequestedPlan(data.organization_id, offerCode)
+    }
     setFeedback({
       type: 'ok',
       message: data?.email_sent
@@ -107,7 +140,12 @@ export default function PlatformProspectsPage() {
   }
 
   const handleResendInvite = async (prospect) => {
-    if (!window.confirm(`Renvoyer l'e-mail d'activation à ${prospect.email} ?`)) return
+    const resend = await confirm({
+      title: 'Renvoyer l’invitation ?',
+      description: `Un nouvel e-mail d’activation sera envoyé à ${prospect.email}.`,
+      confirmLabel: 'Renvoyer',
+    })
+    if (!resend) return
     setBusyId(prospect.id)
     setFeedback(null)
     const { data, error } = await resendManagerInvite(prospect.id)
@@ -125,7 +163,13 @@ export default function PlatformProspectsPage() {
   }
 
   const handleRefuse = async (prospect) => {
-    if (!window.confirm(`Refuser la demande de « ${prospect.school_name} » ?`)) return
+    const refused = await confirm({
+      title: `Refuser la demande de « ${prospect.school_name} » ?`,
+      description: 'Aucun compte ne sera créé. La demande restera visible avec le statut « Refusée ».',
+      confirmLabel: 'Refuser',
+      danger: true,
+    })
+    if (!refused) return
     setBusyId(prospect.id)
     const { error } = await refuseProspect(prospect.id)
     setBusyId(null)
@@ -139,10 +183,17 @@ export default function PlatformProspectsPage() {
 
   const handleDelete = async (prospect) => {
     const hasOrg = Boolean(prospect.organization_id)
-    const message = hasOrg
-      ? `Supprimer définitivement « ${prospect.school_name} » ?\n\nL'auto-école, tous ses comptes utilisateurs et cette demande seront supprimés. Cette action est irréversible.`
-      : `Supprimer la demande « ${prospect.school_name} » ?\n\nCette action est irréversible.`
-    if (!window.confirm(message)) return
+    const removed = await confirm({
+      title: hasOrg ? `Supprimer « ${prospect.school_name} » et son auto-école ?` : `Supprimer la demande « ${prospect.school_name} » ?`,
+      description: hasOrg
+        ? 'L’auto-école, tous ses comptes utilisateurs et cette demande seront supprimés définitivement.'
+        : 'La demande sera supprimée définitivement.',
+      confirmLabel: 'Supprimer définitivement',
+      danger: true,
+      requireText: hasOrg ? prospect.school_name : undefined,
+      requireIdentity: hasOrg,
+    })
+    if (!removed) return
 
     setBusyId(prospect.id)
     setFeedback(null)
@@ -172,162 +223,143 @@ export default function PlatformProspectsPage() {
     refresh()
   }
 
-  const pending = prospects.filter(
+  const testCount = useMemo(() => prospects.filter(isTestProspect).length, [prospects])
+  const visible = useMemo(
+    () => (showTest ? prospects : prospects.filter((row) => !isTestProspect(row))),
+    [prospects, showTest],
+  )
+  const pending = visible.filter(
     (row) => !row.organization_id && !TERMINAL_STATUSES.has(row.status),
   )
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
-      <PageHero
-        eyebrow="Super Admin"
+      <PageHeader
+        description="Demandes envoyées depuis le formulaire de la page d’accueil. Aucun compte n’est créé tant qu’une demande n’est pas acceptée."
         title="Demandes de démonstration"
-        subtitle="Lecture directe de public.demo_requests — aucun compte créé tant qu'une demande n'est pas acceptée."
       />
 
       {pilotStatus && (
-        <div
-          className={`rounded-xl border-2 px-4 py-3 text-sm font-bold ${
-            pilotStatus.acceptsNew
-              ? 'border-cyan-200 bg-cyan-50 text-cyan-900'
-              : 'border-amber-200 bg-amber-50 text-amber-900'
-          }`}
-        >
-          Bêta privée : {pilotStatus.used ?? 0} / {pilotStatus.limit ?? BETA_PILOT_ORG_LIMIT} places pilotes
-          utilisées
+        <Notice tone={pilotStatus.acceptsNew ? 'info' : 'warning'}>
+          Bêta privée : {pilotStatus.used ?? 0} place{(pilotStatus.used ?? 0) > 1 ? 's' : ''} pilote
+          {(pilotStatus.used ?? 0) > 1 ? 's' : ''} utilisée{(pilotStatus.used ?? 0) > 1 ? 's' : ''} sur{' '}
+          {pilotStatus.limit ?? BETA_PILOT_ORG_LIMIT}
           {typeof pilotStatus.remaining === 'number' && (
-            <> — {pilotStatus.remaining} place{pilotStatus.remaining > 1 ? 's' : ''} restante{pilotStatus.remaining > 1 ? 's' : ''}</>
+            <>
+              , {pilotStatus.remaining} restante{pilotStatus.remaining > 1 ? 's' : ''}
+            </>
           )}
-        </div>
+          .
+        </Notice>
       )}
 
-      {loadError && (
-        <p className="rounded-xl border-2 border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-800">
-          {loadError}
-        </p>
-      )}
+      {loadError && <Notice tone="danger">{loadError}</Notice>}
 
       {feedback && (
-        <div
-          className={`rounded-xl border-2 px-4 py-3 text-sm font-bold ${
-            feedback.type === 'ok'
-              ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
-              : 'border-rose-200 bg-rose-50 text-rose-800'
-          }`}
-        >
+        <Notice tone={feedback.type === 'ok' ? 'success' : 'danger'}>
           <p className="whitespace-pre-wrap">{feedback.message}</p>
           {feedback.debug && (
-            <details className="mt-3 rounded-lg bg-white/70 p-3 text-xs font-normal text-slate-700">
-              <summary className="cursor-pointer font-bold text-slate-800">Logs envoi (platform-prospect)</summary>
-              <pre className="mt-2 overflow-x-auto whitespace-pre-wrap">
+            <details className="mt-2 text-xs text-slate-700">
+              <summary className="cursor-pointer font-medium">Détails techniques de l’envoi</summary>
+              <pre className="mt-2 overflow-x-auto whitespace-pre-wrap rounded-md bg-white/70 p-3">
                 {JSON.stringify(feedback.debug, null, 2)}
               </pre>
             </details>
           )}
           {feedback.type === 'error' && feedback.steps && (
-            <pre className="mt-3 overflow-x-auto rounded-lg bg-white/70 p-3 text-xs font-normal text-slate-700">
-              {feedback.steps}
-            </pre>
+            <pre className="mt-2 overflow-x-auto rounded-md bg-white/70 p-3 text-xs text-slate-700">{feedback.steps}</pre>
           )}
-        </div>
+        </Notice>
       )}
 
-      <p className="text-sm font-semibold text-slate-600">
-        {pending.length} demande{pending.length > 1 ? 's' : ''} en attente · {prospects.length} au total
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-slate-500">
+          <span className="font-medium text-slate-900">
+            {pending.length} demande{pending.length > 1 ? 's' : ''} à traiter
+          </span>{' '}
+          sur {visible.length} au total
+        </p>
+        {testCount > 0 && <TestDataToggle checked={showTest} count={testCount} onChange={setShowTest} />}
+      </div>
 
-      <div className="overflow-x-auto rounded-2xl border-2 border-slate-300 bg-white">
-        <table className="w-full min-w-[900px] text-left text-sm">
+      <div className={ui.tableWrap}>
+        <table className={`${ui.table} min-w-[1080px]`}>
           <thead>
-            <tr className="border-b bg-slate-50 text-xs font-black uppercase text-slate-400">
-              <th className="p-4">Auto-école</th>
-              <th className="p-4">Contact</th>
-              <th className="p-4">Téléphone</th>
-              <th className="p-4">E-mail</th>
-              <th className="p-4">Créée le</th>
-              <th className="p-4">Statut</th>
-              <th className="p-4">Actions</th>
+            <tr>
+              <th className={ui.th}>Auto-école</th>
+              <th className={ui.th}>Contact</th>
+              <th className={ui.th}>Offre</th>
+              <th className={ui.th}>Reçue le</th>
+              <th className={ui.th}>Statut</th>
+              <th className={`${ui.th} text-right`}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td className="p-6 text-slate-500" colSpan={7}>
+                <td className={ui.tdEmpty} colSpan={6}>
                   Chargement…
                 </td>
               </tr>
-            ) : prospects.length === 0 ? (
+            ) : visible.length === 0 ? (
               <tr>
-                <td className="p-6 text-slate-500" colSpan={7}>
-                  {loadError ? 'Erreur de lecture — voir le message ci-dessus.' : 'Aucune demande enregistrée.'}
+                <td className={ui.tdEmpty} colSpan={6}>
+                  {loadError ? 'Les demandes n’ont pas pu être lues.' : 'Aucune demande pour le moment.'}
                 </td>
               </tr>
             ) : (
-              prospects.map((row) => {
+              visible.map((row) => {
                 const status = row.status || 'Nouvelle demande'
-                const canAct =
-                  !row.organization_id && !TERMINAL_STATUSES.has(status)
+                const canAct = !row.organization_id && !TERMINAL_STATUSES.has(status)
                 const isBusy = busyId === row.id
                 return (
-                  <tr className="border-b" key={row.id}>
-                    <td className="p-4 font-bold">{row.school_name}</td>
-                    <td className="p-4">{row.contact_name}</td>
-                    <td className="p-4">{row.phone}</td>
-                    <td className="p-4">
-                      <a className="font-semibold text-cyan-700" href={`mailto:${row.email}`}>
-                        {row.email}
-                      </a>
+                  <tr className={ui.tr} key={row.id}>
+                    <td className={`${ui.tdStrong} min-w-[12rem]`}>
+                      {row.school_name}
+                      {isTestProspect(row) && (
+                        <span className="ml-2 align-middle">
+                          <StatusBadge>Test</StatusBadge>
+                        </span>
+                      )}
                     </td>
-                    <td className="p-4">{formatPlatformDateTime(row.created_at)}</td>
-                    <td className="p-4">
-                      <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-black ${STATUS_BADGE[status] || 'bg-slate-100 text-slate-700'}`}
-                      >
-                        {status}
-                      </span>
+                    <td className={ui.td}>
+                      <p className="text-slate-900">{row.contact_name}</p>
+                      <p className="text-xs text-slate-500">
+                        <a className="text-[#1769FF] hover:underline" href={`mailto:${row.email}`}>
+                          {row.email}
+                        </a>
+                        {row.phone ? <> · {row.phone}</> : null}
+                      </p>
                     </td>
-                    <td className="p-4">
-                      <div className="flex flex-wrap gap-2">
+                    <td className={ui.td}>{chosenOffer(row.message) || '—'}</td>
+                    <td className={`${ui.tdMuted} whitespace-nowrap tabular-nums`}>{formatPlatformDateTime(row.created_at)}</td>
+                    <td className={ui.td}>
+                      <StatusBadge tone={STATUS_TONE[status] || 'neutral'}>{status}</StatusBadge>
+                    </td>
+                    <td className={ui.td}>
+                      <div className="flex justify-end gap-2 whitespace-nowrap">
                         {canAct ? (
                           <>
                             <button
-                              className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-800 hover:bg-emerald-100 disabled:opacity-50"
+                              className={ui.btnSmallPrimary}
                               disabled={isBusy || (pilotStatus && !pilotStatus.acceptsNew)}
                               onClick={() => handleAccept(row)}
-                              title={
-                                pilotStatus && !pilotStatus.acceptsNew
-                                  ? 'Limite bêta privée atteinte'
-                                  : undefined
-                              }
+                              title={pilotStatus && !pilotStatus.acceptsNew ? 'Limite de la bêta privée atteinte' : undefined}
                               type="button"
                             >
-                              ✓ Accepter
+                              Accepter
                             </button>
-                            <button
-                              className="rounded-lg border border-rose-300 bg-rose-50 px-3 py-1.5 text-xs font-black text-rose-800 hover:bg-rose-100 disabled:opacity-50"
-                              disabled={isBusy}
-                              onClick={() => handleRefuse(row)}
-                              type="button"
-                            >
-                              ✗ Refuser
+                            <button className={ui.btnSmall} disabled={isBusy} onClick={() => handleRefuse(row)} type="button">
+                              Refuser
                             </button>
                           </>
                         ) : status === 'Acceptée' || status === 'Essai gratuit' ? (
-                          <button
-                            className="rounded-lg border border-cyan-300 bg-cyan-50 px-3 py-1.5 text-xs font-black text-cyan-800 hover:bg-cyan-100 disabled:opacity-50"
-                            disabled={isBusy}
-                            onClick={() => handleResendInvite(row)}
-                            type="button"
-                          >
-                            ↻ Renvoyer l&apos;invitation
+                          <button className={ui.btnSmall} disabled={isBusy} onClick={() => handleResendInvite(row)} type="button">
+                            Renvoyer l’invitation
                           </button>
                         ) : null}
-                        <button
-                          className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-black text-slate-700 hover:bg-slate-100 disabled:opacity-50"
-                          disabled={isBusy}
-                          onClick={() => handleDelete(row)}
-                          type="button"
-                        >
-                          🗑 Supprimer
+                        <button className={ui.btnSmallDanger} disabled={isBusy} onClick={() => handleDelete(row)} type="button">
+                          Supprimer
                         </button>
                       </div>
                     </td>
@@ -338,6 +370,7 @@ export default function PlatformProspectsPage() {
           </tbody>
         </table>
       </div>
+      {confirmDialog}
     </div>
   )
 }

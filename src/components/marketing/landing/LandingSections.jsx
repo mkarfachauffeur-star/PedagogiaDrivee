@@ -1,400 +1,455 @@
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { BookOpen, Check, FileText, GraduationCap, Map, MessageSquare, Play, Route, Users } from 'lucide-react'
-import { useRef } from 'react'
+import { motion } from 'framer-motion'
+import { Check } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import BrandLogo from '../../BrandLogo'
 import { LEGAL_ENTITY } from '../../../config/legal'
 import { trackDemoRequestClick } from '../../../lib/analytics'
 import { MARKETING_FAQ } from '../../../lib/marketingContent'
-import { LANDING_SCHEMAS, LANDING_VIDEO_PREVIEW } from './landingAssets'
+import { LANDING_OFFERS } from './landingOffers'
+import { BTN_PRIMARY, BTN_SECONDARY } from './landingStyles'
 import { isLandingHome, landingHashPath } from './landingNav'
 import {
-  DeviceStage,
-  GpsScreen,
-  HeroAppScreen,
-  ProductFrame,
-  QcuVoyantScreen,
+  AacPreview,
+  BrowserFrame,
+  CompetencyPreview,
+  ManagerPreview,
+  PhoneFrame,
+  QcuPreview,
+  StudentDashboardPreview,
+  TeacherStudentsPreview,
 } from './LandingVisuals'
 
+
+const CONTAINER = 'mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8'
+const H2 = 'text-balance text-[1.75rem] font-semibold leading-tight tracking-[-0.03em] text-[var(--lp-ink)] sm:text-[2.25rem]'
+const LEAD = 'text-base leading-7 text-[var(--lp-muted)]'
+
 function reveal(shouldReduceMotion, delay = 0) {
+  if (shouldReduceMotion) return {}
   return {
-    initial: shouldReduceMotion ? undefined : { opacity: 0, y: 24 },
-    whileInView: shouldReduceMotion ? undefined : { opacity: 1, y: 0 },
-    viewport: { once: true, amount: 0.18 },
-    transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] },
+    initial: { opacity: 0, y: 12 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.15 },
+    transition: { duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] },
   }
 }
 
-export function LandingHero({ shouldReduceMotion }) {
-  const mockupRef = useRef(null)
-  const { scrollYProgress } = useScroll({ target: mockupRef, offset: ['start end', 'end start'] })
-  const mockupY = useTransform(scrollYProgress, [0, 1], shouldReduceMotion ? [0, 0] : [16, -12])
+function Eyebrow({ children }) {
+  return <p className="text-[13px] font-semibold text-[var(--lp-accent)]">{children}</p>
+}
 
+function SectionHeader({ eyebrow, title, children, center = false }) {
   return (
-    <section className="relative scroll-mt-24 overflow-hidden px-4 pb-8 pt-10 sm:px-6 sm:pt-12 lg:px-8 lg:pb-6 lg:pt-14" id="accueil">
-      <div className="landing-glow-hero pointer-events-none absolute inset-0" />
-      <div className="relative mx-auto grid max-w-[1280px] items-center gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-8">
+    <div className={center ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'}>
+      {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
+      <h2 className={`mt-3 ${H2}`}>{title}</h2>
+      {children ? <p className={`mt-4 ${LEAD}`}>{children}</p> : null}
+    </div>
+  )
+}
+
+function Caption({ children }) {
+  return <p className="mt-3 text-center text-xs text-[var(--lp-muted)]">{children}</p>
+}
+
+function CheckList({ items }) {
+  return (
+    <ul className="mt-6 space-y-2.5">
+      {items.map((item) => (
+        <li className="flex gap-3 text-[15px] leading-6 text-[var(--lp-ink)]" key={item}>
+          <Check aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-[#1769FF]" strokeWidth={2.5} />
+          {item}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+export function LandingHero({ shouldReduceMotion }) {
+  return (
+    <section className="scroll-mt-24 border-b border-[var(--lp-border)] pb-16 pt-12 sm:pt-16 lg:pb-24 lg:pt-20" id="accueil">
+      <div className={`${CONTAINER} grid items-center gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-14`}>
         <motion.div className="max-w-xl" {...reveal(shouldReduceMotion)}>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#1769FF]">
-            Le livret numérique des auto-écoles
-          </p>
-          <h1 className="mt-5 text-[2.4rem] font-semibold leading-[1.06] tracking-[-0.05em] text-[var(--lp-ink)] sm:text-5xl lg:text-[4.4rem] lg:leading-[1.02]">
-            Le futur du livret numérique pour auto-école{' '}
-            <span className="landing-accent-text">commence ici.</span>
+          <Eyebrow>Logiciel pour auto-écoles</Eyebrow>
+          <h1 className="mt-4 text-balance text-[2.25rem] font-semibold leading-[1.08] tracking-[-0.035em] text-[var(--lp-ink)] sm:text-5xl lg:text-[3.15rem]">
+            Le livret d’apprentissage numérique de votre auto-école.
           </h1>
-          <p className="mt-6 max-w-lg text-base leading-7 text-[var(--lp-muted)] sm:text-lg sm:leading-8">
-            Simplifiez le suivi pédagogique, accompagnez vos élèves et gérez votre auto-école avec un outil
-            moderne conçu pour les professionnels de la conduite.
+          <p className="mt-5 text-lg leading-8 text-[var(--lp-muted)]">
+            Compétences REMC, planning, QCU, suivi des kilomètres en conduite accompagnée et dossiers élèves. Chacun dans l’auto-école retrouve
+            ce qui le concerne, au même endroit.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a
-              className="inline-flex h-12 w-full items-center justify-center rounded-[12px] bg-[#EF3340] px-7 text-sm font-semibold text-white shadow-[0_16px_32px_-14px_rgba(239,51,64,0.75)] transition hover:-translate-y-0.5 hover:bg-[#d92b38] sm:w-auto"
-              href="#demonstration"
-              onClick={() => trackDemoRequestClick('hero')}
-            >
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a className={BTN_PRIMARY} href="#demonstration" onClick={() => trackDemoRequestClick('hero')}>
               Demander une démonstration
             </a>
-            <Link
-              className="inline-flex h-12 w-full items-center justify-center rounded-[12px] border border-[var(--lp-border)] bg-[var(--lp-card)] px-6 text-sm font-semibold text-[var(--lp-ink)] transition hover:border-[#1769FF]/35 sm:w-auto"
-              to="/livret-numerique-auto-ecole"
-            >
-              Découvrir le livret numérique
-            </Link>
-          </div>
-          <p className="mt-4 text-sm text-[var(--lp-muted)]">
-            <a className="font-semibold text-[#1769FF] underline-offset-4 transition hover:underline" href="#fonctionnalites">
-              Voir toutes les fonctionnalités →
+            <a className={BTN_SECONDARY} href="#tarifs">
+              Voir les tarifs
             </a>
-          </p>
-          <p className="mt-5 text-sm text-[var(--lp-muted)]">Élèves • Enseignants • Secrétariat • Gérants</p>
-        </motion.div>
-
-        <motion.div className="relative min-w-0 lg:max-w-none" {...reveal(shouldReduceMotion, 0.08)}>
-          <motion.div ref={mockupRef} style={{ y: mockupY }}>
-            <DeviceStage size="large" variant="laptop">
-              <HeroAppScreen />
-            </DeviceStage>
-          </motion.div>
-        </motion.div>
-      </div>
-    </section>
-  )
-}
-
-export function LandingTrustStrip({ shouldReduceMotion }) {
-  const items = [
-    { title: 'QCU & compétences', text: 'Préparez vos élèves entre deux leçons.', icon: BookOpen },
-    { title: 'Ressources pédagogiques', text: 'Schémas, fiches et contenus accessibles à tout moment.', icon: FileText },
-    { title: 'AAC / CS', text: 'Suivez les parcours, trajets et kilomètres.', icon: Map },
-    { title: 'Suivi des élèves', text: 'Une vision claire de la progression.', icon: Users },
-  ]
-
-  return (
-    <section className="scroll-mt-24 px-4 py-8 sm:px-6 lg:px-8 lg:py-12" id="fonctionnalites">
-      <motion.div className="mx-auto grid max-w-[1280px] gap-4 sm:grid-cols-2 lg:grid-cols-4" {...reveal(shouldReduceMotion)}>
-        {items.map((item) => {
-          const Icon = item.icon
-          return (
-            <article
-              className="rounded-[20px] border border-[var(--lp-border)] bg-[var(--lp-card)] p-5 shadow-[0_12px_32px_-28px_rgba(7,17,31,0.45)]"
-              key={item.title}
-            >
-              <span className="grid h-10 w-10 place-items-center rounded-[12px] bg-[#1769FF]/10 text-[#1769FF]">
-                <Icon className="h-5 w-5" />
-              </span>
-              <h2 className="mt-4 text-sm font-semibold text-[var(--lp-ink)]">{item.title}</h2>
-              <p className="mt-1.5 text-sm leading-6 text-[var(--lp-muted)]">{item.text}</p>
-            </article>
-          )
-        })}
-      </motion.div>
-    </section>
-  )
-}
-
-export function LandingQcuSection({ shouldReduceMotion }) {
-  return (
-    <section className="scroll-mt-24 overflow-x-clip bg-[var(--lp-bg-alt)] px-4 py-16 sm:px-6 lg:px-8 lg:py-20" id="qcu">
-      <div className="mx-auto grid max-w-[1280px] items-center gap-8 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:gap-10">
-        <motion.div {...reveal(shouldReduceMotion)}>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#1769FF]">QCU & compétences</p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[var(--lp-ink)] sm:text-5xl lg:leading-[1.08]">
-            Vos élèves peuvent apprendre
-            <span className="block">même en dehors de la voiture.</span>
-          </h2>
-          <p className="mt-5 max-w-md text-base leading-7 text-[var(--lp-muted)]">
-            Les QCU permettent de préparer la prochaine séance et de renforcer les connaissances entre deux leçons.
-          </p>
-          <ul className="mt-8 space-y-3 text-sm font-medium text-[var(--lp-ink)]">
-            {['Exercices entre les leçons', 'Progression visible', 'Moins de répétitions en conduite', 'Élève mieux préparé'].map(
+          </div>
+          <ul className="mt-8 grid gap-2 text-sm text-[var(--lp-muted)] sm:grid-cols-2">
+            {['Application web, sans installation', 'Essai gratuit de 30 jours', 'Élèves, enseignants, secrétariat, gérant', 'Accès sur invitation pendant la phase test'].map(
               (item) => (
-                <li className="flex items-center gap-3" key={item}>
-                  <span className="grid h-6 w-6 place-items-center rounded-full bg-[#1769FF]/10 text-[#1769FF]">
-                    <Check className="h-3.5 w-3.5" />
-                  </span>
+                <li className="flex items-start gap-2" key={item}>
+                  <Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[#1769FF]" strokeWidth={2.5} />
                   {item}
                 </li>
               ),
             )}
           </ul>
         </motion.div>
-        <motion.div className="min-w-0 max-w-full" {...reveal(shouldReduceMotion, 0.08)}>
-          <DeviceStage size="large" variant="tablet">
-            <QcuVoyantScreen chrome={false} />
-          </DeviceStage>
-        </motion.div>
+
+        <motion.figure className="min-w-0" {...reveal(shouldReduceMotion, 0.08)}>
+          <BrowserFrame label="pedagogia-drive.fr/student/dashboard">
+            <StudentDashboardPreview />
+          </BrowserFrame>
+          <figcaption>
+            <Caption>Espace élève. Aperçu de l’interface, données fictives.</Caption>
+          </figcaption>
+        </motion.figure>
       </div>
     </section>
   )
 }
 
-export function LandingVideosSection({ shouldReduceMotion }) {
+function FeatureRow({ eyebrow, title, text, items, visual, caption, reverse = false, shouldReduceMotion }) {
   return (
-    <section className="scroll-mt-24 overflow-x-clip px-4 py-16 sm:px-6 lg:px-8 lg:py-20" id="videos">
-      <div className="mx-auto max-w-[1280px]" id="livret-numerique">
-        <motion.div className="max-w-3xl" {...reveal(shouldReduceMotion)}>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#EF3340]">Ressources pédagogiques</p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[var(--lp-ink)] sm:text-5xl lg:leading-[1.08]">
-            Des ressources pédagogiques
-            <span className="block">accessibles au bon moment.</span>
-          </h2>
-          <p className="mt-5 max-w-xl text-base leading-7 text-[var(--lp-muted)]">
-            Les élèves retrouvent QCU, schémas et fiches pour continuer à travailler entre deux leçons.
-          </p>
-        </motion.div>
+    <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+      <motion.div className={reverse ? 'lg:order-2' : ''} {...reveal(shouldReduceMotion)}>
+        <Eyebrow>{eyebrow}</Eyebrow>
+        <h3 className="mt-3 text-2xl font-semibold tracking-[-0.025em] text-[var(--lp-ink)] sm:text-[1.75rem]">{title}</h3>
+        <p className={`mt-4 ${LEAD}`}>{text}</p>
+        <CheckList items={items} />
+      </motion.div>
+      <motion.figure className={`min-w-0 ${reverse ? 'lg:order-1' : ''}`} {...reveal(shouldReduceMotion, 0.06)}>
+        {visual}
+        <figcaption>
+          <Caption>{caption}</Caption>
+        </figcaption>
+      </motion.figure>
+    </div>
+  )
+}
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          <motion.article
-            className="overflow-hidden rounded-[22px] border border-[var(--lp-border)] bg-[var(--lp-card)]"
-            {...reveal(shouldReduceMotion, 0.04)}
-          >
-            <div className="h-64 overflow-hidden sm:h-72">
-              <QcuVoyantScreen chrome={false} compact />
-            </div>
-            <div className="border-t border-[var(--lp-border)] px-4 py-3">
-              <p className="text-sm font-semibold text-[var(--lp-ink)]">QCU interactifs</p>
-              <p className="mt-1 text-sm text-[var(--lp-muted)]">Réviser entre deux leçons</p>
-            </div>
-          </motion.article>
+const MORE_FEATURES = [
+  { title: 'Planning des leçons', text: 'Planning global, planning de chaque enseignant et de chaque élève.' },
+  { title: 'Évaluation de départ', text: 'Réalisée avant les premières leçons, conservée dans le dossier.' },
+  { title: 'Messagerie interne', text: 'Échanges entre élèves, enseignants et secrétariat.' },
+  { title: 'Documents et contrats', text: 'Contrat de formation, charte d’engagement et pièces du dossier.' },
+  { title: 'Paiements', text: 'Formules, encaissements et reste à payer par élève.' },
+  { title: 'Pré-inscriptions', text: 'Suivi des demandes reçues avant l’inscription.' },
+  { title: 'Véhicules et simulateur', text: 'Suivi de la flotte et des séances sur simulateur.' },
+  { title: 'Examens et exports', text: 'Résultats du permis et exports réglementaires.' },
+]
 
-          <motion.article
-            className="overflow-hidden rounded-[22px] border border-[var(--lp-border)] bg-[var(--lp-card)]"
-            {...reveal(shouldReduceMotion, 0.08)}
-          >
-            <div className="relative h-64 overflow-hidden sm:h-72">
-              <img
-                alt={LANDING_VIDEO_PREVIEW.alt}
-                className="h-full w-full object-cover object-center"
-                decoding="async"
-                loading="lazy"
-                src={LANDING_VIDEO_PREVIEW.src}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
-              <div className="absolute inset-0 grid place-items-center">
-                <span className="grid h-14 w-14 place-items-center rounded-full bg-white/20 text-white ring-1 ring-white/40 backdrop-blur-sm">
-                  <Play className="h-5 w-5 fill-current" />
-                </span>
+export function LandingFeatures({ shouldReduceMotion }) {
+  return (
+    <section className="scroll-mt-20 py-20 lg:py-28" id="fonctionnalites">
+      <div className={CONTAINER}>
+        <SectionHeader eyebrow="Fonctionnalités" title="Le suivi pédagogique, de la première leçon à l’examen.">
+          Pedagogia Drive remplace le livret papier et réunit les outils dont l’auto-école se sert chaque jour.
+        </SectionHeader>
+
+        <div className="mt-16 space-y-20 lg:space-y-28">
+          <FeatureRow
+            caption="Compétence 1 du livret. Aperçu de l’interface, données fictives."
+            eyebrow="Livret REMC"
+            items={[
+              'Statut de chaque objectif : non abordé, en cours, validé',
+              'Commentaires de l’enseignant après chaque leçon',
+              'Historique des leçons consultable par l’élève',
+            ]}
+            shouldReduceMotion={shouldReduceMotion}
+            text="Le livret reprend les objectifs du référentiel REMC. La compétence 1 est disponible aujourd’hui ; le contenu des compétences 2 à 4 est en cours de rédaction."
+            title="Un livret d’apprentissage à jour après chaque leçon"
+            visual={
+              <BrowserFrame label="pedagogia-drive.fr/student/lessons">
+                <CompetencyPreview />
+              </BrowserFrame>
+            }
+          />
+
+          <FeatureRow
+            caption="QCU sur les voyants du tableau de bord, contenu réel de la compétence 1."
+            eyebrow="QCU"
+            items={['Correction immédiate après chaque réponse', 'Seuil de réussite fixé à 80 %', 'Accessible sur téléphone, tablette et ordinateur']}
+            reverse
+            shouldReduceMotion={shouldReduceMotion}
+            text="Entre deux leçons, l’élève révise les organes du véhicule ou les voyants du tableau de bord. Il arrive en voiture avec les bases déjà acquises."
+            title="Des révisions entre les leçons de conduite"
+            visual={
+              <PhoneFrame>
+                <QcuPreview />
+              </PhoneFrame>
+            }
+          />
+
+          <FeatureRow
+            caption="Suivi de la conduite accompagnée. Aperçu de l’interface, données fictives."
+            eyebrow="Conduite accompagnée (AAC)"
+            items={[
+              'Durée et distance de chaque trajet',
+              'Cumul du temps de conduite et des kilomètres',
+              'Progression vers les 3 000 km obligatoires',
+            ]}
+            shouldReduceMotion={shouldReduceMotion}
+            text="Chaque trajet de conduite accompagnée est enregistré avec sa durée et sa distance. Pedagogia Drive additionne le temps et les kilomètres parcourus pour suivre l’objectif des 3 000 km obligatoires."
+            title="Le compteur des 3 000 km de l’AAC"
+            visual={
+              <PhoneFrame>
+                <AacPreview />
+              </PhoneFrame>
+            }
+          />
+        </div>
+
+        <div className="mt-24 border-t border-[var(--lp-border)] pt-12">
+          <h3 className="text-lg font-semibold text-[var(--lp-ink)]">Également inclus</h3>
+          <dl className="mt-6 grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+            {MORE_FEATURES.map((item) => (
+              <div key={item.title}>
+                <dt className="text-[15px] font-semibold text-[var(--lp-ink)]">{item.title}</dt>
+                <dd className="mt-1 text-sm leading-6 text-[var(--lp-muted)]">{item.text}</dd>
               </div>
-            </div>
-            <div className="border-t border-[var(--lp-border)] px-4 py-3">
-              <p className="text-sm font-semibold text-[var(--lp-ink)]">Vidéos pédagogiques</p>
-              <p className="mt-1 text-sm text-[var(--lp-muted)]">Bientôt disponibles</p>
-            </div>
-          </motion.article>
-
-          <motion.article
-            className="overflow-hidden rounded-[22px] border border-[var(--lp-border)] bg-[var(--lp-card)]"
-            {...reveal(shouldReduceMotion, 0.12)}
-          >
-            <div className="flex h-64 items-center justify-center overflow-hidden bg-white p-3 sm:h-72">
-              <img
-                alt={LANDING_SCHEMAS[0].alt}
-                className="h-full w-full object-contain"
-                decoding="async"
-                loading="lazy"
-                src={LANDING_SCHEMAS[0].src}
-              />
-            </div>
-            <div className="border-t border-[var(--lp-border)] px-4 py-3">
-              <p className="text-sm font-semibold text-[var(--lp-ink)]">Schémas et ressources</p>
-              <p className="mt-1 text-sm text-[var(--lp-muted)]">Fiches pédagogiques du livret</p>
-            </div>
-          </motion.article>
+            ))}
+          </dl>
         </div>
       </div>
     </section>
   )
 }
 
-export function LandingGpsSection({ shouldReduceMotion }) {
+const ROLES = [
+  {
+    role: 'Gérant',
+    items: ['Tableau de bord et évolution du chiffre d’affaires', 'Comptes enseignants et secrétariat', 'Formules, contrats et exports réglementaires'],
+  },
+  {
+    role: 'Secrétariat',
+    items: ['Inscriptions et pré-inscriptions', 'Planning global et véhicules', 'Paiements, documents et examens'],
+  },
+  {
+    role: 'Enseignant',
+    items: ['Planning de ses leçons', 'Livret et progression de ses élèves', 'Messagerie avec les élèves'],
+  },
+  {
+    role: 'Élève',
+    items: ['Livret REMC et historique des leçons', 'QCU de révision', 'Planning, documents et messagerie'],
+  },
+]
+
+export function LandingRoles({ shouldReduceMotion }) {
   return (
-    <section className="relative scroll-mt-24 overflow-x-clip bg-[var(--lp-bg-alt)] px-4 py-16 sm:px-6 lg:px-8 lg:py-20" id="gps">
-      <div className="landing-glow-gps pointer-events-none absolute inset-0" />
-      <div className="relative mx-auto grid max-w-[1280px] items-center gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-        <motion.div className="order-2 min-w-0 max-w-full lg:order-1" {...reveal(shouldReduceMotion)}>
-          <ProductFrame glow="violet">
-            <GpsScreen />
-          </ProductFrame>
-        </motion.div>
-        <motion.div className="order-1 lg:order-2" {...reveal(shouldReduceMotion, 0.08)}>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7C3AED]">AAC / CS</p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-[var(--lp-ink)] sm:text-5xl lg:leading-[1.08]">
-            Gardez une vision claire
-            <span className="block">des parcours de vos élèves.</span>
-          </h2>
-          <p className="mt-5 max-w-md text-base leading-7 text-[var(--lp-muted)]">
-            Visualisez les trajets, les kilomètres parcourus et la durée des parcours directement depuis Pedagogia Drive.
-          </p>
-          <div className="mt-8 grid grid-cols-3 gap-3">
-            {['Trajets', 'Kilomètres', 'Durée'].map((item) => (
-              <div className="rounded-[16px] border border-[var(--lp-border)] bg-[var(--lp-card)] px-3 py-4 text-center" key={item}>
-                <p className="text-sm font-semibold text-[var(--lp-ink)]">{item}</p>
-              </div>
-            ))}
+    <section className="scroll-mt-20 border-y border-[var(--lp-border)] bg-[var(--lp-section)] py-20 lg:py-28" id="pour-qui">
+      <div className={CONTAINER}>
+        <SectionHeader eyebrow="Pour toute l’auto-école" title="Un espace adapté à chaque rôle.">
+          Chaque utilisateur se connecte avec son propre compte et ne voit que ce qui relève de son rôle.
+        </SectionHeader>
+
+        <div className="mt-12 grid gap-8 lg:grid-cols-2">
+          <motion.figure className="min-w-0" {...reveal(shouldReduceMotion)}>
+            <BrowserFrame label="pedagogia-drive.fr/teacher/students">
+              <TeacherStudentsPreview />
+            </BrowserFrame>
+            <figcaption>
+              <Caption>Espace enseignant. Données fictives.</Caption>
+            </figcaption>
+          </motion.figure>
+          <motion.figure className="min-w-0" {...reveal(shouldReduceMotion, 0.06)}>
+            <BrowserFrame label="pedagogia-drive.fr/manager/dashboard">
+              <ManagerPreview />
+            </BrowserFrame>
+            <figcaption>
+              <Caption>Espace gérant. Données fictives.</Caption>
+            </figcaption>
+          </motion.figure>
+        </div>
+
+        <div className="mt-14 grid gap-px overflow-hidden rounded-xl border border-[var(--lp-border)] bg-[var(--lp-border)] sm:grid-cols-2 lg:grid-cols-4">
+          {ROLES.map((item) => (
+            <div className="bg-[var(--lp-card)] p-6" key={item.role}>
+              <h3 className="text-base font-semibold text-[var(--lp-ink)]">{item.role}</h3>
+              <ul className="mt-3 space-y-2">
+                {item.items.map((line) => (
+                  <li className="text-sm leading-6 text-[var(--lp-muted)]" key={line}>
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const COMPARISON = [
+  {
+    topic: 'Suivi des compétences',
+    paper: 'Cases cochées à la main, souvent après coup.',
+    digital: 'Statut de chaque objectif REMC mis à jour par l’enseignant après la leçon.',
+  },
+  {
+    topic: 'Accès au livret',
+    paper: 'Un seul exemplaire, dans la voiture ou au bureau.',
+    digital: 'Consultable par l’élève et par l’équipe pédagogique.',
+  },
+  {
+    topic: 'Révisions',
+    paper: 'Fiches à part, sans retour sur les erreurs.',
+    digital: 'QCU avec correction immédiate entre les leçons.',
+  },
+  {
+    topic: 'Historique',
+    paper: 'Difficile à reconstituer en cas de changement d’enseignant.',
+    digital: 'Leçons, commentaires et progression conservés dans le dossier.',
+  },
+  {
+    topic: 'Administratif',
+    paper: 'Planning, paiements et documents saisis séparément.',
+    digital: 'Planning, contrat et paiements rattachés au même dossier élève.',
+  },
+]
+
+export function LandingComparison({ shouldReduceMotion }) {
+  return (
+    <section className="scroll-mt-20 py-20 lg:py-28" id="benefices">
+      <div className={CONTAINER}>
+        <SectionHeader eyebrow="Ce qui change" title="Du livret papier au livret numérique.">
+          Moins de saisie en double, un suivi lisible pour l’élève comme pour l’équipe.
+        </SectionHeader>
+
+        <motion.div className="mt-12 overflow-hidden rounded-xl border border-[var(--lp-border)]" {...reveal(shouldReduceMotion)}>
+          <div className="hidden grid-cols-[0.8fr_1fr_1fr] border-b border-[var(--lp-border)] bg-[var(--lp-section)] text-sm font-semibold md:grid">
+            <span className="px-6 py-4 text-[var(--lp-muted)]" />
+            <span className="px-6 py-4 text-[var(--lp-muted)]">Livret papier</span>
+            <span className="px-6 py-4 text-[var(--lp-ink)]">Avec Pedagogia Drive</span>
           </div>
+          {COMPARISON.map((row) => (
+            <div
+              className="grid border-b border-[var(--lp-border)] bg-[var(--lp-card)] last:border-0 md:grid-cols-[0.8fr_1fr_1fr]"
+              key={row.topic}
+            >
+              <p className="px-6 pt-5 text-[15px] font-semibold text-[var(--lp-ink)] md:py-5">{row.topic}</p>
+              <p className="px-6 pt-2 text-sm leading-6 text-[var(--lp-muted)] md:py-5">
+                <span className="mb-0.5 block text-xs font-semibold md:hidden">Livret papier</span>
+                {row.paper}
+              </p>
+              <p className="flex gap-2.5 px-6 pb-5 pt-2 text-sm leading-6 text-[var(--lp-ink)] md:py-5">
+                <Check aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-[#1769FF]" strokeWidth={2.5} />
+                {row.digital}
+              </p>
+            </div>
+          ))}
         </motion.div>
       </div>
     </section>
   )
 }
 
-export function LandingAllInOneSection({ shouldReduceMotion }) {
-  const items = [
-    { title: 'Livret pédagogique', icon: BookOpen },
-    { title: 'QCU', icon: Check },
-    { title: 'Vidéos pédagogiques', icon: Play, soon: true },
-    { title: 'Schémas pédagogiques', icon: FileText },
-    { title: 'Suivi GPS AAC / CS', icon: Route },
-    { title: 'Suivi de progression', icon: GraduationCap },
-    { title: 'Messagerie', icon: MessageSquare },
-    { title: 'Gestion / suivi des élèves', icon: Users },
-  ]
+export function LandingPricing({ shouldReduceMotion, selectedOfferId = null, onSelectOffer }) {
+  const chooseOffer = (offer) => {
+    trackDemoRequestClick(`pricing_${offer.id}`)
+    onSelectOffer?.(offer.id)
+  }
 
   return (
-    <section className="scroll-mt-24 px-4 py-16 sm:px-6 lg:px-8 lg:py-20" id="tout-au-meme-endroit">
-      <div className="mx-auto max-w-[1280px]">
-        <motion.div className="max-w-2xl" {...reveal(shouldReduceMotion)}>
-          <h2 className="text-3xl font-semibold tracking-[-0.045em] text-[var(--lp-ink)] sm:text-5xl">
-            Tout au même endroit.
-          </h2>
-        </motion.div>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {items.map((item, index) => {
-            const Icon = item.icon
+    <section className="scroll-mt-20 border-y border-[var(--lp-border)] bg-[var(--lp-section)] py-20 lg:py-28" id="tarifs">
+      <div className={CONTAINER}>
+        <SectionHeader center eyebrow="Tarifs" title="Des offres simples, sans option cachée.">
+          Toutes les fonctionnalités sont incluses dans chaque offre. Choisissez une offre, puis renseignez les
+          coordonnées de l’auto-école.
+        </SectionHeader>
+
+        <div className="mx-auto mt-12 grid max-w-[1000px] items-stretch gap-4 lg:grid-cols-3">
+          {LANDING_OFFERS.map((plan, index) => {
+            const selected = selectedOfferId === plan.id
             return (
-              <motion.article
-                className="rounded-[18px] border border-[var(--lp-border)] bg-[var(--lp-card)] px-4 py-5"
-                key={item.title}
-                {...reveal(shouldReduceMotion, index * 0.03)}
+              <motion.button
+                aria-pressed={selected}
+                className={`flex cursor-pointer flex-col rounded-xl border bg-[var(--lp-card)] p-6 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1769FF] sm:p-7 ${
+                  selected
+                    ? 'border-[#1769FF] ring-1 ring-[#1769FF]'
+                    : plan.highlighted
+                      ? 'border-[#1769FF]/50 hover:border-[#1769FF]'
+                      : 'border-[var(--lp-border)] hover:border-[var(--lp-border-strong)]'
+                }`}
+                key={plan.id}
+                onClick={() => chooseOffer(plan)}
+                type="button"
+                {...reveal(shouldReduceMotion, index * 0.05)}
               >
-                <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-[#1769FF]/10 text-[#1769FF]">
-                  <Icon className="h-4 w-4" />
+                <h3 className="text-base font-semibold text-[var(--lp-ink)]">{plan.name}</h3>
+                <p className="mt-5 flex items-baseline gap-2">
+                  <span className="text-[2.5rem] font-semibold leading-none tracking-[-0.03em] text-[var(--lp-ink)]">
+                    {plan.price}
+                  </span>
+                  <span className="text-sm text-[var(--lp-muted)]">{plan.period}</span>
+                </p>
+                <p className="mt-2 min-h-5 text-xs text-[var(--lp-muted)]">{plan.note || ''}</p>
+                <ul className="mt-6 flex-1 space-y-2.5 border-t border-[var(--lp-border)] pt-6">
+                  {plan.features.map((feature) => (
+                    <li className="flex items-start gap-2.5 text-sm text-[var(--lp-ink)]" key={feature}>
+                      <Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[#1769FF]" strokeWidth={2.5} />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <span
+                  className={`mt-8 inline-flex h-11 items-center justify-center rounded-lg text-sm font-semibold transition ${
+                    selected || plan.highlighted
+                      ? 'bg-[#1769FF] text-white'
+                      : 'border border-[var(--lp-border-strong)] text-[var(--lp-ink)]'
+                  }`}
+                >
+                  {selected ? 'Offre sélectionnée' : 'Choisir cette offre'}
                 </span>
-                <p className="mt-3 text-sm font-semibold leading-5 text-[var(--lp-ink)]">{item.title}</p>
-                {item.soon ? (
-                  <p className="mt-1 text-[11px] font-medium text-[var(--lp-muted)]">Bientôt disponibles</p>
-                ) : null}
-              </motion.article>
+              </motion.button>
             )
           })}
         </div>
-      </div>
-    </section>
-  )
-}
-
-export function LandingRolesSection({ shouldReduceMotion }) {
-  const roles = [
-    { role: 'Élève', text: 'Je sais ce que je dois travailler.' },
-    { role: 'Enseignant', text: 'Je retrouve la progression de mes élèves.' },
-    { role: 'Secrétariat', text: 'Je centralise le suivi plus facilement.' },
-    { role: 'Gérant', text: 'Je garde une vision globale de mon auto-école.' },
-  ]
-
-  return (
-    <section className="scroll-mt-24 px-4 py-16 sm:px-6 lg:px-8 lg:py-20" id="comment-ca-marche">
-      <div className="mx-auto max-w-[1280px]">
-        <motion.h2
-          className="max-w-3xl text-3xl font-semibold tracking-[-0.045em] text-[var(--lp-ink)] sm:text-5xl"
-          {...reveal(shouldReduceMotion)}
-        >
-          Pensé pour toute l’auto-école.
-        </motion.h2>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {roles.map((item, index) => (
-            <motion.article
-              className="rounded-[22px] border border-[var(--lp-border)] bg-[var(--lp-card)] p-6 transition hover:-translate-y-1 hover:border-[#1769FF]/35 hover:shadow-[0_20px_40px_-28px_rgba(23,105,255,0.45)]"
-              key={item.role}
-              {...reveal(shouldReduceMotion, index * 0.06)}
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#1769FF]">{item.role}</p>
-              <p className="mt-4 text-lg font-semibold leading-7 text-[var(--lp-ink)]">{item.text}</p>
-            </motion.article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-export function LandingBenefitsSection({ shouldReduceMotion }) {
-  const items = [
-    { title: 'Apprendre', text: 'Les élèves continuent leur apprentissage entre les leçons.' },
-    { title: 'Enseigner', text: 'L’enseignant arrive en leçon avec un élève mieux préparé.' },
-    { title: 'Piloter', text: 'L’auto-école dispose d’un suivi centralisé et lisible.' },
-  ]
-
-  return (
-    <section className="scroll-mt-24 bg-[var(--lp-bg-alt)] px-4 py-16 sm:px-6 lg:px-8 lg:py-20" id="pourquoi">
-      <div className="mx-auto max-w-[1280px]">
-        <motion.div className="max-w-3xl" {...reveal(shouldReduceMotion)}>
-          <h2 className="text-3xl font-semibold tracking-[-0.045em] text-[var(--lp-ink)] sm:text-5xl lg:leading-[1.08]">
-            Transformez le suivi pédagogique de votre auto-école.
-          </h2>
-          <p className="mt-5 max-w-xl text-base leading-7 text-[var(--lp-muted)] sm:text-lg">
-            Un livret numérique pensé pour les élèves, les enseignants, le secrétariat et les gérants.
-          </p>
-          <a
-            className="mt-7 inline-flex h-12 w-full items-center justify-center rounded-[12px] bg-[#EF3340] px-7 text-sm font-semibold text-white shadow-[0_16px_32px_-14px_rgba(239,51,64,0.75)] transition hover:-translate-y-0.5 hover:bg-[#d92b38] sm:w-auto"
-            href="#demonstration"
-            onClick={() => trackDemoRequestClick('benefits')}
-          >
-            Demander une démonstration
-          </a>
-        </motion.div>
-        <div className="mt-10 grid gap-8 md:grid-cols-3">
-          {items.map((item, index) => (
-            <motion.div key={item.title} {...reveal(shouldReduceMotion, 0.06 + index * 0.06)}>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#1769FF]">{item.title}</p>
-              <p className="mt-4 text-lg leading-8 text-[var(--lp-ink)]">{item.text}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-export function LandingFinalCta({ shouldReduceMotion }) {
-  return (
-    <section className="relative overflow-hidden bg-[#07111F] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-      <div className="landing-glow-cta pointer-events-none absolute inset-0" />
-      <motion.div className="relative mx-auto max-w-3xl text-center" {...reveal(shouldReduceMotion)}>
-        <h2 className="text-3xl font-semibold tracking-[-0.045em] text-white sm:text-5xl lg:leading-[1.1]">
-          Et si vos élèves progressaient
-          <span className="mt-1 block">aussi entre les leçons ?</span>
-        </h2>
-        <p className="mx-auto mt-6 max-w-xl text-base leading-7 text-white/65">
-          Découvrez une nouvelle façon de gérer le suivi pédagogique de votre auto-école.
+        <p className="mx-auto mt-8 max-w-xl text-center text-[13px] leading-6 text-[var(--lp-muted)]">
+          Pendant la phase test, l’accès se fait sur invitation. Les abonnements seront commercialisés à partir du
+          premier trimestre 2027.
         </p>
-        <a
-          className="mt-8 inline-flex w-full items-center justify-center rounded-[12px] bg-[#EF3340] px-10 py-4 text-base font-semibold text-white shadow-[0_16px_32px_-14px_rgba(239,51,64,0.55)] transition hover:-translate-y-0.5 hover:bg-[#d92b38] sm:w-auto"
-          href="#demonstration"
-          onClick={() => trackDemoRequestClick('final_cta')}
-        >
-          Demander une démonstration
-        </a>
-      </motion.div>
+      </div>
+    </section>
+  )
+}
+
+const REASSURANCE = [
+  {
+    title: 'Accompagnement à la prise en main',
+    text: 'Pendant la phase test, chaque auto-école pilote est accompagnée pour le paramétrage et la mise en route.',
+  },
+  {
+    title: '30 jours d’essai',
+    text: 'L’essai donne accès à toutes les fonctionnalités et vous pouvez l’arrêter à tout moment.',
+  },
+  {
+    title: 'Données cloisonnées',
+    text: 'Chaque utilisateur ne voit que les données de son auto-école, selon son rôle.',
+  },
+  {
+    title: 'Sans installation',
+    text: 'Pedagogia Drive fonctionne dans le navigateur, sur ordinateur, tablette et téléphone.',
+  },
+]
+
+export function LandingReassurance({ shouldReduceMotion }) {
+  return (
+    <section className="scroll-mt-20 py-20 lg:py-24" id="confiance">
+      <div className={CONTAINER}>
+        <SectionHeader eyebrow="Avant de vous engager" title="Démarrer sans risque." />
+        <motion.dl className="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-4" {...reveal(shouldReduceMotion)}>
+          {REASSURANCE.map((item) => (
+            <div className="border-t-2 border-[#1769FF] pt-5" key={item.title}>
+              <dt className="text-[15px] font-semibold text-[var(--lp-ink)]">{item.title}</dt>
+              <dd className="mt-2 text-sm leading-6 text-[var(--lp-muted)]">{item.text}</dd>
+            </div>
+          ))}
+        </motion.dl>
+      </div>
     </section>
   )
 }
@@ -417,25 +472,22 @@ const HOME_FAQ = [
 
 export function LandingFaq() {
   return (
-    <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20" id="faq">
-      <div className="text-center">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#1769FF]">Questions fréquentes</p>
-        <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[var(--lp-ink)] sm:text-4xl">FAQ</h2>
-      </div>
-      <div className="mt-10 space-y-3">
-        {HOME_FAQ.map((item) => (
-          <details className="group rounded-[18px] border border-[var(--lp-border)] bg-[var(--lp-card)] p-5" key={item.question}>
-            <summary className="cursor-pointer list-none text-base font-semibold text-[var(--lp-ink)] marker:content-none [&::-webkit-details-marker]:hidden">
-              <span className="flex items-start justify-between gap-4">
+    <section className="scroll-mt-20 border-t border-[var(--lp-border)] py-20 lg:py-28" id="faq">
+      <div className="mx-auto grid w-full max-w-[1200px] gap-10 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 lg:px-8">
+        <SectionHeader eyebrow="Questions fréquentes" title="Vos questions sur Pedagogia Drive." />
+        <div className="divide-y divide-[var(--lp-border)] border-y border-[var(--lp-border)]">
+          {HOME_FAQ.map((item) => (
+            <details className="group py-5" key={item.question}>
+              <summary className="flex cursor-pointer list-none items-start justify-between gap-6 text-base font-semibold text-[var(--lp-ink)] marker:content-none [&::-webkit-details-marker]:hidden">
                 {item.question}
-                <span aria-hidden="true" className="mt-0.5 shrink-0 text-[#1769FF] transition group-open:rotate-45">
+                <span aria-hidden="true" className="mt-0.5 shrink-0 text-lg leading-none text-[var(--lp-muted)] transition group-open:rotate-45">
                   +
                 </span>
-              </span>
-            </summary>
-            <p className="mt-4 text-sm leading-7 text-[var(--lp-muted)]">{item.answer}</p>
-          </details>
-        ))}
+              </summary>
+              <p className="mt-3 pr-8 text-[15px] leading-7 text-[var(--lp-muted)]">{item.answer}</p>
+            </details>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -462,39 +514,95 @@ function FooterHashLink({ hash, className, children }) {
 
 export function LandingFooter({ isDark }) {
   const linkClass = 'text-sm text-[var(--lp-muted)] transition hover:text-[var(--lp-ink)]'
+  const titleClass = 'text-sm font-semibold text-[var(--lp-ink)]'
 
   return (
-    <footer className="border-t border-[var(--lp-border)] bg-[var(--lp-card)] px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-[1280px] flex-col gap-10 md:flex-row md:items-start md:justify-between">
-        <BrandLogo animated={false} idPrefix="landing-footer" variant={isDark ? 'marketing' : 'light'} />
-        <nav aria-label="Navigation footer" className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-x-7">
-          <FooterHashLink className={linkClass} hash="#fonctionnalites">
-            Fonctionnalités
-          </FooterHashLink>
-          <Link className={linkClass} to="/blog">
-            Blog
-          </Link>
-          <FooterHashLink className={linkClass} hash="#faq">
-            FAQ
-          </FooterHashLink>
-          <FooterHashLink className={linkClass} hash="#demonstration">
-            Demander une démonstration
-          </FooterHashLink>
-          <Link className={linkClass} to="/login">
-            Se connecter
-          </Link>
+    <footer className="border-t border-[var(--lp-border)] bg-[var(--lp-section)] py-14">
+      <div className={`${CONTAINER} grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]`}>
+        <div className="max-w-xs">
+          <BrandLogo animated={false} idPrefix="landing-footer" lightMark={!isDark} variant={isDark ? 'marketing' : 'light'} />
+          <p className="mt-4 text-sm leading-6 text-[var(--lp-muted)]">
+            Livret d’apprentissage numérique et outil de gestion pour les auto-écoles.
+          </p>
+        </div>
+        <nav aria-label="Produit">
+          <p className={titleClass}>Produit</p>
+          <ul className="mt-4 space-y-2.5">
+            <li>
+              <FooterHashLink className={linkClass} hash="#fonctionnalites">
+                Fonctionnalités
+              </FooterHashLink>
+            </li>
+            <li>
+              <FooterHashLink className={linkClass} hash="#tarifs">
+                Tarifs
+              </FooterHashLink>
+            </li>
+            <li>
+              <Link className={linkClass} to="/livret-numerique-auto-ecole">
+                Livret numérique
+              </Link>
+            </li>
+            <li>
+              <FooterHashLink className={linkClass} hash="#faq">
+                FAQ
+              </FooterHashLink>
+            </li>
+          </ul>
+        </nav>
+        <nav aria-label="Accès">
+          <p className={titleClass}>Accès</p>
+          <ul className="mt-4 space-y-2.5">
+            <li>
+              <Link className={linkClass} to="/login">
+                Se connecter
+              </Link>
+            </li>
+            <li>
+              <FooterHashLink className={linkClass} hash="#demonstration">
+                Demander une démonstration
+              </FooterHashLink>
+            </li>
+            <li>
+              <Link className={linkClass} to="/contact">
+                Contact
+              </Link>
+            </li>
+          </ul>
+        </nav>
+        <nav aria-label="Informations légales">
+          <p className={titleClass}>Informations légales</p>
+          <ul className="mt-4 space-y-2.5">
+            <li>
+              <Link className={linkClass} to="/mentions-legales">
+                Mentions légales
+              </Link>
+            </li>
+            <li>
+              <Link className={linkClass} to="/politique-confidentialite">
+                Politique de confidentialité
+              </Link>
+            </li>
+            <li>
+              <Link className={linkClass} to="/cgu">
+                CGU
+              </Link>
+            </li>
+            <li>
+              <Link className={linkClass} to="/cgv">
+                CGV
+              </Link>
+            </li>
+            <li>
+              <Link className={linkClass} to="/cookies">
+                Cookies
+              </Link>
+            </li>
+          </ul>
         </nav>
       </div>
-      <div className="mx-auto mt-10 flex max-w-[1280px] flex-col gap-3 border-t border-[var(--lp-border)] pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <nav aria-label="Informations légales" className="flex flex-wrap gap-x-6 gap-y-2">
-          <Link className={linkClass} to="/mentions-legales">
-            Mentions légales
-          </Link>
-          <Link className={linkClass} to="/politique-confidentialite">
-            Politique de confidentialité
-          </Link>
-        </nav>
-        <p className="text-xs text-[var(--lp-muted)]">
+      <div className={`${CONTAINER} mt-12`}>
+        <p className="border-t border-[var(--lp-border)] pt-6 text-xs text-[var(--lp-muted)]">
           © {new Date().getFullYear()} {LEGAL_ENTITY.tradeName}
         </p>
       </div>

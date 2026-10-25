@@ -3,6 +3,7 @@ import { ChevronDown } from 'lucide-react'
 import { trackBookDemo, trackDemoFormSubmit } from '../../lib/analytics'
 import { getUserFacingError } from '../../lib/userFacingError'
 import { submitDemoRequest } from '../../services/demoRequests'
+import { LANDING_OFFERS, landingOfferById } from './landing/landingOffers'
 import {
   isValidSiret,
   sanitizePhoneInput,
@@ -33,14 +34,19 @@ const emptyForm = {
   message: '',
 }
 
-export default function DemoRequestForm({ id = 'demonstration', isDark = true }) {
+export default function DemoRequestForm({
+  id = 'demonstration',
+  isDark = true,
+  selectedOfferId = null,
+  onSelectOffer,
+}) {
   const inputClass = isDark
-    ? 'mt-2 min-h-12 w-full rounded-2xl border border-white/15 bg-white/[0.06] px-4 text-sm font-medium text-white outline-none placeholder:text-slate-500 focus:border-blue-400/50 focus:ring-2 focus:ring-blue-500/20'
-    : 'mt-2 min-h-12 w-full rounded-2xl border border-[#07111F]/12 bg-white px-4 text-sm font-medium text-[#07111F] outline-none placeholder:text-[#5B6B80]/70 focus:border-[#1769FF] focus:ring-2 focus:ring-[#1769FF]/15'
+    ? 'mt-2 min-h-12 w-full rounded-lg border border-white/15 bg-white/[0.06] px-4 text-sm font-medium text-white outline-none placeholder:text-slate-500 focus:border-blue-400/50 focus:ring-2 focus:ring-blue-500/20'
+    : 'mt-2 min-h-12 w-full rounded-lg border border-[#07111F]/12 bg-white px-4 text-sm font-medium text-[#07111F] outline-none placeholder:text-[#5B6B80]/70 focus:border-[#1769FF] focus:ring-2 focus:ring-[#1769FF]/15'
   const selectClass = isDark
-    ? 'min-h-12 w-full appearance-none rounded-2xl border border-white/15 bg-white/[0.06] py-3 pl-4 pr-12 text-sm font-medium text-white outline-none focus:border-blue-400/50 focus:ring-2 focus:ring-blue-500/20'
-    : 'min-h-12 w-full appearance-none rounded-2xl border border-[#07111F]/12 bg-white py-3 pl-4 pr-12 text-sm font-medium text-[#07111F] outline-none focus:border-[#1769FF] focus:ring-2 focus:ring-[#1769FF]/15'
-  const labelClass = `block text-sm font-bold ${isDark ? 'text-slate-200' : 'text-slate-700'}`
+    ? 'min-h-12 w-full appearance-none rounded-lg border border-white/15 bg-white/[0.06] py-3 pl-4 pr-12 text-sm font-medium text-white outline-none focus:border-blue-400/50 focus:ring-2 focus:ring-blue-500/20'
+    : 'min-h-12 w-full appearance-none rounded-lg border border-[#07111F]/12 bg-white py-3 pl-4 pr-12 text-sm font-medium text-[#07111F] outline-none focus:border-[#1769FF] focus:ring-2 focus:ring-[#1769FF]/15'
+  const labelClass = `block text-sm font-semibold ${isDark ? 'text-slate-200' : 'text-slate-700'}`
   const errorClass = isDark ? 'mt-1 text-xs font-semibold text-rose-300' : 'mt-1 text-xs font-semibold text-rose-600'
   const hintClass = isDark ? 'ml-1 text-xs font-medium text-slate-500' : 'ml-1 text-xs font-medium text-slate-400'
 
@@ -62,6 +68,12 @@ export default function DemoRequestForm({ id = 'demonstration', isDark = true })
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+
+    if (!selectedOfferId) {
+      setFieldErrors({ offer: 'Choisissez une offre avant d’envoyer vos coordonnées.' })
+      setFeedback({ type: 'error', message: 'Choisissez une offre avant d’envoyer vos coordonnées.' })
+      return
+    }
 
     const { ok, errors, message } = validateOrgProfileForm({
       orgName: form.schoolName,
@@ -94,7 +106,12 @@ export default function DemoRequestForm({ id = 'demonstration', isDark = true })
 
     setSubmitting(true)
     setFeedback(null)
-    const { error } = await submitDemoRequest(form)
+    const offer = landingOfferById(selectedOfferId)
+    const { error } = await submitDemoRequest({
+      ...form,
+      offerId: offer?.id,
+      offerName: offer ? `${offer.name} — ${offer.price} ${offer.period}` : null,
+    })
     setSubmitting(false)
 
     if (error) {
@@ -119,23 +136,62 @@ export default function DemoRequestForm({ id = 'demonstration', isDark = true })
       <div
         className={
           isDark
-            ? 'rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-blue-950/20 sm:p-8'
-            : 'rounded-[1.75rem] border border-[#07111F]/[0.08] bg-white p-6 shadow-[0_24px_60px_-36px_rgba(7,17,31,0.28)] sm:p-8'
+            ? 'mx-auto max-w-3xl rounded-xl border border-white/10 bg-[#0b1630] p-6 sm:p-10'
+            : 'mx-auto max-w-3xl rounded-xl border border-[#07111F]/10 bg-white p-6 sm:p-10'
         }
       >
         <div className="mx-auto max-w-2xl text-center">
-          <p className={`text-xs font-black uppercase tracking-[0.16em] ${isDark ? 'text-blue-300' : 'text-blue-600'}`}>
+          <p className={`text-[13px] font-semibold ${isDark ? 'text-[#6ea6ff]' : 'text-[#1769FF]'}`}>
             Accès sur invitation
           </p>
-          <h2 className={`mt-3 text-2xl font-black sm:text-3xl ${isDark ? 'text-white' : 'text-slate-900'}`}>
+          <h2 className={`mt-3 text-[1.75rem] font-semibold tracking-[-0.03em] sm:text-[2.25rem] ${isDark ? 'text-white' : 'text-slate-900'}`}>
             Demander une démonstration
           </h2>
           <p className={`mt-3 text-sm leading-7 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-            Renseignez le profil de votre auto-école : nous vous présenterons Pedagogia Drive et les conditions d&apos;accès à la bêta privée.
+            L’offre choisie est indiquée ci-dessous. Renseignez ensuite les coordonnées de l’employeur.
           </p>
         </div>
 
         <form className="mx-auto mt-8 grid max-w-2xl gap-4 sm:grid-cols-2" noValidate onSubmit={handleSubmit}>
+          <fieldset className="sm:col-span-2">
+            <legend className={labelClass}>Offre *</legend>
+            <div className="mt-2 grid gap-2 sm:grid-cols-3">
+              {LANDING_OFFERS.map((offer) => {
+                const selected = selectedOfferId === offer.id
+                return (
+                  <label
+                    className={`flex cursor-pointer flex-col rounded-xl border px-3 py-3 text-left transition ${
+                      selected
+                        ? 'border-[#1769FF] bg-[#1769FF]/10 ring-2 ring-[#1769FF]'
+                        : isDark
+                          ? 'border-white/15 bg-white/[0.04] hover:border-white/30'
+                          : 'border-[#07111F]/12 bg-white hover:border-[#1769FF]/40'
+                    }`}
+                    key={offer.id}
+                  >
+                    <input
+                      checked={selected}
+                      className="sr-only"
+                      name="offer"
+                      onChange={() => onSelectOffer?.(offer.id)}
+                      type="radio"
+                      value={offer.id}
+                    />
+                    <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-[#0b1526]'}`}>{offer.name}</span>
+                    <span className={`mt-1 text-xs font-semibold ${isDark ? 'text-slate-300' : 'text-[#5b6b80]'}`}>
+                      {offer.price} · {offer.period}
+                    </span>
+                  </label>
+                )
+              })}
+            </div>
+            {fieldErrors.offer && <p className={errorClass}>{fieldErrors.offer}</p>}
+          </fieldset>
+
+          <p className={`sm:col-span-2 text-sm font-bold ${isDark ? 'text-white' : 'text-[#0b1526]'}`}>
+            Coordonnées de l’employeur
+          </p>
+
           <label className={`${labelClass} sm:col-span-2`}>
             Nom de l&apos;auto-école *
             <input
@@ -149,7 +205,7 @@ export default function DemoRequestForm({ id = 'demonstration', isDark = true })
           </label>
 
           <label className={`${labelClass} sm:col-span-2`}>
-            Nom du gérant *
+            Nom de l&apos;employeur *
             <input
               className={inputClass}
               onChange={(event) => update('contactName', event.target.value)}
@@ -302,7 +358,7 @@ export default function DemoRequestForm({ id = 'demonstration', isDark = true })
 
           {feedback && (
             <p
-              className={`rounded-2xl px-4 py-3 text-sm font-semibold sm:col-span-2 ${
+              className={`rounded-lg px-4 py-3 text-sm font-semibold sm:col-span-2 ${
                 feedback.type === 'error'
                   ? isDark
                     ? 'border border-rose-400/30 bg-rose-500/10 text-rose-100'
@@ -318,9 +374,7 @@ export default function DemoRequestForm({ id = 'demonstration', isDark = true })
 
           <div className="flex flex-col items-center gap-2 sm:col-span-2">
             <button
-              className={`inline-flex w-full items-center justify-center rounded-full px-7 py-4 text-sm font-semibold text-white shadow-xl transition hover:-translate-y-0.5 disabled:opacity-60 sm:w-auto ${
-                isDark ? 'bg-gradient-to-r from-cyan-400 to-blue-600' : 'bg-[#1769FF] hover:bg-[#1258db]'
-              }`}
+              className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-[#1769FF] px-6 text-sm font-semibold text-white transition hover:bg-[#145fe8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1769FF] disabled:opacity-60 sm:w-auto"
               disabled={submitting || (form.siret.length > 0 && !siretOk)}
               type="submit"
             >

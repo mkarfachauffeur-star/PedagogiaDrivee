@@ -39,9 +39,6 @@ export default function PublicFooter({ isDark = true, compact = false }) {
               {item.label}
             </Link>
           ))}
-          <Link className={linkClass} to="/blog">
-            Blog
-          </Link>
         </nav>
       </div>
       <div className={`mx-auto mt-8 max-w-7xl border-t pt-6 text-center ${borderClass}`}>
