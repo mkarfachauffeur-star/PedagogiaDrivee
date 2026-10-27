@@ -814,3 +814,17 @@ export async function fetchStudentQuotas() {
     return { quotas: new Map(), error }
   }
 }
+
+/** E-mail de test « alerte 40 élèves » d'une auto-école, envoyé uniquement au Super Admin connecté. */
+export async function sendStudentQuotaTestEmail(organizationId) {
+  try {
+    const { data, error } = await supabase.functions.invoke('student-quota-test', {
+      body: { organization_id: organizationId },
+    })
+    const payload = (await readFunctionPayload(error, data)) || data || {}
+    if (error || payload.error) throw new Error(payload.error || error?.message || 'Envoi impossible.')
+    return { result: payload, error: null }
+  } catch (error) {
+    return { result: null, error }
+  }
+}

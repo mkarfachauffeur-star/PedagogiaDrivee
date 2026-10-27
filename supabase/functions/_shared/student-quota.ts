@@ -2,6 +2,7 @@
 // Même règle que src/lib/studentQuota.js (côté application).
 import { emailLog, escapeHtml, normalizeResendKey } from './email-utils.ts'
 import { loginUrl } from './app-url.ts'
+import { emailHighlight, emailParagraph, renderEmail } from './email-layout.ts'
 
 // deno-lint-ignore no-explicit-any
 type Admin = any
@@ -104,55 +105,94 @@ export async function checkStudentQuota(admin: Admin, orgId: string, sub: Subscr
   return { ok: true as const }
 }
 
-/** Après une inscription : e-mail au gérant dès 40 élèves sur l'année d'abonnement, une seule fois par année. */
+type QuotaEmailInput = {
+  orgName: string
+  used: number
+  max: number
+  planName: string
+  period: { start: Date; end: Date; isTrial: boolean }
+  contact: string
+}
+
+/** Objet et contenu de l'e-mail d'alerte quota (40 élèves). */
+export function buildQuotaAlertEmail({ orgName, used, max, planName, period, contact }: QuotaEmailInput) {
+  const periodLabel = period.isTrial ? 'la période d’essai' : 'l’année d’abonnement'
+  const after = period.isTrial ? 'jusqu’au début de votre abonnement' : 'jusqu’à la prochaine année d’abonnement'
+  const remaining = Math.max(0, max - used)
+  const subject = `${orgName} : ${used} élèves inscrits sur ${max}`
+  const html = renderEmail({
+    title: 'Votre limite d’élèves approche',
+    preheader: `${used} élèves sur ${max} inclus dans votre formule ${planName}. Passez à Premium pour continuer sans interruption.`,
+    bodyHtml: [
+      emailParagraph('Bonjour,'),
+      emailParagraph(
+        `<strong>${escapeHtml(orgName)}</strong> a inscrit <strong>${used} élèves</strong> sur les ${max} inclus dans la formule ${escapeHtml(planName)}, pour ${periodLabel} du ${formatDate(period.start)} au ${formatDate(lastDay(period.end))}.`,
+      ),
+      emailHighlight(`${used} / ${max}`, `élèves inscrits · encore ${remaining} possible${remaining > 1 ? 's' : ''}`, '#B45309'),
+      emailParagraph(
+        `À ${max} élèves, l’inscription de nouveaux élèves sera suspendue ${after}.`,
+      ),
+      emailParagraph(
+        `Pour continuer à inscrire des élèves sans interruption, passez à la formule <strong>Premium</strong> (élèves illimités) : il suffit de nous écrire à <a href="mailto:${contact}" style="color:#1769FF;">${contact}</a>, nous nous occupons du changement.`,
+      ),
+    ].join('\n'),
+    cta: { label: 'Contacter Pedagogia Drive', url: `mailto:${contact}?subject=${encodeURIComponent(`Passage à Premium — ${orgName}`)}` },
+    footerNote: `Vous recevez cet e-mail car ${escapeHtml(orgName)} utilise la formule ${escapeHtml(planName)}. <a href="${loginUrl()}" style="color:#5B6B80;">Accéder à votre espace</a>`,
+  })
+  return { subject, html }
+}
+
+/** Envoie un e-mail via Resend. */
+export async function sendEmail(to: string[], subject: string, html: string, replyTo?: string) {
+  const apiKey = normalizeResendKey(Deno.env.get('RESEND_API_KEY'))
+  const from = Deno.env.get('RESEND_FROM') || 'Pedagogia Drive <noreply@pedagogia-drive.fr>'
+  if (!apiKey) return { sent: false, reason: 'missing_resend_api_key' }
+  if (!to.length) return { sent: false, reason: 'no_recipient' }
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from, to, subject, html, ...(replyTo ? { reply_to: replyTo } : {}) }),
+  })
+  if (!res.ok) return { sent: false, reason: await res.text() }
+  return { sent: true, reason: null }
+}
+
+export function platformContactEmail() {
+  return Deno.env.get('PLATFORM_CONTACT_EMAIL') || 'contact@pedagogia-drive.fr'
+}
+
+/** État du quota d'une auto-école sur sa période en cours. */
+export async function quotaState(admin: Admin, orgId: string) {
+  const sub = await loadSubscription(admin, orgId)
+  const max = sub?.plan?.max_students
+  const period = quotaPeriod(sub)
+  const used = period ? await countStudentsInPeriod(admin, orgId, period.start) : 0
+  return { sub, max: max ?? null, period, used }
+}
+
+/** Après une inscription : e-mail au gérant dès 40 élèves sur la période, une seule fois par période. */
 export async function notifyQuotaThreshold(admin: Admin, orgId: string, orgName: string) {
   try {
-    const sub = await loadSubscription(admin, orgId)
-    const max = sub?.plan?.max_students
-    if (!sub || max === null || max === undefined) return
-    const period = quotaPeriod(sub)
-    if (!period) return
+    const { sub, max, period, used } = await quotaState(admin, orgId)
+    if (!sub || max === null || !period) return
     const threshold = Math.min(QUOTA_ALERT_THRESHOLD, max)
-    const used = await countStudentsInPeriod(admin, orgId, period.start)
     const periodKey = period.start.toISOString().slice(0, 10)
     if (used < threshold || sub.metadata?.quota_alert_sent_for === periodKey) return
 
     const { data: managers } = await admin
       .from('profiles')
-      .select('email, full_name')
+      .select('email')
       .eq('organization_id', orgId)
       .eq('role', 'manager')
       .eq('is_active', true)
     const { data: org } = await admin.from('organizations').select('email').eq('id', orgId).maybeSingle()
-    const recipients = [...new Set([...(managers || []).map((m: { email?: string }) => m.email), org?.email].filter(Boolean))]
+    const recipients = [...new Set([...(managers || []).map((m: { email?: string }) => m.email), org?.email].filter(Boolean))] as string[]
 
-    const apiKey = normalizeResendKey(Deno.env.get('RESEND_API_KEY'))
-    const from = Deno.env.get('RESEND_FROM') || 'Pedagogia Drive <noreply@pedagogia-drive.fr>'
-    const contact = Deno.env.get('PLATFORM_CONTACT_EMAIL') || 'contact@pedagogia-drive.fr'
-    if (!apiKey || recipients.length === 0) {
-      emailLog('student-quota', 'warn', 'Alerte quota non envoyée', { orgId, used, recipients: recipients.length })
-      return
-    }
-
-    const planName = escapeHtml(sub.plan?.name || 'Starter')
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from,
-        to: recipients,
-        reply_to: contact,
-        subject: `Pedagogia Drive : ${used} élèves inscrits sur ${max} cette année`,
-        html: `<p>Bonjour,</p>
-<p>${escapeHtml(orgName)} compte <strong>${used} élèves inscrits sur ${max}</strong> inclus dans la formule ${planName}, pour ${period.isTrial ? 'la période d\'essai' : 'l\'année d\'abonnement'} du ${formatDate(period.start)} au ${formatDate(lastDay(period.end))}.</p>
-<p>Une fois la limite de ${max} élèves atteinte, il ne sera plus possible d'inscrire de nouvel élève ${period.isTrial ? 'avant le début de votre abonnement' : 'avant la prochaine année d\'abonnement'}.</p>
-<p>Pour continuer à inscrire des élèves sans interruption, contactez-nous à <a href="mailto:${contact}">${contact}</a> afin de passer à la formule Premium (élèves illimités).</p>
-<p><a href="${loginUrl()}">Accéder à Pedagogia Drive</a></p>
-<p>L'équipe Pedagogia Drive</p>`,
-      }),
-    })
-    if (!res.ok) {
-      emailLog('student-quota', 'error', 'Resend a refusé l’alerte quota', { status: res.status, body: await res.text() })
+    const contact = platformContactEmail()
+    const { subject, html } = buildQuotaAlertEmail({ orgName, used, max, planName: sub.plan?.name || 'Starter', period, contact })
+    const result = await sendEmail(recipients, subject, html, contact)
+    if (!result.sent) {
+      emailLog('student-quota', 'warn', 'Alerte quota non envoyée', { orgId, used, reason: result.reason })
       return
     }
 
