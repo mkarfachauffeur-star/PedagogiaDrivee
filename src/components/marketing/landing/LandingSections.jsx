@@ -67,7 +67,7 @@ export function LandingHero({ shouldReduceMotion }) {
             Le livret d’apprentissage numérique de votre auto-école.
           </h1>
           <p className="mt-5 text-lg leading-8 text-[var(--lp-muted)]">
-            Compétences REMC, planning, QCU et conduite accompagnée, réunis dans un seul outil.
+            Les 4 compétences du REMC, le planning, les QCU et la gestion de l’auto-école, dans un seul outil.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a className={BTN_PRIMARY} href="#demonstration" onClick={() => trackDemoRequestClick('hero')}>
@@ -134,14 +134,14 @@ function FeatureText({ eyebrow, title, text, items, shouldReduceMotion, delay = 
 }
 
 const MORE_FEATURES = [
-  'Planning des leçons',
   'Évaluation de départ',
   'Messagerie interne',
-  'Documents et contrats',
-  'Paiements',
   'Pré-inscriptions',
+  'Examens et résultats',
   'Véhicules et simulateur',
-  'Examens et exports',
+  'Exports réglementaires',
+  'Conduite accompagnée (AAC)',
+  'Statistiques',
 ]
 
 export function LandingFeatures({ shouldReduceMotion }) {
@@ -154,7 +154,7 @@ export function LandingFeatures({ shouldReduceMotion }) {
 
         <div className="mt-16">
           <FeatureRow
-            caption="QCU sur les voyants du tableau de bord, contenu réel de la compétence 1."
+            caption="Exemple de QCU : les voyants du tableau de bord."
             eyebrow="QCU"
             items={['Correction immédiate après chaque réponse', 'Seuil de réussite fixé à 80 %', 'Accessible sur téléphone, tablette et ordinateur']}
             reverse
@@ -173,21 +173,21 @@ export function LandingFeatures({ shouldReduceMotion }) {
           <FeatureText
             eyebrow="Livret REMC"
             items={[
-              'Statut de chaque objectif : non abordé, en cours, validé',
-              'Commentaires de l’enseignant après chaque leçon',
-              'Historique des leçons consultable par l’élève',
+              'Les 4 compétences et tous leurs objectifs',
+              'Statut et commentaires de l’enseignant à chaque leçon',
+              'Progression consultable par l’élève à tout moment',
             ]}
             shouldReduceMotion={shouldReduceMotion}
-            text="Les objectifs du REMC, suivis leçon après leçon. Compétence 1 disponible, compétences 2 à 4 en cours de rédaction."
+            text="Les 4 compétences du REMC, objectif par objectif, mises à jour par l’enseignant après chaque leçon."
             title="Un livret d’apprentissage à jour après chaque leçon"
           />
           <FeatureText
             delay={0.06}
-            eyebrow="Conduite accompagnée (AAC)"
-            items={['Temps de conduite cumulé', 'Kilomètres parcourus', 'Progression vers les 3 000 km']}
+            eyebrow="Gestion de l’auto-école"
+            items={['Planning des leçons et des enseignants', 'Contrats, paiements et documents', 'Tableau de bord et chiffre d’affaires']}
             shouldReduceMotion={shouldReduceMotion}
-            text="Durée et distance de chaque trajet, additionnées jusqu’aux 3 000 km obligatoires."
-            title="Le compteur des 3 000 km de l’AAC"
+            text="Toute l’administration au même endroit : moins de saisie en double, plus de temps pour les élèves."
+            title="Toute l’auto-école pilotée depuis un seul outil"
           />
         </div>
 

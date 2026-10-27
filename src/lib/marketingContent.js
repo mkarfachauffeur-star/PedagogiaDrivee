@@ -32,7 +32,7 @@ export const LANDING_FEATURES = [
   },
   {
     title: 'Livret pédagogique numérique',
-    description: 'Livret numérique auto-école : leçons et QCM de la compétence 1, progression consultable entre les séances.',
+    description: 'Livret numérique auto-école : les 4 compétences du REMC, leçons et QCM, progression consultable entre les séances.',
     icon: BookOpen,
   },
   {
@@ -52,7 +52,7 @@ export const LANDING_FEATURES = [
   },
   {
     title: 'Suivi REMC',
-    description: 'La compétence 1 est opérationnelle. Les compétences 2, 3 et 4 sont prévues ; leur contenu pédagogique n\'est pas encore complet.',
+    description: 'Les 4 compétences du REMC, objectif par objectif, avec le statut et les commentaires de l\'enseignant.',
     icon: Target,
   },
   {
@@ -90,7 +90,7 @@ export const LANDING_WHY = [
   },
   {
     title: 'Conforme REMC',
-    description: 'Le suivi pédagogique s\'appuie sur le référentiel officiel. La compétence 1 est opérationnelle ; les compétences 2 à 4 seront complétées.',
+    description: 'Le suivi pédagogique reprend les 4 compétences du référentiel officiel.',
   },
   {
     title: 'Accessible ordinateur, tablette et mobile',
@@ -102,7 +102,7 @@ export const LANDING_WHY = [
   },
   {
     title: 'Suivi pédagogique simplifié',
-    description: 'Visualisez la progression réelle de chaque élève sur la compétence 1 ; les compétences 2 à 4 arriveront ensuite.',
+    description: 'Visualisez la progression réelle de chaque élève, compétence par compétence.',
   },
   {
     title: 'Déploiement rapide',
@@ -114,7 +114,7 @@ export const MARKETING_FAQ = [
   {
     question: 'Qu\'est-ce qu\'un livret numérique auto-école ?',
     answer:
-      'Un livret numérique auto-école est la version digitale du livret pédagogique d\'apprentissage : il centralise le suivi REMC (compétence 1 opérationnelle ; compétences 2 à 4 encore incomplètes), les QCM de la compétence 1 et la progression de chaque élève, accessible en ligne par les moniteurs et les candidats au permis.',
+      'Un livret numérique auto-école est la version digitale du livret pédagogique d\'apprentissage : il centralise le suivi des 4 compétences du REMC, les QCM et la progression de chaque élève, accessible en ligne par les moniteurs et les candidats au permis.',
   },
   {
     question: 'Pedagogia Drive remplace-t-il le livret papier ?',
@@ -124,7 +124,7 @@ export const MARKETING_FAQ = [
   {
     question: 'Le livret pédagogique d\'apprentissage est-il conforme au REMC ?',
     answer:
-      'Oui. Le livret pédagogique d\'apprentissage auto-école Pedagogia Drive structure le parcours autour des compétences officielles. La compétence 1 est opérationnelle ; les compétences 2, 3 et 4 ne sont pas encore disponibles comme contenu complet.',
+      'Oui. Le livret pédagogique d\'apprentissage auto-école Pedagogia Drive structure le parcours autour des compétences officielles. Les 4 compétences du REMC sont disponibles, objectif par objectif.',
   },
   {
     question: 'Comment fonctionne l\'essai gratuit ?',
@@ -149,7 +149,7 @@ export const MARKETING_FAQ = [
   {
     question: 'Les élèves disposent-ils d\'un espace personnel ?',
     answer:
-      'Oui. Chaque élève accède à son livret numérique, aux QCM de la compétence 1, à sa progression et à sa messagerie depuis un espace sécurisé.',
+      'Oui. Chaque élève accède à son livret numérique, aux QCM, à sa progression et à sa messagerie depuis un espace sécurisé.',
   },
   {
     question: 'Puis-je arrêter à tout moment ?',
@@ -169,7 +169,7 @@ export const MARKETING_FAQ = [
   {
     question: 'Le logiciel est-il conforme au REMC ?',
     answer:
-      'Oui. Pedagogia Drive structure le parcours autour du REMC. La compétence 1 est opérationnelle dans le livret ; les compétences 2 à 4 sont prévues mais leur contenu n\'est pas encore complet.',
+      'Oui. Pedagogia Drive structure le parcours autour du REMC. Les 4 compétences du référentiel sont suivies dans le livret, objectif par objectif.',
   },
 ]
 
@@ -188,7 +188,7 @@ export const LIVRET_SEO_SECTIONS = [
     id: 'definition',
     title: 'Qu\'est-ce qu\'un livret numérique auto-école ?',
     paragraphs: [
-      'C\'est la version digitale du livret de suivi utilisé en formation à la conduite : progression REMC (compétence 1 opérationnelle), évaluations des moniteurs, QCM de la compétence 1 et avancement de chaque élève, dans un espace en ligne sécurisé.',
+      'C\'est la version digitale du livret de suivi utilisé en formation à la conduite : progression sur les 4 compétences du REMC, évaluations des moniteurs, QCM et avancement de chaque élève, dans un espace en ligne sécurisé.',
       'Contrairement au livret papier, il se met à jour en temps réel, se partage entre enseignants et reste consultable par l\'élève entre deux leçons — sur ordinateur, tablette ou smartphone.',
     ],
   },
@@ -196,7 +196,7 @@ export const LIVRET_SEO_SECTIONS = [
     id: 'remc',
     title: 'Conforme au référentiel REMC',
     paragraphs: [
-      'Pedagogia Drive s\'appuie sur le Référentiel pour l\'Éducation à une Mobilité Citoyenne (REMC). La compétence 1 est opérationnelle ; les compétences 2 à 4 seront complétées. Les moniteurs suivent la progression depuis la voiture ou le bureau.',
+      'Pedagogia Drive s\'appuie sur le Référentiel pour l\'Éducation à une Mobilité Citoyenne (REMC). Les 4 compétences sont suivies objectif par objectif. Les moniteurs suivent la progression depuis la voiture ou le bureau.',
       'Chaque séance est tracée : dates, commentaires et niveaux d\'acquisition — une preuve utile pour les contrôles, les examens et la relation de confiance avec les familles.',
     ],
   },
@@ -204,8 +204,8 @@ export const LIVRET_SEO_SECTIONS = [
     id: 'fonctionnalites',
     title: 'Tout le suivi au même endroit',
     bullets: [
-      'Arborescence REMC : compétence 1 opérationnelle ; compétences 2 à 4 prévues (contenu pédagogique encore incomplet)',
-      'QCM et QCU pédagogiques liés aux leçons de la compétence 1',
+      'Arborescence REMC complète : les 4 compétences et leurs objectifs',
+      'QCM et QCU pédagogiques liés aux leçons',
       'Espace personnel élève : progression, lexique, messages',
       'Comptes moniteurs et secrétariat synchronisés',
       'Aucune installation : 100 % navigateur web',
@@ -235,7 +235,7 @@ export const LIVRET_SEO_FAQ = [
   {
     question: 'Les élèves peuvent-ils consulter leur livret ?',
     answer:
-      'Oui. Chaque élève dispose d\'un espace sécurisé pour suivre sa compétence 1, réviser les QCM associés et échanger avec son auto-école.',
+      'Oui. Chaque élève dispose d\'un espace sécurisé pour suivre sa progression sur les 4 compétences, réviser les QCM et échanger avec son auto-école.',
   },
 ]
 
