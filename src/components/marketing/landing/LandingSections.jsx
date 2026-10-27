@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import BrandLogo from '../../BrandLogo'
+import AppStoreBadge from '../AppStoreBadge'
 import { LEGAL_ENTITY } from '../../../config/legal'
 import { trackDemoRequestClick } from '../../../lib/analytics'
 import { MARKETING_FAQ } from '../../../lib/marketingContent'
@@ -459,7 +460,7 @@ const HOME_FAQ = [
   {
     question: 'Dois-je installer un logiciel ?',
     answer:
-      'Non. Pedagogia Drive fonctionne déjà entièrement dans le navigateur web, sans installation. Les applications iOS et Android, à télécharger sur smartphone et tablette, seront bientôt disponibles.',
+      'Non. Pedagogia Drive fonctionne entièrement dans le navigateur web, sans installation. L’application iPhone est disponible sur l’App Store ; l’application Android arrive bientôt.',
   },
 ]
 
@@ -517,6 +518,9 @@ export function LandingFooter({ isDark }) {
           <p className="mt-4 text-sm leading-6 text-[var(--lp-muted)]">
             Livret d’apprentissage numérique et outil de gestion pour les auto-écoles.
           </p>
+          <p className="mt-6 text-sm font-semibold text-[var(--lp-ink)]">Application iPhone</p>
+          <p className="mt-1 text-sm text-[var(--lp-muted)]">Retrouvez votre espace sur votre téléphone.</p>
+          <AppStoreBadge className="mt-3" />
         </div>
         <nav aria-label="Produit">
           <p className={titleClass}>Produit</p>
