@@ -9,7 +9,6 @@ import {
   LandingFooter,
   LandingHero,
   LandingPricing,
-  LandingReassurance,
   LandingRoles,
 } from '../components/marketing/landing/LandingSections'
 import PageSeo from '../components/seo/PageSeo'
@@ -59,7 +58,6 @@ export default function ProfileSelection() {
           selectedOfferId={selectedOfferId}
           shouldReduceMotion={shouldReduceMotion}
         />
-        <LandingReassurance shouldReduceMotion={shouldReduceMotion} />
         <LandingFaq />
 
         <section className="border-t border-[var(--lp-border)] bg-[var(--lp-section)] px-4 py-20 sm:px-6 lg:px-8 lg:py-28" id="contact">

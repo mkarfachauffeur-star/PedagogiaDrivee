@@ -67,8 +67,7 @@ export function LandingHero({ shouldReduceMotion }) {
             Le livret d’apprentissage numérique de votre auto-école.
           </h1>
           <p className="mt-5 text-lg leading-8 text-[var(--lp-muted)]">
-            Compétences REMC, planning, QCU, suivi des kilomètres en conduite accompagnée et dossiers élèves. Chacun dans l’auto-école retrouve
-            ce qui le concerne, au même endroit.
+            Compétences REMC, planning, QCU et conduite accompagnée, réunis dans un seul outil.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a className={BTN_PRIMARY} href="#demonstration" onClick={() => trackDemoRequestClick('hero')}>
@@ -78,8 +77,8 @@ export function LandingHero({ shouldReduceMotion }) {
               Voir les tarifs
             </a>
           </div>
-          <ul className="mt-8 grid gap-2 text-sm text-[var(--lp-muted)] sm:grid-cols-2">
-            {['Application web, sans installation', 'Essai gratuit de 30 jours', 'Élèves, enseignants, secrétariat, gérant', 'Accès sur invitation pendant la phase test'].map(
+          <ul className="mt-8 flex flex-col gap-2 text-sm text-[var(--lp-muted)] sm:flex-row sm:flex-wrap sm:gap-x-6">
+            {['Sans installation', 'Essai gratuit de 30 jours', 'Accès sur invitation pendant la phase test'].map(
               (item) => (
                 <li className="flex items-start gap-2" key={item}>
                   <Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[#1769FF]" strokeWidth={2.5} />
@@ -135,14 +134,14 @@ function FeatureText({ eyebrow, title, text, items, shouldReduceMotion, delay = 
 }
 
 const MORE_FEATURES = [
-  { title: 'Planning des leçons', text: 'Planning global, planning de chaque enseignant et de chaque élève.' },
-  { title: 'Évaluation de départ', text: 'Réalisée avant les premières leçons, conservée dans le dossier.' },
-  { title: 'Messagerie interne', text: 'Échanges entre élèves, enseignants et secrétariat.' },
-  { title: 'Documents et contrats', text: 'Contrat de formation, charte d’engagement et pièces du dossier.' },
-  { title: 'Paiements', text: 'Formules, encaissements et reste à payer par élève.' },
-  { title: 'Pré-inscriptions', text: 'Suivi des demandes reçues avant l’inscription.' },
-  { title: 'Véhicules et simulateur', text: 'Suivi de la flotte et des séances sur simulateur.' },
-  { title: 'Examens et exports', text: 'Résultats du permis et exports réglementaires.' },
+  'Planning des leçons',
+  'Évaluation de départ',
+  'Messagerie interne',
+  'Documents et contrats',
+  'Paiements',
+  'Pré-inscriptions',
+  'Véhicules et simulateur',
+  'Examens et exports',
 ]
 
 export function LandingFeatures({ shouldReduceMotion }) {
@@ -150,7 +149,7 @@ export function LandingFeatures({ shouldReduceMotion }) {
     <section className="scroll-mt-20 py-20 lg:py-28" id="fonctionnalites">
       <div className={CONTAINER}>
         <SectionHeader eyebrow="Fonctionnalités" title="Le suivi pédagogique, de la première leçon à l’examen.">
-          Pedagogia Drive remplace le livret papier et réunit les outils dont l’auto-école se sert chaque jour.
+          Le livret papier et les outils du quotidien, au même endroit.
         </SectionHeader>
 
         <div className="mt-16">
@@ -160,7 +159,7 @@ export function LandingFeatures({ shouldReduceMotion }) {
             items={['Correction immédiate après chaque réponse', 'Seuil de réussite fixé à 80 %', 'Accessible sur téléphone, tablette et ordinateur']}
             reverse
             shouldReduceMotion={shouldReduceMotion}
-            text="Entre deux leçons, l’élève révise les organes du véhicule ou les voyants du tableau de bord. Il arrive en voiture avec les bases déjà acquises."
+            text="Entre deux leçons, l’élève révise et arrive en voiture avec les bases déjà acquises."
             title="Des révisions entre les leçons de conduite"
             visual={
               <PhoneFrame>
@@ -179,33 +178,32 @@ export function LandingFeatures({ shouldReduceMotion }) {
               'Historique des leçons consultable par l’élève',
             ]}
             shouldReduceMotion={shouldReduceMotion}
-            text="Le livret reprend les objectifs du référentiel REMC. La compétence 1 est disponible aujourd’hui ; le contenu des compétences 2 à 4 est en cours de rédaction."
+            text="Les objectifs du REMC, suivis leçon après leçon. Compétence 1 disponible, compétences 2 à 4 en cours de rédaction."
             title="Un livret d’apprentissage à jour après chaque leçon"
           />
           <FeatureText
             delay={0.06}
             eyebrow="Conduite accompagnée (AAC)"
-            items={[
-              'Durée et distance de chaque trajet',
-              'Cumul du temps de conduite et des kilomètres',
-              'Progression vers les 3 000 km obligatoires',
-            ]}
+            items={['Temps de conduite cumulé', 'Kilomètres parcourus', 'Progression vers les 3 000 km']}
             shouldReduceMotion={shouldReduceMotion}
-            text="Chaque trajet de conduite accompagnée est enregistré avec sa durée et sa distance. Pedagogia Drive additionne le temps et les kilomètres pour suivre l’objectif des 3 000 km obligatoires."
+            text="Durée et distance de chaque trajet, additionnées jusqu’aux 3 000 km obligatoires."
             title="Le compteur des 3 000 km de l’AAC"
           />
         </div>
 
-        <div className="mt-24 border-t border-[var(--lp-border)] pt-12">
+        <div className="mt-20 border-t border-[var(--lp-border)] pt-10">
           <h3 className="text-lg font-semibold text-[var(--lp-ink)]">Également inclus</h3>
-          <dl className="mt-6 grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="mt-5 flex flex-wrap gap-2">
             {MORE_FEATURES.map((item) => (
-              <div key={item.title}>
-                <dt className="text-[15px] font-semibold text-[var(--lp-ink)]">{item.title}</dt>
-                <dd className="mt-1 text-sm leading-6 text-[var(--lp-muted)]">{item.text}</dd>
-              </div>
+              <li
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--lp-border)] bg-[var(--lp-card)] px-3.5 py-1.5 text-sm font-medium text-[var(--lp-ink)]"
+                key={item}
+              >
+                <Check aria-hidden="true" className="h-3.5 w-3.5 text-[#1769FF]" strokeWidth={2.5} />
+                {item}
+              </li>
             ))}
-          </dl>
+          </ul>
         </div>
       </div>
     </section>
@@ -236,7 +234,7 @@ export function LandingRoles({ shouldReduceMotion }) {
     <section className="scroll-mt-20 border-y border-[var(--lp-border)] bg-[var(--lp-section)] py-20 lg:py-28" id="pour-qui">
       <div className={CONTAINER}>
         <SectionHeader eyebrow="Pour toute l’auto-école" title="Un espace adapté à chaque rôle.">
-          Chaque utilisateur se connecte avec son propre compte et ne voit que ce qui relève de son rôle.
+          Chacun a son compte et ne voit que ce qui le concerne.
         </SectionHeader>
 
         <motion.div
@@ -263,29 +261,19 @@ export function LandingRoles({ shouldReduceMotion }) {
 
 const COMPARISON = [
   {
-    topic: 'Suivi des compétences',
+    topic: 'Compétences',
     paper: 'Cases cochées à la main, souvent après coup.',
-    digital: 'Statut de chaque objectif REMC mis à jour par l’enseignant après la leçon.',
+    digital: 'Mises à jour par l’enseignant après la leçon.',
   },
   {
     topic: 'Accès au livret',
     paper: 'Un seul exemplaire, dans la voiture ou au bureau.',
-    digital: 'Consultable par l’élève et par l’équipe pédagogique.',
-  },
-  {
-    topic: 'Révisions',
-    paper: 'Fiches à part, sans retour sur les erreurs.',
-    digital: 'QCU avec correction immédiate entre les leçons.',
-  },
-  {
-    topic: 'Historique',
-    paper: 'Difficile à reconstituer en cas de changement d’enseignant.',
-    digital: 'Leçons, commentaires et progression conservés dans le dossier.',
+    digital: 'Consultable par l’élève et l’équipe.',
   },
   {
     topic: 'Administratif',
-    paper: 'Planning, paiements et documents saisis séparément.',
-    digital: 'Planning, contrat et paiements rattachés au même dossier élève.',
+    paper: 'Planning, paiements et documents séparés.',
+    digital: 'Tout est rattaché au dossier de l’élève.',
   },
 ]
 
@@ -294,7 +282,7 @@ export function LandingComparison({ shouldReduceMotion }) {
     <section className="scroll-mt-20 py-20 lg:py-28" id="benefices">
       <div className={CONTAINER}>
         <SectionHeader eyebrow="Ce qui change" title="Du livret papier au livret numérique.">
-          Moins de saisie en double, un suivi lisible pour l’élève comme pour l’équipe.
+          Moins de saisie en double, un suivi lisible pour tous.
         </SectionHeader>
 
         <motion.div className="mt-12 overflow-hidden rounded-xl border border-[var(--lp-border)]" {...reveal(shouldReduceMotion)}>
@@ -335,8 +323,7 @@ export function LandingPricing({ shouldReduceMotion, selectedOfferId = null, onS
     <section className="scroll-mt-20 border-y border-[var(--lp-border)] bg-[var(--lp-section)] py-20 lg:py-28" id="tarifs">
       <div className={CONTAINER}>
         <SectionHeader center eyebrow="Tarifs" title="Des offres simples, sans option cachée.">
-          Toutes les fonctionnalités sont incluses dans chaque offre. Choisissez une offre, puis renseignez les
-          coordonnées de l’auto-école.
+          Toutes les fonctionnalités dans chaque offre.
         </SectionHeader>
 
         <div className="mx-auto mt-14 grid max-w-[1040px] items-stretch gap-5 lg:grid-cols-3 lg:gap-6">
@@ -402,46 +389,9 @@ export function LandingPricing({ shouldReduceMotion, selectedOfferId = null, onS
           })}
         </div>
         <p className="mx-auto mt-8 max-w-xl text-center text-[13px] leading-6 text-[var(--lp-muted)]">
-          Pendant la phase test, l’accès se fait sur invitation. Les abonnements seront commercialisés à partir du
-          premier trimestre 2027.
+          Accompagnement à la prise en main, données séparées par auto-école. Pendant la phase test, l’accès se fait
+          sur invitation ; les abonnements seront commercialisés à partir du premier trimestre 2027.
         </p>
-      </div>
-    </section>
-  )
-}
-
-const REASSURANCE = [
-  {
-    title: 'Accompagnement à la prise en main',
-    text: 'Pendant la phase test, chaque auto-école pilote est accompagnée pour le paramétrage et la mise en route.',
-  },
-  {
-    title: '30 jours d’essai',
-    text: 'L’essai donne accès à toutes les fonctionnalités et vous pouvez l’arrêter à tout moment.',
-  },
-  {
-    title: 'Données cloisonnées',
-    text: 'Chaque utilisateur ne voit que les données de son auto-école, selon son rôle.',
-  },
-  {
-    title: 'Sans installation',
-    text: 'Pedagogia Drive fonctionne dans le navigateur, sur ordinateur, tablette et téléphone.',
-  },
-]
-
-export function LandingReassurance({ shouldReduceMotion }) {
-  return (
-    <section className="scroll-mt-20 py-20 lg:py-24" id="confiance">
-      <div className={CONTAINER}>
-        <SectionHeader eyebrow="Avant de vous engager" title="Démarrer sans risque." />
-        <motion.dl className="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-4" {...reveal(shouldReduceMotion)}>
-          {REASSURANCE.map((item) => (
-            <div className="border-t-2 border-[#1769FF] pt-5" key={item.title}>
-              <dt className="text-[15px] font-semibold text-[var(--lp-ink)]">{item.title}</dt>
-              <dd className="mt-2 text-sm leading-6 text-[var(--lp-muted)]">{item.text}</dd>
-            </div>
-          ))}
-        </motion.dl>
       </div>
     </section>
   )
