@@ -77,7 +77,7 @@ export async function fetchSubscription() {
     const { data, error } = await supabase
       .from('subscriptions')
       .select(`
-        id, status, trial_ends_at, current_period_start, current_period_end,
+        id, status, trial_ends_at, current_period_start, current_period_end, created_at, metadata,
         plan:plan_id(id, code, name, max_students, trial_days)
       `)
       .maybeSingle()

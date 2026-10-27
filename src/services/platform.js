@@ -17,6 +17,7 @@ import {
   resolveSubscriptionStatus,
 } from '../lib/platformPlans'
 import { isTestOrganization } from '../lib/platformTestData'
+import { quotaLevel, quotaPeriod } from '../lib/studentQuota'
 
 export { formatPlatformEur }
 
@@ -479,10 +480,13 @@ export async function updateSubscriptionBySuperAdmin(subscriptionId, payload) {
     if (payload.currentPeriodEnd !== undefined) patch.current_period_end = payload.currentPeriodEnd || null
     if (payload.status) patch.status = payload.status
 
-    if (payload.paymentMethod !== undefined || payload.isTest !== undefined) {
+    const planChanged = Boolean(payload.planCode && payload.planCode !== current.plan?.code)
+    if (payload.paymentMethod !== undefined || payload.isTest !== undefined || planChanged) {
       patch.metadata = { ...(current.metadata || {}) }
       if (payload.paymentMethod !== undefined) patch.metadata.payment_method = payload.paymentMethod || null
       if (payload.isTest !== undefined) patch.metadata.is_test = Boolean(payload.isTest)
+      // Nouvelle formule : nouvelle année d'abonnement pour le quota d'élèves.
+      if (planChanged) patch.metadata.plan_started_at = new Date().toISOString()
     }
 
     const { data, error } = await supabase
@@ -774,5 +778,39 @@ export async function getOrganizationOverview(organizationId) {
     }
   } catch (error) {
     return { organization: null, profiles: [], invoices: [], error }
+  }
+}
+
+/**
+ * Élèves inscrits sur l'année d'abonnement en cours, par auto-école, avec la limite de la formule.
+ * Retourne une Map : organization_id → { used, max, level, period, planName }.
+ */
+export async function fetchStudentQuotas() {
+  try {
+    const [subsRes, studentsRes] = await Promise.all([
+      supabase
+        .from('subscriptions')
+        .select('organization_id, trial_ends_at, current_period_start, created_at, metadata, plan:plan_id(name, code, max_students)')
+        .order('created_at', { ascending: false }),
+      supabase.from('students').select('organization_id, created_at'),
+    ])
+    if (subsRes.error) throw subsRes.error
+    if (studentsRes.error) throw studentsRes.error
+
+    const quotas = new Map()
+    ;(subsRes.data || []).forEach((sub) => {
+      if (quotas.has(sub.organization_id)) return
+      const period = quotaPeriod(sub)
+      const used = (studentsRes.data || []).filter(
+        (student) =>
+          student.organization_id === sub.organization_id
+          && (!period || new Date(student.created_at) >= period.start),
+      ).length
+      const max = sub.plan?.max_students ?? null
+      quotas.set(sub.organization_id, { used, max, level: quotaLevel(used, max), period, planName: sub.plan?.name || null })
+    })
+    return { quotas, error: null }
+  } catch (error) {
+    return { quotas: new Map(), error }
   }
 }

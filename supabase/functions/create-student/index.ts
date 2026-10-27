@@ -2,6 +2,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { loginUrl } from '../_shared/app-url.ts'
 import { emailLog, escapeHtml } from '../_shared/email-utils.ts'
+import { checkStudentQuota, loadSubscription, notifyQuotaThreshold } from '../_shared/student-quota.ts'
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -66,11 +67,7 @@ async function canCreateStudent(admin: ReturnType<typeof createClient>, orgId: s
   const { data: org } = await admin.from('organizations').select('status, name').eq('id', orgId).single()
   if (!org || ['suspended', 'cancelled'].includes(org.status)) return { ok: false, reason: 'Organisation en lecture seule.' }
 
-  const { data: sub } = await admin
-    .from('subscriptions')
-    .select('status, trial_ends_at, plan:plan_id(max_students)')
-    .eq('organization_id', orgId)
-    .single()
+  const sub = await loadSubscription(admin, orgId)
 
   if (sub?.status && ['suspended', 'expired', 'cancelled'].includes(sub.status)) {
     return { ok: false, reason: 'Abonnement inactif.' }
@@ -79,13 +76,9 @@ async function canCreateStudent(admin: ReturnType<typeof createClient>, orgId: s
     return { ok: false, reason: 'Essai gratuit expiré.' }
   }
 
-  const maxStudents = (sub?.plan as { max_students?: number })?.max_students
-  if (maxStudents != null) {
-    const { count } = await admin.from('students').select('id', { count: 'exact', head: true }).eq('organization_id', orgId)
-    if ((count || 0) >= maxStudents) {
-      return { ok: false, reason: `Limite de ${maxStudents} élèves atteinte pendant l'essai.` }
-    }
-  }
+  // Formule limitée (Starter) : quota compté par année d'abonnement.
+  const quota = await checkStudentQuota(admin, orgId, sub)
+  if (!quota.ok) return { ok: false, reason: quota.reason }
   return { ok: true, orgName: org.name || 'votre auto-école' }
 }
 
@@ -340,6 +333,8 @@ Deno.serve(async (req) => {
         is_referent: true,
       })
     }
+
+    await notifyQuotaThreshold(admin, orgId, gate.orgName || 'votre auto-école')
 
     let emailSent = false
     let emailError: string | null = null

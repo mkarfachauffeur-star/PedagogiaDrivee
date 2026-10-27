@@ -452,6 +452,11 @@ const HOME_FAQ = [
   MARKETING_FAQ[1],
   MARKETING_FAQ[2],
   {
+    question: 'Comment sont comptés les 50 élèves de la formule Starter ?',
+    answer:
+      'Sur l’année d’abonnement : elle commence à la fin de l’essai gratuit, quand l’abonnement payant démarre, dure 12 mois, puis le compteur repart à zéro à chaque date anniversaire. Ce sont les élèves inscrits pendant cette période qui comptent ; pendant l’essai, la limite de 50 s’applique à la période d’essai. Vous êtes prévenu par e-mail à 40 élèves ; à 50, l’inscription de nouveaux élèves est suspendue jusqu’à la fin de la période, sauf passage à la formule Premium (élèves illimités) sur simple demande.',
+  },
+  {
     question: 'Comment fonctionne la démonstration ?',
     answer:
       'Renseignez le profil de votre auto-école : nous vous présenterons Pedagogia Drive et les conditions d’accès à la bêta privée.',

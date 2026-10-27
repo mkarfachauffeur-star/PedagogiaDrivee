@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Notice from '../../components/ui/Notice'
 import OnlineDot from '../../components/ui/OnlineDot'
+import StudentQuota from '../../components/platform/StudentQuota'
 import { useOnlinePresence } from '../../hooks/useOnlinePresence'
 import PageHeader from '../../components/ui/PageHeader'
 import StatusBadge from '../../components/ui/StatusBadge'
@@ -10,7 +11,7 @@ import { TestDataToggle } from '../../components/ui/TableTools'
 import { useConfirm } from '../../components/ui/useConfirm'
 import { formatDate } from '../../lib/format'
 import { isTestOrganization } from '../../lib/platformTestData'
-import { createOrganization, deleteOrganization, listAllOrganizations } from '../../services/platform'
+import { createOrganization, deleteOrganization, fetchStudentQuotas, listAllOrganizations } from '../../services/platform'
 
 const STATUS = {
   trial: { label: 'Essai', tone: 'info' },
@@ -27,13 +28,15 @@ export default function PlatformOrganizationsPage() {
   const [feedback, setFeedback] = useState(null)
   const [listFeedback, setListFeedback] = useState(null)
   const [showTest, setShowTest] = useState(false)
+  const [quotas, setQuotas] = useState(() => new Map())
   const [confirm, confirmDialog] = useConfirm()
   const { byOrganization } = useOnlinePresence()
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const { organizations: rows } = await listAllOrganizations()
+    const [{ organizations: rows }, quotaRes] = await Promise.all([listAllOrganizations(), fetchStudentQuotas()])
     setOrganizations(rows)
+    setQuotas(quotaRes.quotas)
     setLoading(false)
   }, [])
 
@@ -143,13 +146,14 @@ export default function PlatformOrganizationsPage() {
       )}
 
       <div className={ui.tableWrap}>
-        <table className={`${ui.table} min-w-[820px]`}>
+        <table className={`${ui.table} min-w-[960px]`}>
           <thead>
             <tr>
               <th className={ui.th}>Auto-école</th>
               <th className={ui.th}>E-mail</th>
               <th className={ui.th}>Statut</th>
               <th className={ui.th}>Offre</th>
+              <th className={ui.th}>Élèves sur l’année</th>
               <th className={ui.th}>Fin de l’essai</th>
               <th className={`${ui.th} text-right`}>Actions</th>
             </tr>
@@ -157,13 +161,13 @@ export default function PlatformOrganizationsPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td className={ui.tdEmpty} colSpan={6}>
+                <td className={ui.tdEmpty} colSpan={7}>
                   Chargement…
                 </td>
               </tr>
             ) : visible.length === 0 ? (
               <tr>
-                <td className={ui.tdEmpty} colSpan={6}>
+                <td className={ui.tdEmpty} colSpan={7}>
                   Aucune auto-école.
                 </td>
               </tr>
@@ -193,6 +197,9 @@ export default function PlatformOrganizationsPage() {
                       <StatusBadge tone={status.tone}>{status.label}</StatusBadge>
                     </td>
                     <td className={ui.td}>{sub?.plan?.name || '—'}</td>
+                    <td className={ui.td}>
+                      <StudentQuota quota={quotas.get(org.id)} />
+                    </td>
                     <td className={`${ui.tdMuted} tabular-nums`}>{sub?.trial_ends_at ? formatDate(sub.trial_ends_at) : '—'}</td>
                     <td className={ui.td}>
                       <div className="flex justify-end gap-2 whitespace-nowrap">

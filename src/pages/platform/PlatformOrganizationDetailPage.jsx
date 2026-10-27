@@ -5,13 +5,14 @@ import Notice from '../../components/ui/Notice'
 import OnlineDot from '../../components/ui/OnlineDot'
 import PageHeader from '../../components/ui/PageHeader'
 import StatusBadge from '../../components/ui/StatusBadge'
+import StudentQuota from '../../components/platform/StudentQuota'
 import { ui } from '../../components/ui/styles'
 import { useOnlinePresence } from '../../hooks/useOnlinePresence'
 import { ACTION_LABELS } from '../../lib/auditLabels'
 import { formatDate, formatDateTime } from '../../lib/format'
 import { formatPlatformEur, resolveSubscriptionStatus } from '../../lib/platformPlans'
 import { isTestOrganization } from '../../lib/platformTestData'
-import { getOrganizationOverview, listAuditLogs } from '../../services/platform'
+import { fetchStudentQuotas, getOrganizationOverview, listAuditLogs } from '../../services/platform'
 import { roleLabels } from '../../utils/authSession'
 
 const ORG_STATUS = {
@@ -56,15 +57,17 @@ export default function PlatformOrganizationDetailPage() {
   const { organizationId } = useParams()
   const [data, setData] = useState(null)
   const [logs, setLogs] = useState([])
+  const [quota, setQuota] = useState(null)
   const { online } = useOnlinePresence()
 
   useEffect(() => {
     let active = true
-    Promise.all([getOrganizationOverview(organizationId), listAuditLogs({ organizationId, limit: 20 })]).then(
-      ([overview, audit]) => {
+    Promise.all([getOrganizationOverview(organizationId), listAuditLogs({ organizationId, limit: 20 }), fetchStudentQuotas()]).then(
+      ([overview, audit, quotaRes]) => {
         if (!active) return
         setData(overview)
         setLogs(audit.logs)
+        setQuota(quotaRes.quotas.get(organizationId) || null)
       },
     )
     return () => {
@@ -146,6 +149,12 @@ export default function PlatformOrganizationDetailPage() {
         >
           <dl className="divide-y divide-slate-100 px-5 py-1">
             <Field label="Offre">{offer}</Field>
+            <div className="flex justify-between gap-4 py-2.5 text-sm">
+              <dt className="text-slate-500">Élèves sur la période</dt>
+              <dd className="text-right">
+                <StudentQuota quota={quota} showPeriod />
+              </dd>
+            </div>
             <Field label="Offre demandée">{PLAN_NAMES[sub?.metadata?.requested_plan]}</Field>
             <Field label="Prix">{sub?.plan?.price_cents ? `${formatPlatformEur(sub.plan.price_cents, { fromCents: true })} par mois` : null}</Field>
             <Field label="Fin de l’essai">{sub?.trial_ends_at ? formatDate(sub.trial_ends_at) : null}</Field>
