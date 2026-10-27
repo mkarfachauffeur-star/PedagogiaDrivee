@@ -1,4 +1,3 @@
-import { Lock } from 'lucide-react'
 import DashboardWarningIcon from '../../DashboardWarningIcon'
 
 /*
@@ -10,9 +9,9 @@ import DashboardWarningIcon from '../../DashboardWarningIcon'
 const STUDENT_NAV = ['Tableau de bord', 'Planning', 'Évaluation de départ', 'Compétences', 'Historique des leçons', 'Documents', 'Messagerie']
 
 const REMC = [
-  { code: 'C1', title: 'Maîtriser le véhicule', progress: 64, open: true },
-  { code: 'C2', title: 'Appréhender la route', progress: 0 },
-  { code: 'C3', title: 'Circuler en conditions difficiles', progress: 0 },
+  { code: 'C1', title: 'Maîtriser le véhicule', progress: 100 },
+  { code: 'C2', title: 'Appréhender la route', progress: 58 },
+  { code: 'C3', title: 'Circuler en conditions difficiles', progress: 12 },
   { code: 'C4', title: 'Conduite autonome', progress: 0 },
 ]
 
@@ -113,7 +112,7 @@ export function StudentDashboardPreview() {
             <p className="text-[15px] font-semibold tracking-tight text-slate-950">Tableau de bord</p>
             <p className="text-[11px] text-slate-500">Camille D. · Livret numérique Permis B</p>
           </div>
-          <Badge>C1 en cours</Badge>
+          <Badge>C2 en cours</Badge>
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2">
@@ -139,16 +138,14 @@ export function StudentDashboardPreview() {
             {REMC.map((item) => (
               <div key={item.code}>
                 <div className="mb-1 flex items-center justify-between gap-2">
-                  <p className={`min-w-0 truncate text-[11px] ${item.open ? 'font-medium text-slate-800' : 'text-slate-400'}`}>
+                  <p className={`min-w-0 truncate text-[11px] ${item.progress > 0 ? 'font-medium text-slate-800' : 'text-slate-500'}`}>
                     <span className="font-semibold">{item.code}</span> · {item.title}
                   </p>
-                  {item.open ? (
-                    <span className="text-[10px] font-semibold text-blue-700">{item.progress} %</span>
-                  ) : (
-                    <Lock aria-hidden="true" className="h-3 w-3 text-slate-300" />
-                  )}
+                  <span className={`text-[10px] font-semibold ${item.progress === 100 ? 'text-emerald-600' : 'text-blue-700'}`}>
+                    {item.progress === 100 ? 'Validée' : `${item.progress} %`}
+                  </span>
                 </div>
-                <ProgressBar tone={item.open ? 'bg-[#1769FF]' : 'bg-slate-200'} value={item.open ? item.progress : 0} />
+                <ProgressBar tone={item.progress === 100 ? 'bg-emerald-500' : 'bg-[#1769FF]'} value={item.progress} />
               </div>
             ))}
           </div>
@@ -158,7 +155,7 @@ export function StudentDashboardPreview() {
   )
 }
 
-/** QCU voyants, contenu réel de la compétence 1. */
+/** QCU sur les voyants du tableau de bord, repris des leçons de l’app. */
 export function QcuPreview() {
   const letters = ['A', 'B', 'C', 'D']
   return (
