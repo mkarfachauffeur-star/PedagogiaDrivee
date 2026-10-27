@@ -18,6 +18,9 @@ verify_jwt = true
 [functions.create-student]
 verify_jwt = true
 
+[functions.student-quota-test]
+verify_jwt = true
+
 [functions.manage-user]
 verify_jwt = true
 

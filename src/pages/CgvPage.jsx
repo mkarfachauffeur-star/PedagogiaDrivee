@@ -40,14 +40,22 @@ export default function CgvPage() {
       <LegalSection id="starter" title="Starter">
         <LegalParagraph>
           L&apos;abonnement Starter s&apos;adresse aux auto-écoles souhaitant digitaliser leur gestion avec un
-          volume d&apos;élèves adapté. Le détail des limites (nombre d&apos;élèves, fonctionnalités) est précisé
-          dans le catalogue ci-dessus.
+          volume d&apos;élèves adapté. Il comprend toutes les fonctionnalités et jusqu&apos;à 50 élèves inscrits par
+          année d&apos;abonnement.
+        </LegalParagraph>
+        <LegalParagraph>
+          L&apos;année d&apos;abonnement commence à la fin de l&apos;essai gratuit, à la date de début de l&apos;abonnement
+          payant. Elle court sur 12 mois puis se renouvelle à chaque date anniversaire ; le compteur d&apos;élèves repart
+          alors à zéro. Sont comptés les élèves inscrits dans Pedagogia Drive pendant cette période. Pendant l&apos;essai
+          gratuit, la même limite de 50 élèves s&apos;applique à la période d&apos;essai. À 40 élèves, l&apos;auto-école est
+          prévenue par e-mail. À 50 élèves, l&apos;inscription de nouveaux élèves est suspendue jusqu&apos;à la fin de la
+          période en cours, sauf passage à l&apos;abonnement Premium, sur simple demande auprès de Pedagogia Drive.
         </LegalParagraph>
       </LegalSection>
 
       <LegalSection id="premium" title="Premium">
         <LegalParagraph>
-          L&apos;abonnement Premium offre une capacité étendue et un accompagnement renforcé. Les
+          L&apos;abonnement Premium offre un nombre d&apos;élèves illimité et un accompagnement renforcé. Les
           caractéristiques exactes sont celles publiées dans le catalogue au moment de la souscription.
         </LegalParagraph>
       </LegalSection>

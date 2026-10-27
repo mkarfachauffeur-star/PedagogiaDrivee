@@ -5,13 +5,16 @@ import Notice from '../../components/ui/Notice'
 import OnlineDot from '../../components/ui/OnlineDot'
 import PageHeader from '../../components/ui/PageHeader'
 import StatusBadge from '../../components/ui/StatusBadge'
+import StudentQuota from '../../components/platform/StudentQuota'
 import { ui } from '../../components/ui/styles'
 import { useOnlinePresence } from '../../hooks/useOnlinePresence'
 import { ACTION_LABELS } from '../../lib/auditLabels'
 import { formatDate, formatDateTime } from '../../lib/format'
 import { formatPlatformEur, resolveSubscriptionStatus } from '../../lib/platformPlans'
 import { isTestOrganization } from '../../lib/platformTestData'
-import { getOrganizationOverview, listAuditLogs } from '../../services/platform'
+import { fetchStudentQuotas, getOrganizationOverview, listAuditLogs, sendStudentQuotaTestEmail } from '../../services/platform'
+import { useAuth } from '../../context/AuthContext'
+import { useConfirm } from '../../components/ui/useConfirm'
 import { roleLabels } from '../../utils/authSession'
 
 const ORG_STATUS = {
@@ -56,15 +59,39 @@ export default function PlatformOrganizationDetailPage() {
   const { organizationId } = useParams()
   const [data, setData] = useState(null)
   const [logs, setLogs] = useState([])
+  const [quota, setQuota] = useState(null)
+  const [testFeedback, setTestFeedback] = useState(null)
+  const [testing, setTesting] = useState(false)
+  const [confirm, confirmDialog] = useConfirm()
+  const { user } = useAuth()
+
+  const sendTestEmail = async (orgName) => {
+    const ok = await confirm({
+      title: 'Envoyer un e-mail de test ?',
+      description: `L’e-mail d’alerte « 40 élèves » de ${orgName}, avec ses vrais chiffres, sera envoyé uniquement à votre adresse (${user?.email || 'Super Admin'}). Rien n’est modifié et l’auto-école ne reçoit rien.`,
+      confirmLabel: 'Envoyer le test',
+    })
+    if (!ok) return
+    setTesting(true)
+    setTestFeedback(null)
+    const { result, error } = await sendStudentQuotaTestEmail(organizationId)
+    setTesting(false)
+    setTestFeedback(
+      error
+        ? { tone: 'danger', message: error.message || 'Envoi impossible.' }
+        : { tone: 'success', message: `E-mail de test envoyé à ${result.to}.` },
+    )
+  }
   const { online } = useOnlinePresence()
 
   useEffect(() => {
     let active = true
-    Promise.all([getOrganizationOverview(organizationId), listAuditLogs({ organizationId, limit: 20 })]).then(
-      ([overview, audit]) => {
+    Promise.all([getOrganizationOverview(organizationId), listAuditLogs({ organizationId, limit: 20 }), fetchStudentQuotas()]).then(
+      ([overview, audit, quotaRes]) => {
         if (!active) return
         setData(overview)
         setLogs(audit.logs)
+        setQuota(quotaRes.quotas.get(organizationId) || null)
       },
     )
     return () => {
@@ -113,6 +140,8 @@ export default function PlatformOrganizationDetailPage() {
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
       <PageHeader actions={back} description={`Créée le ${formatDate(org.created_at)}`} title={org.name} />
 
+      {testFeedback && <Notice tone={testFeedback.tone}>{testFeedback.message}</Notice>}
+
       <div className="-mt-2 flex flex-wrap items-center gap-2">
         <StatusBadge tone={status.tone}>{status.label}</StatusBadge>
         {isTestOrganization(org, sub) ? <StatusBadge>Compte de test</StatusBadge> : null}
@@ -146,6 +175,17 @@ export default function PlatformOrganizationDetailPage() {
         >
           <dl className="divide-y divide-slate-100 px-5 py-1">
             <Field label="Offre">{offer}</Field>
+            <div className="flex justify-between gap-4 py-2.5 text-sm">
+              <dt className="text-slate-500">Élèves sur la période</dt>
+              <dd className="text-right">
+                <StudentQuota quota={quota} showPeriod />
+                {quota?.max !== null && quota ? (
+                  <button className={`${ui.btnSmall} mt-2`} disabled={testing} onClick={() => sendTestEmail(org.name)} type="button">
+                    {testing ? 'Envoi…' : 'Tester l’e-mail d’alerte'}
+                  </button>
+                ) : null}
+              </dd>
+            </div>
             <Field label="Offre demandée">{PLAN_NAMES[sub?.metadata?.requested_plan]}</Field>
             <Field label="Prix">{sub?.plan?.price_cents ? `${formatPlatformEur(sub.plan.price_cents, { fromCents: true })} par mois` : null}</Field>
             <Field label="Fin de l’essai">{sub?.trial_ends_at ? formatDate(sub.trial_ends_at) : null}</Field>
@@ -244,6 +284,7 @@ export default function PlatformOrganizationDetailPage() {
           )}
         </Panel>
       </div>
+      {confirmDialog}
     </div>
   )
 }

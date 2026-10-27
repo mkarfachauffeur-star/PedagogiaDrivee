@@ -2,12 +2,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import Notice from '../../components/ui/Notice'
 import PageHeader from '../../components/ui/PageHeader'
 import StatusBadge from '../../components/ui/StatusBadge'
+import StudentQuota from '../../components/platform/StudentQuota'
 import { ui } from '../../components/ui/styles'
 import { TestDataToggle } from '../../components/ui/TableTools'
 import { useConfirm } from '../../components/ui/useConfirm'
 import { formatPlatformDate, formatPlatformEur } from '../../lib/platformPlans'
 import {
   cancelSubscription,
+  fetchStudentQuotas,
   listAllSubscriptions,
   listPlatformPlans,
   reactivateSubscription,
@@ -39,12 +41,14 @@ export default function PlatformSubscriptionsPage() {
   const [editing, setEditing] = useState(null)
   const [feedback, setFeedback] = useState(null)
   const [showTest, setShowTest] = useState(false)
+  const [quotas, setQuotas] = useState(() => new Map())
   const [confirm, confirmDialog] = useConfirm()
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const [subsRes, plansRes] = await Promise.all([listAllSubscriptions(), listPlatformPlans()])
+    const [subsRes, plansRes, quotaRes] = await Promise.all([listAllSubscriptions(), listPlatformPlans(), fetchStudentQuotas()])
     setSubscriptions(subsRes.subscriptions)
+    setQuotas(quotaRes.quotas)
     setPlans(plansRes.plans.filter((p) => p.code !== 'trial'))
     setLoading(false)
   }, [])
@@ -130,12 +134,13 @@ export default function PlatformSubscriptionsPage() {
       )}
 
       <div className={ui.tableWrap}>
-        <table className={`${ui.table} min-w-[1240px]`}>
+        <table className={`${ui.table} min-w-[1380px]`}>
           <thead>
             <tr>
               <th className={ui.th}>Auto-école</th>
               <th className={ui.th}>Gérant</th>
               <th className={ui.th}>Offre</th>
+              <th className={ui.th}>Élèves sur l’année</th>
               <th className={ui.th}>Début</th>
               <th className={ui.th}>Fin d’essai ou de période</th>
               <th className={ui.th}>Prochaine facture</th>
@@ -147,13 +152,13 @@ export default function PlatformSubscriptionsPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td className={ui.tdEmpty} colSpan={9}>
+                <td className={ui.tdEmpty} colSpan={10}>
                   Chargement…
                 </td>
               </tr>
             ) : visible.length === 0 ? (
               <tr>
-                <td className={ui.tdEmpty} colSpan={9}>
+                <td className={ui.tdEmpty} colSpan={10}>
                   Aucun abonnement.
                 </td>
               </tr>
@@ -177,6 +182,9 @@ export default function PlatformSubscriptionsPage() {
                     {row.offer === 'Essai' && PLAN_NAMES[row.requestedPlan] ? (
                       <p className="mt-1 text-xs text-slate-500">Demandée : {PLAN_NAMES[row.requestedPlan]}</p>
                     ) : null}
+                  </td>
+                  <td className={ui.td}>
+                    <StudentQuota quota={quotas.get(row.organization?.id)} />
                   </td>
                   <td className={`${ui.tdMuted} tabular-nums`}>{formatPlatformDate(row.trialStartAt)}</td>
                   <td className={`${ui.tdMuted} tabular-nums`}>{formatPlatformDate(row.trialEndAt || row.current_period_end)}</td>
