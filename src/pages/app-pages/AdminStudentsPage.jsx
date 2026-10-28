@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ChevronDown } from 'lucide-react'
 import { CallButton, StudentAvatar } from '../../components/teacher/TeacherStudentViews'
 import { useSecretaryDuties } from '../../hooks/useSecretaryDuties'
 import { ui } from '../../components/ui/styles'
@@ -302,26 +303,22 @@ export default function AdminStudentsPage() {
               const assessmentStyles = getAssessmentStatusStyles(assessmentStatus)
               return (
               <article key={student.id} className="min-w-0 rounded-lg border border-slate-200 bg-white">
-                <div className="flex items-center gap-3 p-3">
-                  <StudentAvatar student={student} />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-slate-900">{formatPersonName(student)}</p>
-                    <p className="truncate text-xs text-slate-500">{formationLabel}</p>
-                  </div>
-                  <CallButton phone={student.phone} />
+                <div className="flex items-center gap-2 p-2">
                   <button
                     aria-expanded={openStudentId === student.id}
-                    className={`${ui.btnSmall} shrink-0 whitespace-nowrap`}
+                    aria-label={`${openStudentId === student.id ? 'Refermer' : 'Ouvrir'} la fiche de ${formatPersonName(student)}`}
+                    className="flex min-w-0 flex-1 items-center gap-3 rounded-lg p-1 text-left transition hover:bg-slate-50"
                     onClick={() => setOpenStudentId((current) => (current === student.id ? null : student.id))}
                     type="button"
                   >
-                    {openStudentId === student.id ? 'Fermer' : (
-                      <>
-                        <span className="sm:hidden">Fiche</span>
-                        <span className="hidden sm:inline">Ouvrir la fiche</span>
-                      </>
-                    )}
+                    <StudentAvatar student={student} />
+                    <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-900">{formatPersonName(student)}</span>
+                    <ChevronDown
+                      aria-hidden="true"
+                      className={`h-4 w-4 shrink-0 text-slate-400 transition-transform ${openStudentId === student.id ? 'rotate-180' : ''}`}
+                    />
                   </button>
+                  <CallButton phone={student.phone} />
                 </div>
                 {openStudentId === student.id ? (
                   <div className="border-t border-slate-100 p-4">
