@@ -53,7 +53,7 @@ function validateExportDates(dateFrom, dateTo) {
 function ExportDateInput({ label, value, onChange, min, max }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
       <input
         className="pd-input mt-2 w-full"
         max={max}
@@ -86,13 +86,13 @@ function RegulatoryExportCard({
   const xlsxBusy = busyKey === `${config.id}-xlsx`
 
   return (
-    <article className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
+    <article className="rounded-xl border border-slate-200 bg-white p-5">
       <div className="flex items-start gap-4">
-        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-cyan-50 text-cyan-700">
+        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-blue-50 text-blue-700">
           <Icon className="h-5 w-5" />
         </span>
         <div className="min-w-0 flex-1">
-          <h3 className="text-lg font-extrabold text-slate-950">{config.title}</h3>
+          <h3 className="text-lg font-semibold text-slate-950">{config.title}</h3>
           <p className="mt-1 text-sm leading-6 text-slate-500">{config.description}</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <button
@@ -183,8 +183,7 @@ export default function ManagerExportsPage() {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
       <PageHero
-        eyebrow="Gérant"
-        subtitle="Fichiers CSV et Excel conformes aux contrôles administratifs (DDTM, préfecture) : une ligne d'en-tête, séparateur point-virgule, UTF-8."
+        subtitle="Fichiers CSV et Excel prêts pour les contrôles administratifs (DDTM, préfecture)."
         title="Exports réglementaires"
       />
 
@@ -196,10 +195,10 @@ export default function ManagerExportsPage() {
         />
       ) : (
         <>
-          <section className="overflow-hidden rounded-[1.5rem] border-2 border-slate-300 bg-white shadow-[var(--shadow-soft)]">
-            <div className="border-b-2 border-slate-200 bg-gradient-to-r from-navy-950 to-cyan-900 px-5 py-4 text-white md:px-6">
-              <h2 className="text-lg font-extrabold">Période d&apos;export</h2>
-              <p className="mt-1 text-sm text-cyan-50/85">
+          <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <div className="border-b border-slate-200 px-5 py-4 md:px-6">
+              <h2 className="text-base font-semibold text-slate-900">Période d&apos;export</h2>
+              <p className="mt-1 text-sm text-slate-500">
                 Les registres élèves, leçons, paiements et contrats sont filtrés sur la période choisie.
               </p>
             </div>
@@ -247,9 +246,9 @@ export default function ManagerExportsPage() {
             ))}
           </section>
 
-          <section className="overflow-hidden rounded-[1.5rem] border-2 border-slate-300 bg-white shadow-[var(--shadow-soft)]">
-            <div className="border-b-2 border-slate-200 px-5 py-4 md:px-6">
-              <h2 className="text-lg font-extrabold text-slate-950">Dossier PDF réglementaire</h2>
+          <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <div className="border-b border-slate-200 px-5 py-4 md:px-6">
+              <h2 className="text-lg font-semibold text-slate-950">Dossier PDF réglementaire</h2>
               <p className="mt-1 text-sm text-slate-500">
                 Synthèse imprimable : identité de l&apos;auto-école, SIRET, agrément, tableaux élèves, enseignants, véhicules, paiements et signature numérique.
               </p>

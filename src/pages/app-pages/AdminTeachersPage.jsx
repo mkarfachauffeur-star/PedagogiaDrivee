@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
+import { ui } from '../../components/ui/styles'
+import PageHeader from '../../components/ui/PageHeader'
 import TeacherDetailModal from '../../components/teachers/TeacherDetailModal'
 import TeacherFormModal from '../../components/teachers/TeacherFormModal'
 import EmptyState from '../../components/ui/EmptyState'
@@ -97,22 +99,15 @@ export default function AdminTeachersPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-      <section className="rounded-[2rem] border-2 border-slate-300 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white shadow-[var(--shadow-card)] md:p-8">
-        <p className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-          Équipe pédagogique
-        </p>
-        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-extrabold sm:text-4xl">Enseignants & simulateurs</h1>
-            <p className="mt-3 max-w-3xl text-sm leading-7 text-blue-50">
-              Fiches métier des moniteurs et simulateurs : autorisations RdvPermis, catégories et comptes utilisateurs.
-            </p>
-          </div>
-          <button type="button" onClick={openCreate} className="pd-btn-primary shrink-0" disabled={!canWrite}>
-            Ajouter une ressource
-          </button>
-        </div>
-      </section>
+      <PageHeader
+        actions={
+            <button className={ui.btnPrimary} disabled={!canWrite} onClick={openCreate} type="button">
+              Ajouter une ressource
+            </button>
+        }
+        description="Fiches des moniteurs et des simulateurs : autorisations RdvPermis, catégories et comptes."
+        title="Enseignants"
+      />
 
       {feedback && (
         <p className={`rounded-2xl px-4 py-3 text-sm font-semibold ${feedback.type === 'ok' ? 'border border-emerald-200 bg-emerald-50 text-emerald-700' : 'border border-rose-200 bg-rose-50 text-rose-700'}`}>
@@ -120,7 +115,7 @@ export default function AdminTeachersPage() {
         </p>
       )}
 
-      <section className="overflow-hidden rounded-[1.5rem] border-2 border-slate-300 bg-white shadow-[var(--shadow-soft)]">
+      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
         {!profileId ? (
           <div className="p-5"><EmptyState title="Connexion requise" message="Connectez-vous avec votre compte gérant." icon="👨‍🏫" /></div>
         ) : loading ? (
@@ -131,20 +126,20 @@ export default function AdminTeachersPage() {
           <div className="p-5"><EmptyState title="Aucune ressource" message="Ajoutez un enseignant ou un simulateur." icon="👨‍🏫" /></div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm">
-              <thead className="border-b-2 border-slate-300 bg-slate-50 text-xs font-bold uppercase tracking-wide text-slate-500">
+            <table className="block min-w-full text-left text-sm lg:table">
+              <thead className="hidden border-b border-slate-200 bg-slate-50 text-xs text-slate-500 lg:table-header-group">
                 <tr>
-                  <th className="px-4 py-3">Nom</th>
-                  <th className="px-4 py-3">Type</th>
-                  <th className="px-4 py-3">Téléphone</th>
-                  <th className="px-4 py-3">E-mail</th>
-                  <th className="px-4 py-3">N° autorisation</th>
-                  <th className="px-4 py-3">Validité</th>
-                  <th className="px-4 py-3">Statut</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
+                  <th className="px-4 py-3 font-medium">Nom</th>
+                  <th className="px-4 py-3 font-medium">Type</th>
+                  <th className="px-4 py-3 font-medium">Téléphone</th>
+                  <th className="px-4 py-3 font-medium">E-mail</th>
+                  <th className="px-4 py-3 font-medium">N° autorisation</th>
+                  <th className="px-4 py-3 font-medium">Validité</th>
+                  <th className="px-4 py-3 font-medium">Statut</th>
+                  <th className="px-4 py-3 text-right font-medium">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="block lg:table-row-group">
                 {teachers.map((teacher) => {
                   const status = computeTeacherStatus({
                     isActive: teacher.is_active && teacher.account_is_active,
@@ -152,20 +147,20 @@ export default function AdminTeachersPage() {
                   })
                   const busy = actionBusy === teacher.profile_id || actionBusy === teacher.profile_id + 'del'
                   return (
-                    <tr key={teacher.profile_id} className="border-b-2 border-slate-200 last:border-0">
-                      <td className="px-4 py-3 font-extrabold text-slate-900">{teacher.full_name}</td>
-                      <td className="px-4 py-3 text-slate-600">{getResourceTypeLabel(teacher.resource_type)}</td>
-                      <td className="px-4 py-3 text-slate-600">{teacher.phone || '—'}</td>
-                      <td className="px-4 py-3 text-slate-600">{teacher.email || '—'}</td>
-                      <td className="px-4 py-3 text-slate-600">{teacher.authorization_number || '—'}</td>
-                      <td className="px-4 py-3 text-slate-600">{formatDateFr(teacher.authorization_expires_at)}</td>
-                      <td className="px-4 py-3">
-                        <span className={`rounded-full px-2.5 py-1 text-xs font-black ring-1 ${STATUS_BADGE[status.tone]}`}>
+                    <tr key={teacher.profile_id} className="block border-b border-slate-100 px-4 py-3 last:border-0 lg:table-row lg:p-0">
+                      <td className="block font-medium text-slate-900 lg:table-cell lg:px-4 lg:py-3">{teacher.full_name}</td>
+                      <td className="block text-sm text-slate-500 lg:table-cell lg:px-4 lg:py-3 lg:text-slate-600">{getResourceTypeLabel(teacher.resource_type)}</td>
+                      <td className="mt-1 block text-sm text-slate-600 lg:table-cell lg:px-4 lg:py-3 lg:mt-0"><span className="lg:hidden">Tél. : </span>{teacher.phone || '—'}</td>
+                      <td className="block break-all text-sm text-slate-600 lg:table-cell lg:px-4 lg:py-3 lg:break-normal">{teacher.email || '—'}</td>
+                      <td className="block text-sm text-slate-600 lg:table-cell lg:px-4 lg:py-3"><span className="lg:hidden">Autorisation : </span>{teacher.authorization_number || '—'}</td>
+                      <td className="block text-sm text-slate-600 lg:table-cell lg:px-4 lg:py-3"><span className="lg:hidden">Validité : </span>{formatDateFr(teacher.authorization_expires_at)}</td>
+                      <td className="mt-2 block lg:table-cell lg:px-4 lg:py-3 lg:mt-0">
+                        <span className={`rounded-md px-2 py-0.5 text-xs font-medium ring-1 ${STATUS_BADGE[status.tone]}`}>
                           {!teacher.is_active || !teacher.account_is_active ? 'Désactivé' : status.label}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="flex flex-wrap justify-end gap-2">
+                      <td className="mt-3 block lg:table-cell lg:px-4 lg:py-3 lg:mt-0">
+                        <div className="flex flex-wrap gap-2 lg:justify-end">
                           <ActionBtn label="Voir" onClick={() => openView(teacher)} />
                           <ActionBtn label="Modifier" onClick={() => openEdit(teacher)} disabled={!canWrite} />
                           <ActionBtn
@@ -215,7 +210,7 @@ function ActionBtn({ label, onClick, disabled, tone = 'slate' }) {
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`rounded-xl border px-2.5 py-1.5 text-xs font-bold transition disabled:opacity-50 ${tones[tone]}`}
+      className={`inline-flex h-8 items-center rounded-lg border bg-white px-2.5 text-xs font-medium transition disabled:opacity-50 ${tones[tone]}`}
     >
       {label}
     </button>

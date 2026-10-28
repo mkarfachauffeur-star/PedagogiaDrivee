@@ -30,6 +30,18 @@ const EXACT_RULES = [
 
 const CONTAINS_RULES = [
   {
+    pattern: /email rate limit|over_email_send_rate_limit|rate limit exceeded|only request this after|too many requests|\b429\b/i,
+    message: 'Trop d’e-mails envoyés en peu de temps. Patientez une heure avant de réessayer.',
+  },
+  {
+    pattern: /email address .*(not authorized|invalid)|not authorized to send|email_address_not_authorized|email_address_invalid/i,
+    message: 'Le service d’envoi refuse cette adresse e-mail. Vérifiez qu’elle existe et peut recevoir des e-mails.',
+  },
+  {
+    pattern: /error sending (recovery|reset|confirmation) email|smtp/i,
+    message: 'L’e-mail n’a pas pu être envoyé par le service de messagerie. Réessayez plus tard.',
+  },
+  {
     pattern: /failed to fetch|networkerror|network request failed|load failed|net::/i,
     message: null,
     network: true,

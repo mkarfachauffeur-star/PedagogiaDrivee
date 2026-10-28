@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import EmptyState from '../../components/ui/EmptyState'
-import PageHero from '../../components/ui/PageHero'
+import PageHeader from '../../components/ui/PageHeader'
 import PageShell from '../../components/ui/PageShell'
 import { useStudentAccount } from '../../hooks/useStudentAccount'
 import { fetchStudentContractOverview, formatDateFr, formatEur } from '../../services/finance'
@@ -15,7 +15,7 @@ const CONTRACT_STATUS_LABELS = {
 function SummaryCard({ hint, label, tone = 'default', value }) {
   const toneClass =
     tone === 'cyan'
-      ? 'border-cyan-200 bg-cyan-50 text-cyan-800'
+      ? 'border-blue-200 bg-blue-50 text-blue-800'
       : tone === 'amber'
         ? 'border-amber-200 bg-amber-50 text-amber-800'
         : tone === 'emerald'
@@ -25,7 +25,7 @@ function SummaryCard({ hint, label, tone = 'default', value }) {
   return (
     <article className={`rounded-2xl border p-4 ${toneClass}`}>
       <p className="text-sm font-semibold text-slate-500">{label}</p>
-      <p className="mt-1 text-2xl font-black">{value}</p>
+      <p className="mt-1 text-2xl font-semibold">{value}</p>
       {hint ? <p className="mt-1 text-xs font-semibold text-slate-400">{hint}</p> : null}
     </article>
   )
@@ -93,11 +93,7 @@ export default function StudentContractPage() {
 
   return (
     <PageShell>
-      <PageHero
-        eyebrow="Espace élève"
-        subtitle="Formule, heures et conditions contractuelles."
-        title="Contrat"
-      />
+      <PageHeader description="Votre formule, vos heures et le récapitulatif financier." title="Contrat" />
 
       {!hasOverview ? (
         <section className="pd-section-card pd-section-card-body">
@@ -110,44 +106,44 @@ export default function StudentContractPage() {
       ) : (
         <>
           <section className="pd-section-card pd-section-card-body">
-            <h2 className="text-xl font-extrabold text-slate-950">Votre formule</h2>
+            <h2 className="text-xl font-semibold text-slate-950">Votre formule</h2>
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4">
+              <div className="rounded-2xl border border-slate-300 bg-slate-50 p-4">
                 <p className="text-sm font-semibold text-slate-500">Formule choisie</p>
-                <p className="mt-1 text-lg font-extrabold text-slate-950">{formuleLabel || '—'}</p>
+                <p className="mt-1 text-lg font-semibold text-slate-950">{formuleLabel || '—'}</p>
               </div>
-              <div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4">
+              <div className="rounded-2xl border border-slate-300 bg-slate-50 p-4">
                 <p className="text-sm font-semibold text-slate-500">Permis visé</p>
-                <p className="mt-1 text-lg font-extrabold text-slate-950">
+                <p className="mt-1 text-lg font-semibold text-slate-950">
                   {overview.student?.license_category || '—'}
                 </p>
               </div>
               {Number(overview.student?.extra_hours) > 0 && (
-                <div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4">
+                <div className="rounded-2xl border border-slate-300 bg-slate-50 p-4">
                   <p className="text-sm font-semibold text-slate-500">Heures supplémentaires</p>
-                  <p className="mt-1 text-lg font-extrabold text-slate-950">
+                  <p className="mt-1 text-lg font-semibold text-slate-950">
                     {overview.student.extra_hours} h
                   </p>
                 </div>
               )}
               {overview.student?.registration_date && (
-                <div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4">
+                <div className="rounded-2xl border border-slate-300 bg-slate-50 p-4">
                   <p className="text-sm font-semibold text-slate-500">Date d'inscription</p>
-                  <p className="mt-1 text-lg font-extrabold text-slate-950">
+                  <p className="mt-1 text-lg font-semibold text-slate-950">
                     {formatDateFr(overview.student.registration_date)}
                   </p>
                 </div>
               )}
               {overview.student?.file_number && (
-                <div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4">
+                <div className="rounded-2xl border border-slate-300 bg-slate-50 p-4">
                   <p className="text-sm font-semibold text-slate-500">N° de dossier</p>
-                  <p className="mt-1 text-lg font-extrabold text-slate-950">{overview.student.file_number}</p>
+                  <p className="mt-1 text-lg font-semibold text-slate-950">{overview.student.file_number}</p>
                 </div>
               )}
               {contractStatus && (
-                <div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4">
+                <div className="rounded-2xl border border-slate-300 bg-slate-50 p-4">
                   <p className="text-sm font-semibold text-slate-500">Statut du contrat</p>
-                  <p className="mt-1 text-lg font-extrabold text-slate-950">{contractStatus}</p>
+                  <p className="mt-1 text-lg font-semibold text-slate-950">{contractStatus}</p>
                   {overview.contract?.signed_at ? (
                     <p className="mt-1 text-xs font-semibold text-slate-400">
                       Signé le {formatDateFr(overview.contract.signed_at)}
@@ -160,7 +156,7 @@ export default function StudentContractPage() {
 
           {hasFinancialData && (
             <section className="pd-section-card pd-section-card-body">
-              <h2 className="text-xl font-extrabold text-slate-950">Récapitulatif financier</h2>
+              <h2 className="text-xl font-semibold text-slate-950">Récapitulatif financier</h2>
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <SummaryCard
                   hint={contractTotal > 0 ? 'Montant total du forfait' : 'Non renseigné par le secrétariat'}
@@ -180,8 +176,8 @@ export default function StudentContractPage() {
 
           <section className="pd-section-card pd-section-card-body">
             <div className="flex flex-wrap items-end justify-between gap-3">
-              <h2 className="text-xl font-extrabold text-slate-950">Historique des paiements</h2>
-              <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-700">
+              <h2 className="text-xl font-semibold text-slate-950">Historique des paiements</h2>
+              <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
                 {overview.payments.length} paiement(s)
               </span>
             </div>
@@ -197,7 +193,7 @@ export default function StudentContractPage() {
               <div className="mt-4 overflow-x-auto">
                 <table className="min-w-full text-left text-sm">
                   <thead>
-                    <tr className="border-b-2 border-slate-300 text-xs font-black uppercase tracking-wide text-slate-400">
+                    <tr className="border-b border-slate-300 text-xs font-semibold text-slate-400">
                       <th className="px-3 py-3">Date</th>
                       <th className="px-3 py-3">Montant</th>
                       <th className="px-3 py-3">Nature</th>
@@ -206,11 +202,11 @@ export default function StudentContractPage() {
                   </thead>
                   <tbody>
                     {overview.payments.map((payment) => (
-                      <tr className="border-b-2 border-slate-200" key={payment.id}>
+                      <tr className="border-b border-slate-200" key={payment.id}>
                         <td className="px-3 py-3 font-semibold text-slate-700">
                           {formatDateFr(payment.paid_at)}
                         </td>
-                        <td className="px-3 py-3 font-extrabold text-slate-950">
+                        <td className="px-3 py-3 font-semibold text-slate-950">
                           {formatEur(payment.amount)}
                         </td>
                         <td className="px-3 py-3 text-slate-600">{payment.nature || '—'}</td>

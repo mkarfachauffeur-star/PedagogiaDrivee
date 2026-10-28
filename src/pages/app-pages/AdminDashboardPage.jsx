@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
+import Notice from '../../components/ui/Notice'
+import { useSecretaryDuties } from '../../hooks/useSecretaryDuties'
+import { Building2, CalendarDays, GraduationCap, Hourglass, Wallet } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import EmptyState from '../../components/ui/EmptyState'
 import PageHero from '../../components/ui/PageHero'
 import PageShell from '../../components/ui/PageShell'
+import StatCard from '../../components/ui/StatCard'
 import { useAuth } from '../../context/AuthContext'
 import { formatEur } from '../../services/finance'
 import { fetchManagerDashboard } from '../../services/managerDashboard'
@@ -11,11 +15,12 @@ import { orgLogoUrl } from '../../services/organization'
 const priorityTone = {
   amber: 'border-amber-200 bg-amber-50 text-amber-900',
   rose: 'border-rose-200 bg-rose-50 text-rose-900',
-  cyan: 'border-cyan-200 bg-cyan-50 text-cyan-900',
+  cyan: 'border-blue-200 bg-blue-50 text-blue-900',
   emerald: 'border-emerald-200 bg-emerald-50 text-emerald-900',
 }
 
 export default function AdminDashboardPage() {
+  const { managerCovers } = useSecretaryDuties()
   const { profileId, organizationId, organization, profile, loading: authLoading } = useAuth()
   const [dashboard, setDashboard] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -54,33 +59,39 @@ export default function AdminDashboardPage() {
   return (
     <PageShell>
       <PageHero
-        eyebrow="Gérant"
         title="Tableau de bord"
-        subtitle={todayLabel}
+        subtitle={`Vue d’ensemble de votre auto-école · ${todayLabel}`}
       />
 
+      {managerCovers ? (
+        <Notice tone="info">
+          Votre auto-école n’a pas de compte secrétaire actif : vous gérez aussi le planning, les inscriptions et les paiements.
+          Dès qu’un secrétaire est créé dans Utilisateurs, ces tâches passent au secrétariat.
+        </Notice>
+      ) : null}
+
       {organizationId && (
-        <section className="mb-6 flex flex-wrap items-center gap-4 rounded-2xl border-2 border-slate-300 bg-white p-4 shadow-[var(--shadow-soft)] sm:p-5">
+        <section className="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
           {logoUrl ? (
             <img
               src={logoUrl}
               alt={`Logo ${orgName}`}
-              className="h-14 w-14 shrink-0 rounded-2xl border border-slate-200 object-cover sm:h-16 sm:w-16"
+              className="h-12 w-12 shrink-0 rounded-lg border border-slate-200 object-cover"
             />
           ) : (
-            <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-slate-100 text-2xl sm:h-16 sm:w-16">
-              🏫
+            <div aria-hidden="true" className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-blue-50 text-[#1769FF]">
+              <Building2 className="h-6 w-6" />
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-lg font-extrabold text-slate-950">{orgName}</p>
+            <p className="truncate text-base font-semibold text-slate-900">{orgName}</p>
             <p className="mt-0.5 text-sm text-slate-600">
               {[managerName, city].filter(Boolean).join(' · ') || 'Complétez le profil dans Paramètres'}
             </p>
           </div>
           <Link
             to="/manager/settings"
-            className="shrink-0 rounded-xl border-2 border-slate-300 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-800"
+            className="inline-flex h-8 shrink-0 items-center rounded-lg border border-slate-300 bg-white px-3 text-xs font-medium text-slate-700 transition hover:bg-slate-50"
           >
             Profil auto-école
           </Link>
@@ -101,7 +112,7 @@ export default function AdminDashboardPage() {
         <EmptyState title="Erreur de chargement" message={loadError || 'Données indisponibles.'} icon="⚠️" />
       ) : (
         <div className="flex flex-col gap-6">
-          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
             <KpiCard
               caption="Élèves en formation"
               hint={`${dashboard.summary.teacherCount} enseignant(s) actif(s)`}
@@ -147,8 +158,8 @@ export default function AdminDashboardPage() {
                 <div className="mt-4 overflow-x-auto">
                   <table className="min-w-full text-left text-sm">
                     <thead>
-                      <tr className="border-b border-slate-200 text-xs font-bold uppercase tracking-wide text-slate-500">
-                        <th className="px-3 py-2">Élève</th>
+                      <tr className="border-b border-slate-200 text-xs text-slate-500">
+                        <th className="px-3 py-2 font-medium">Élève</th>
                         <th className="px-3 py-2">Formation</th>
                         <th className="px-3 py-2">Code</th>
                         <th className="px-3 py-2">Statut</th>
@@ -157,11 +168,11 @@ export default function AdminDashboardPage() {
                     <tbody>
                       {dashboard.studentRows.map((row) => (
                         <tr className="border-b border-slate-100 last:border-0" key={row.id}>
-                          <td className="px-3 py-3 font-bold text-slate-900">{row.name}</td>
+                          <td className="px-3 py-3 font-medium text-slate-900">{row.name}</td>
                           <td className="px-3 py-3 text-slate-600">{row.formation}</td>
                           <td className="px-3 py-3 text-slate-600">{row.code}</td>
                           <td className="px-3 py-3">
-                            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">
+                            <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
                               {row.status}
                             </span>
                           </td>
@@ -180,17 +191,17 @@ export default function AdminDashboardPage() {
                 subtitle="Disponibilité de vos véhicules."
                 title="Véhicules"
               />
-              <p className="mt-3 text-3xl font-black text-emerald-600">
+              <p className="mt-3 text-2xl font-semibold tabular-nums text-emerald-600">
                 {dashboard.summary.availableVehicles}/{dashboard.summary.vehicleCount}
-                <span className="ml-2 text-base font-bold text-slate-500">disponibles</span>
+                <span className="ml-2 text-sm font-normal text-slate-500">disponibles</span>
               </p>
               <div className="mt-4 grid gap-2">
                 {dashboard.fleetRows.length === 0 ? (
                   <EmptyPanel message="Aucun véhicule enregistré." />
                 ) : (
                   dashboard.fleetRows.map((row) => (
-                    <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" key={row.id}>
-                      <p className="font-bold text-slate-900">{row.label}</p>
+                    <div className="rounded-lg border border-slate-200 px-3 py-2" key={row.id}>
+                      <p className="text-sm font-medium text-slate-900">{row.label}</p>
                       <p className="text-xs text-slate-500">
                         {row.plate} · {row.availability}
                       </p>
@@ -220,14 +231,14 @@ export default function AdminDashboardPage() {
                   {dashboard.scheduleItems.map((item) => (
                     <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3" key={item.id}>
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <p className="text-xs font-black uppercase tracking-wide text-slate-500">
+                        <p className="text-xs font-medium text-slate-500">
                           {item.day} · {item.time}
                         </p>
-                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">
+                        <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
                           {item.status}
                         </span>
                       </div>
-                      <p className="mt-2 text-base font-extrabold text-slate-900">
+                      <p className="mt-2 text-base font-semibold text-slate-900">
                         {item.subtitle} — {item.title}
                       </p>
                       <p className="mt-1 text-sm text-slate-600">{item.meta}</p>
@@ -251,12 +262,12 @@ export default function AdminDashboardPage() {
                   {dashboard.recentPayments.map((row) => (
                     <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3" key={row.id}>
                       <div>
-                        <p className="font-extrabold text-slate-900">{row.student}</p>
+                        <p className="font-semibold text-slate-900">{row.student}</p>
                         <p className="text-sm text-slate-500">
                           {row.nature} · {row.method} · {row.date}
                         </p>
                       </div>
-                      <p className="text-lg font-black text-emerald-600">{formatEur(row.amount)}</p>
+                      <p className="text-lg font-semibold text-emerald-600">{formatEur(row.amount)}</p>
                     </div>
                   ))}
                 </div>
@@ -293,8 +304,8 @@ export default function AdminDashboardPage() {
                       className={`rounded-xl border px-3 py-2 ${priorityTone[item.tone] || priorityTone.cyan}`}
                       key={item.id}
                     >
-                      <p className="text-xs font-black uppercase tracking-wide opacity-80">{item.label}</p>
-                      <p className="mt-1 text-sm font-bold">{item.title}</p>
+                      <p className="text-xs font-medium opacity-80">{item.label}</p>
+                      <p className="mt-1 text-sm font-semibold">{item.title}</p>
                     </div>
                   ))}
                 </div>
@@ -304,7 +315,7 @@ export default function AdminDashboardPage() {
 
           {dashboard.teacherNames.length > 0 && (
             <section className="card-panel">
-              <p className="text-sm font-bold text-slate-500">Équipe pédagogique</p>
+              <p className="text-sm font-semibold text-slate-500">Équipe pédagogique</p>
               <p className="mt-2 text-base font-semibold text-slate-800">
                 {dashboard.teacherNames.join(' · ')}
               </p>
@@ -320,11 +331,11 @@ function SectionHeader({ title, subtitle, linkTo, linkLabel }) {
   return (
     <div className="flex flex-wrap items-end justify-between gap-3">
       <div>
-        <h2 className="text-2xl font-extrabold text-slate-900">{title}</h2>
+        <h2 className="text-base font-semibold text-slate-900">{title}</h2>
         {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
       </div>
       {linkTo && linkLabel && (
-        <Link className="text-sm font-bold text-cyan-700 hover:text-cyan-900" to={linkTo}>
+        <Link className="text-sm font-medium text-[#1769FF] hover:underline" to={linkTo}>
           {linkLabel}
         </Link>
       )}
@@ -332,32 +343,27 @@ function SectionHeader({ title, subtitle, linkTo, linkLabel }) {
   )
 }
 
-function KpiCard({ label, value, valueSuffix = '', caption, hint, tone }) {
-  const colors = {
-    indigo: 'text-indigo-600',
-    violet: 'text-violet-600',
-    cyan: 'text-cyan-600',
-    amber: 'text-amber-600',
-  }
+const KPI_ICONS = { indigo: GraduationCap, violet: CalendarDays, cyan: Wallet, amber: Hourglass }
+const KPI_ACCENTS = { indigo: 'blue', violet: 'violet', cyan: 'emerald', amber: 'amber' }
 
+/** Indicateur du tableau de bord, sur la carte de chiffres commune. */
+function KpiCard({ label, value, valueSuffix = '', caption, hint, tone }) {
   return (
-    <article className="card-panel">
-      <p className="text-sm font-semibold text-slate-500">{label}</p>
-      <p className={`mt-2 text-3xl font-black ${colors[tone] || colors.cyan}`}>
-        {value}
-        {valueSuffix && <span className="text-lg font-bold text-slate-500">{valueSuffix}</span>}
-      </p>
-      {caption && <p className="mt-2 text-sm font-semibold text-slate-700">{caption}</p>}
-      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
-    </article>
+    <StatCard
+      accent={KPI_ACCENTS[tone] || 'blue'}
+      detail={[caption, hint].filter(Boolean).join(' · ')}
+      icon={KPI_ICONS[tone]}
+      label={label}
+      value={`${value}${valueSuffix}`}
+    />
   )
 }
 
 function StatTile({ label, value }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-      <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{label}</p>
-      <p className="mt-1 text-xl font-black text-slate-900">{value}</p>
+    <div className="rounded-lg bg-slate-50 px-3 py-2.5">
+      <p className="text-xs text-slate-500">{label}</p>
+      <p className="mt-1 text-lg font-semibold tabular-nums text-slate-900">{value}</p>
     </div>
   )
 }

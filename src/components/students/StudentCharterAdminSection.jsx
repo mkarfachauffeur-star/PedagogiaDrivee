@@ -70,21 +70,21 @@ export default function StudentCharterAdminSection({ canWrite }) {
   }
 
   return (
-    <section className="rounded-2xl border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
-      <h2 className="text-lg font-extrabold text-slate-950">Charte d&apos;engagement élève</h2>
+    <section className="rounded-xl border border-slate-200 bg-white p-5">
+      <h2 className="text-lg font-semibold text-slate-950">Charte d&apos;engagement élève</h2>
       <p className="mt-1 text-sm text-slate-500">
         Obligatoire à la première connexion. Publier une nouvelle version demande une nouvelle acceptation.
       </p>
 
       {charter?.versionNumber && (
-        <p className="mt-3 text-sm font-semibold text-cyan-800">
+        <p className="mt-3 text-sm font-semibold text-blue-800">
           Version active : v{charter.versionNumber}
           {charter.publishedAt ? ` · publiée le ${formatCharterAcceptedAt(charter.publishedAt)}` : ''}
         </p>
       )}
 
       <div className="mt-5 space-y-4">
-        <label className="block text-sm font-bold text-slate-700">
+        <label className="block text-sm font-semibold text-slate-700">
           Titre
           <input
             className="pd-input mt-2 w-full disabled:bg-slate-50"
@@ -94,7 +94,7 @@ export default function StudentCharterAdminSection({ canWrite }) {
           />
         </label>
 
-        <label className="block text-sm font-bold text-slate-700">
+        <label className="block text-sm font-semibold text-slate-700">
           Contenu (Markdown simple : # titre, ## section, * puce)
           <textarea
             className="pd-input mt-2 min-h-72 w-full resize-y font-mono text-xs disabled:bg-slate-50"
@@ -105,7 +105,7 @@ export default function StudentCharterAdminSection({ canWrite }) {
         </label>
 
         <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-          <p className="text-xs font-black uppercase tracking-wide text-slate-500">Aperçu</p>
+          <p className="text-xs font-semibold text-slate-500">Aperçu</p>
           <div className="mt-3 max-h-72 overflow-y-auto rounded-xl border border-white bg-white p-4">
             <CharterContentView content={draftContent} />
           </div>

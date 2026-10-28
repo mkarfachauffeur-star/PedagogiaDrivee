@@ -16,7 +16,7 @@ export default function OrgStatusBanner() {
   if (isNativeApp) {
     if (canWrite) return null
     return (
-      <div className="border-b border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm font-bold text-amber-900">
+      <div className="border-b border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm font-semibold text-amber-900">
         Compte en lecture seule : consultation et exports autorisés.
       </div>
     )
@@ -24,7 +24,7 @@ export default function OrgStatusBanner() {
 
   if (organization.status === 'suspended' || organization.status === 'cancelled') {
     return (
-      <div className="border-b border-rose-200 bg-rose-50 px-4 py-3 text-center text-sm font-bold text-rose-800">
+      <div className="border-b border-rose-200 bg-rose-50 px-4 py-3 text-center text-sm font-semibold text-rose-800">
         Compte en lecture seule — consultation et exports autorisés. Contactez PEDAGOGIA DRIVE pour réactiver votre abonnement.
       </div>
     )
@@ -32,7 +32,7 @@ export default function OrgStatusBanner() {
 
   if (!canWrite && isTrial && trialEnd && trialEnd < new Date()) {
     return (
-      <div className="border-b border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm font-bold text-amber-900">
+      <div className="border-b border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm font-semibold text-amber-900">
         Essai gratuit expiré — mode consultation. Souscrivez un abonnement pour continuer à modifier vos données.
       </div>
     )
@@ -40,7 +40,7 @@ export default function OrgStatusBanner() {
 
   if (isTrial && daysLeft != null) {
     return (
-      <div className="border-b border-cyan-200 bg-cyan-50 px-4 py-3 text-center text-sm font-semibold text-cyan-900">
+      <div className="border-b border-blue-200 bg-blue-50 px-4 py-3 text-center text-sm font-semibold text-blue-900">
         Essai gratuit — {daysLeft} jour{daysLeft > 1 ? 's' : ''} restant{daysLeft > 1 ? 's' : ''}
         {quota && ` · ${quota.used}/${quota.max} élèves`}
       </div>

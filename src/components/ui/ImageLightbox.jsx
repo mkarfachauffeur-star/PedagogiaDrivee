@@ -144,7 +144,7 @@ export default function ImageLightbox({ image, onClose }) {
     >
       <div className="flex items-center justify-between gap-3 px-4 pb-2 pt-[max(0.75rem,env(safe-area-inset-top,0px))]">
         <div className="min-w-0">
-          {image.title ? <p className="truncate text-sm font-bold text-white">{image.title}</p> : null}
+          {image.title ? <p className="truncate text-sm font-semibold text-white">{image.title}</p> : null}
           <p className="text-xs text-sky-200/70">
             {zoomed ? 'Déplacez l’image · pincez pour ajuster' : 'Pincez pour zoomer · double-toucher pour agrandir'}
           </p>

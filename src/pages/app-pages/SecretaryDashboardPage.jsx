@@ -10,7 +10,7 @@ import { fetchSecretaryDashboard } from '../../services/secretaryDashboard'
 const priorityTone = {
   amber: 'border-amber-200 bg-amber-50 text-amber-900',
   rose: 'border-rose-200 bg-rose-50 text-rose-900',
-  cyan: 'border-cyan-200 bg-cyan-50 text-cyan-900',
+  cyan: 'border-blue-200 bg-blue-50 text-blue-900',
   violet: 'border-violet-200 bg-violet-50 text-violet-900',
 }
 
@@ -95,14 +95,14 @@ export default function SecretaryDashboardPage() {
                   {dashboard.scheduleItems.map((item) => (
                     <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3" key={item.id}>
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <p className="text-xs font-black uppercase tracking-wide text-slate-500">
+                        <p className="text-xs font-semibold text-slate-500">
                           {item.day} · {item.time}
                         </p>
-                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">
+                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
                           {item.status}
                         </span>
                       </div>
-                      <p className="mt-2 text-base font-extrabold text-slate-900">
+                      <p className="mt-2 text-base font-semibold text-slate-900">
                         {item.subtitle} — {item.title}
                       </p>
                       <p className="mt-1 text-sm text-slate-600">{item.meta}</p>
@@ -126,8 +126,8 @@ export default function SecretaryDashboardPage() {
                       className={`rounded-xl border px-3 py-2 ${priorityTone[item.tone] || priorityTone.cyan}`}
                       key={item.id}
                     >
-                      <p className="text-xs font-black uppercase tracking-wide opacity-80">{item.label}</p>
-                      <p className="mt-1 text-sm font-bold">{item.title}</p>
+                      <p className="text-xs font-semibold opacity-80">{item.label}</p>
+                      <p className="mt-1 text-sm font-semibold">{item.title}</p>
                     </div>
                   ))}
                 </div>
@@ -149,7 +149,7 @@ export default function SecretaryDashboardPage() {
                 <div className="mt-4 overflow-x-auto">
                   <table className="min-w-full text-left text-sm">
                     <thead>
-                      <tr className="border-b border-slate-200 text-xs font-bold uppercase tracking-wide text-slate-500">
+                      <tr className="border-b border-slate-200 text-xs font-semibold text-slate-500">
                         <th className="px-3 py-2">Élève</th>
                         <th className="px-3 py-2">Formule</th>
                         <th className="px-3 py-2">Statut</th>
@@ -159,10 +159,10 @@ export default function SecretaryDashboardPage() {
                     <tbody>
                       {dashboard.recentStudents.map((row) => (
                         <tr className="border-b border-slate-100 last:border-0" key={row.id}>
-                          <td className="px-3 py-3 font-bold text-slate-900">{row.name}</td>
+                          <td className="px-3 py-3 font-semibold text-slate-900">{row.name}</td>
                           <td className="px-3 py-3 text-slate-600">{row.formation}</td>
                           <td className="px-3 py-3">
-                            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">
+                            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
                               {row.status}
                             </span>
                           </td>
@@ -189,12 +189,12 @@ export default function SecretaryDashboardPage() {
                   {dashboard.recentPayments.map((row) => (
                     <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3" key={row.id}>
                       <div>
-                        <p className="font-extrabold text-slate-900">{row.student}</p>
+                        <p className="font-semibold text-slate-900">{row.student}</p>
                         <p className="text-sm text-slate-500">
                           {row.nature} · {row.method} · {row.date}
                         </p>
                       </div>
-                      <p className="text-lg font-black text-emerald-600">{formatEur(row.amount)}</p>
+                      <p className="text-lg font-semibold text-emerald-600">{formatEur(row.amount)}</p>
                     </div>
                   ))}
                 </div>
@@ -211,11 +211,11 @@ function SectionHeader({ title, subtitle, linkTo, linkLabel }) {
   return (
     <div className="flex flex-wrap items-end justify-between gap-3">
       <div>
-        <h2 className="text-2xl font-extrabold text-slate-900">{title}</h2>
+        <h2 className="text-2xl font-semibold text-slate-900">{title}</h2>
         {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
       </div>
       {linkTo && linkLabel && (
-        <Link className="text-sm font-bold text-cyan-700 hover:text-cyan-900" to={linkTo}>
+        <Link className="text-sm font-semibold text-blue-700 hover:text-blue-900" to={linkTo}>
           {linkLabel}
         </Link>
       )}
@@ -225,7 +225,7 @@ function SectionHeader({ title, subtitle, linkTo, linkLabel }) {
 
 function KpiCard({ label, value, caption, tone }) {
   const colors = {
-    cyan: 'text-cyan-600',
+    cyan: 'text-blue-600',
     amber: 'text-amber-600',
     rose: 'text-rose-600',
     violet: 'text-violet-600',
@@ -234,7 +234,7 @@ function KpiCard({ label, value, caption, tone }) {
   return (
     <article className="card-panel">
       <p className="text-sm font-semibold text-slate-500">{label}</p>
-      <p className={`mt-2 text-3xl font-black ${colors[tone] || colors.cyan}`}>{value}</p>
+      <p className={`mt-2 text-3xl font-semibold ${colors[tone] || colors.cyan}`}>{value}</p>
       {caption && <p className="mt-2 text-sm font-semibold text-slate-700">{caption}</p>}
     </article>
   )

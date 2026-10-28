@@ -42,9 +42,9 @@ function RemcCompetencyCard({
     <article
       className={`overflow-hidden rounded-2xl border transition-colors ${
         expanded && unlocked
-          ? 'border-cyan-200 bg-cyan-50/60 shadow-sm'
+          ? 'border-blue-200 bg-blue-50/60 shadow-sm'
           : unlocked
-            ? 'border-slate-300 bg-white hover:border-cyan-100'
+            ? 'border-slate-300 bg-white hover:border-blue-100'
             : 'border-slate-100 bg-slate-50/80'
       }`}
     >
@@ -62,7 +62,7 @@ function RemcCompetencyCard({
                 {icon}
               </span>
             )}
-            <p className="text-sm font-black text-slate-900 sm:text-base">
+            <p className="text-sm font-semibold text-slate-900 sm:text-base">
               {code} · {meta?.shortTitle}
             </p>
           </div>
@@ -74,7 +74,7 @@ function RemcCompetencyCard({
               </p>
               <div className="mt-2 h-2 overflow-hidden rounded-full bg-white">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-cyan-600 to-cyan-400 transition-all duration-500"
+                  className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-500"
                   style={{ width: `${subProgress}%` }}
                 />
               </div>
@@ -89,26 +89,26 @@ function RemcCompetencyCard({
             </p>
           ) : effectivelyValidated && entry?.validatedAt ? (
             <>
-              <p className="text-xs font-extrabold text-emerald-700">✅ Compétence validée</p>
+              <p className="text-xs font-semibold text-emerald-700">✅ Compétence validée</p>
               <p className="text-xs font-semibold text-slate-500">
                 Validée le {new Date(entry.validatedAt).toLocaleDateString('fr-FR')}
                 {entry.teacherName ? ` · ${entry.teacherName}` : ''}
               </p>
             </>
           ) : allSubsValidated ? (
-            <p className="text-xs font-semibold text-cyan-700">Validation en cours…</p>
+            <p className="text-xs font-semibold text-blue-700">Validation en cours…</p>
           ) : (
-            <p className="text-xs font-bold text-cyan-800">
+            <p className="text-xs font-semibold text-blue-800">
               {expanded ? 'Masquer les sous-compétences' : 'Ouvrir les sous-compétences'}
             </p>
           )}
           {unlocked && (
             <span
               aria-hidden="true"
-              className={`inline-flex h-10 w-10 items-center justify-center rounded-full border-2 shadow-sm transition-all ${
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-full border shadow-sm transition-all ${
                 expanded
-                  ? 'rotate-180 border-cyan-400 bg-cyan-100 text-cyan-800'
-                  : 'border-cyan-300 bg-cyan-50 text-cyan-700'
+                  ? 'rotate-180 border-blue-400 bg-blue-100 text-blue-800'
+                  : 'border-blue-300 bg-blue-50 text-blue-700'
               }`}
             >
               <ChevronDown className="h-5 w-5 stroke-[2.5]" />
@@ -118,25 +118,25 @@ function RemcCompetencyCard({
       </button>
 
       {unlocked && expanded && items.length > 0 && (
-        <div className="border-t border-cyan-100 px-4 pb-4 pt-3">
+        <div className="border-t border-blue-100 px-4 pb-4 pt-3">
           <p className="mb-3 text-xs font-semibold text-slate-500">
             Passez chaque sous-compétence en « Validé » — la compétence {code} sera validée
             automatiquement lorsque toutes le seront.
           </p>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {items.map((item) => (
-              <div className="rounded-xl border-2 border-slate-300 bg-white p-3" key={item.id}>
-                <p className="text-sm font-bold text-slate-700">
+              <div className="rounded-xl border border-slate-300 bg-white p-3" key={item.id}>
+                <p className="text-sm font-semibold text-slate-700">
                   {item.code ? (
                     <>
-                      <span className="text-cyan-700">{item.code}</span> · {item.label}
+                      <span className="text-blue-700">{item.code}</span> · {item.label}
                     </>
                   ) : (
                     item.label
                   )}
                 </p>
                 <select
-                  className="mt-2 w-full rounded-xl border-2 border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 outline-none focus:border-cyan-300 focus:ring-2 focus:ring-cyan-100"
+                  className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
                   onChange={(event) =>
                     onRemcStatusChange?.(studentId, code, item.id, event.target.value)
                   }
@@ -264,14 +264,14 @@ export default function RemcTeacherValidationPanel({
     : 'Cliquez une compétence pour afficher ses sous-compétences. Lorsque toutes sont « Validé », la compétence est validée automatiquement.'
 
   return (
-    <section className={embedded ? 'rounded-2xl border border-cyan-200 bg-white p-4 sm:p-5' : 'card-panel-lg'}>
+    <section className={embedded ? 'rounded-2xl border border-blue-200 bg-white p-4 sm:p-5' : 'card-panel-lg'}>
       <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
         <div>
-          <h2 className={`font-extrabold text-slate-900 ${embedded ? 'text-lg' : 'text-2xl'}`}>{title}</h2>
+          <h2 className={`font-semibold text-slate-900 ${embedded ? 'text-lg' : 'text-2xl'}`}>{title}</h2>
           <p className="mt-1 text-sm text-slate-500">{description}</p>
         </div>
         {!loading && (
-          <p className={`font-black text-cyan-700 ${embedded ? 'text-2xl' : 'text-3xl'}`}>{globalProgress} %</p>
+          <p className={`font-semibold text-blue-700 ${embedded ? 'text-2xl' : 'text-3xl'}`}>{globalProgress} %</p>
         )}
       </div>
 

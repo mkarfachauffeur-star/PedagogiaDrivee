@@ -14,10 +14,9 @@ function formatSupabaseError(error) {
 
 /**
  * Charge et diagnostique le compte élève (Auth + profiles + students).
- * Journalise les résultats dans la console pour faciliter le débogage.
  */
 export function useStudentAccount() {
-  const { user, profile, profileId, role, loading: authLoading, session } = useAuth()
+  const { user, profile, profileId, loading: authLoading, session } = useAuth()
   const [student, setStudent] = useState(null)
   const [profileError, setProfileError] = useState(null)
   const [studentError, setStudentError] = useState(null)
@@ -25,48 +24,27 @@ export function useStudentAccount() {
 
   const refresh = useCallback(async () => {
     const userId = user?.id || profileId
-    const userEmail = user?.email || profile?.email || null
 
     if (!userId || (!session && !profileId)) {
       setStudent(null)
       setProfileError(null)
       setStudentError(null)
       setLoading(false)
-      console.info('[StudentAccount] Pas de session active', { userId, userEmail })
       return
     }
 
     setLoading(true)
 
-    let fetchedProfile = profile
     let nextProfileError = null
 
-    if (!fetchedProfile) {
-      const { data, error } = await supabase
+    if (!profile) {
+      const { error } = await supabase
         .from('profiles')
         .select('id, organization_id, role, full_name, email, is_active, access_expires_at')
         .eq('id', userId)
         .maybeSingle()
-
       nextProfileError = formatSupabaseError(error)
-      fetchedProfile = data ?? null
-
-      console.info('[StudentAccount] Requête profiles', {
-        userId,
-        userEmail,
-        profile: fetchedProfile,
-        error: nextProfileError,
-      })
-    } else {
-      console.info('[StudentAccount] Profil déjà en contexte', {
-        userId,
-        userEmail,
-        profile: fetchedProfile,
-      })
     }
-
-    let fetchedStudent = null
-    let nextStudentError = null
 
     const { data: studentData, error: studentQueryError } = await supabase
       .from('students')
@@ -74,31 +52,14 @@ export function useStudentAccount() {
       .eq('profile_id', userId)
       .maybeSingle()
 
-    nextStudentError = formatSupabaseError(studentQueryError)
-    fetchedStudent = studentData ?? null
-
-    console.info('[StudentAccount] Requête students', {
-      userId,
-      userEmail,
-      student: fetchedStudent,
-      error: nextStudentError,
-    })
+    const nextStudentError = formatSupabaseError(studentQueryError)
+    const fetchedStudent = studentData ?? null
 
     setProfileError(nextProfileError)
     setStudentError(nextStudentError)
     setStudent(fetchedStudent)
     setLoading(false)
-
-    console.info('[StudentAccount] État final', {
-      userId,
-      userEmail,
-      role,
-      hasProfile: Boolean(fetchedProfile),
-      hasStudent: Boolean(fetchedStudent),
-      profileError: nextProfileError,
-      studentError: nextStudentError,
-    })
-  }, [user, profile, profileId, role, session])
+  }, [user, profile, profileId, session])
 
   useEffect(() => {
     if (authLoading) return

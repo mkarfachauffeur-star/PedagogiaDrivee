@@ -52,6 +52,7 @@ const BY_SEGMENT = {
   users: Users,
   vehicles: Car,
   contracts: FileSignature,
+  contract: FileSignature,
   payments: Wallet,
   paiements: Wallet,
   finance: Wallet,

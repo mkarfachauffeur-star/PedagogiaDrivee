@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ui } from '../../components/ui/styles'
+import PageHeader from '../../components/ui/PageHeader'
 import EmptyState from '../../components/ui/EmptyState'
 import AppModal, { AppModalFooter } from '../../components/ui/AppModal'
 import WeekdayDatePicker from '../../components/ui/WeekdayDatePicker'
@@ -211,24 +213,15 @@ export default function SecretaryExamsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-      <section className="overflow-hidden rounded-[2rem] border-2 border-slate-300 bg-white shadow-[var(--shadow-card)]">
-        <div className="bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white md:p-8">
-          <span className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-            Examens
-          </span>
-          <div className="mt-5 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
-            <div>
-              <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Planification des examens</h1>
-              <p className="mt-3 max-w-3xl text-base leading-7 text-blue-50">
-                Réservations, centres, enseignants référents, statuts et dossiers incomplets. L&apos;élève est notifié automatiquement.
-              </p>
-            </div>
-            <button className="rounded-2xl bg-cyan-300 px-5 py-3 text-sm font-black text-navy-950 shadow-xl transition hover:-translate-y-0.5 hover:bg-white" onClick={openCreate} type="button">
-              + Planifier un examen
-            </button>
-          </div>
-        </div>
-      </section>
+      <PageHeader
+        actions={
+          <button className={ui.btnPrimary} onClick={openCreate} type="button">
+            Planifier un examen
+          </button>
+        }
+        description="Réservations, centres, enseignants référents et dossiers incomplets. L’élève est prévenu automatiquement."
+        title="Examens"
+      />
 
       {loadError && (
         <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">{loadError}</p>
@@ -241,8 +234,8 @@ export default function SecretaryExamsPage() {
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_420px]">
-        <div className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
-          <h2 className="text-2xl font-extrabold text-slate-950">Sessions à venir</h2>
+        <div className="rounded-xl border border-slate-200 bg-white p-5">
+          <h2 className="text-2xl font-semibold text-slate-950">Sessions à venir</h2>
           <div className="mt-5 grid gap-3">
             {loading ? (
               <p className="text-sm font-medium text-slate-500">Chargement…</p>
@@ -250,13 +243,13 @@ export default function SecretaryExamsPage() {
               <EmptyState title="Aucun examen planifié" message="Planifiez une session pour un élève de votre auto-école." icon="🎫" />
             ) : (
               exams.map((exam) => (
-                <button className={`rounded-2xl border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-lg ${selectedId === exam.id ? 'border-cyan-300 bg-cyan-50' : 'border-slate-300 bg-slate-50'}`} key={exam.id} onClick={() => { setSelectedId(exam.id); setStatusFeedback(null); openEdit(exam) }} type="button">
+                <button className={`rounded-2xl border p-4 text-left transition hover:shadow-lg ${selectedId === exam.id ? 'border-blue-300 bg-blue-50' : 'border-slate-300 bg-slate-50'}`} key={exam.id} onClick={() => { setSelectedId(exam.id); setStatusFeedback(null); openEdit(exam) }} type="button">
                   <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                     <div>
-                      <h3 className="font-extrabold text-slate-950">{exam.studentName}</h3>
+                      <h3 className="font-semibold text-slate-950">{exam.studentName}</h3>
                       <p className="mt-1 text-sm text-slate-500">{exam.type} · {exam.exam_date} à {exam.exam_time} · {exam.center || '—'}</p>
                     </div>
-                    <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-cyan-700">{exam.status}</span>
+                    <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-blue-700">{exam.status}</span>
                   </div>
                 </button>
               ))
@@ -265,9 +258,9 @@ export default function SecretaryExamsPage() {
         </div>
 
         {selectedExam && (
-          <aside className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
-            <p className="text-xs font-black uppercase tracking-wide text-cyan-700">Fiche examen</p>
-            <h2 className="mt-2 text-2xl font-extrabold text-slate-950">{selectedExam.studentName}</h2>
+          <aside className="rounded-xl border border-slate-200 bg-white p-5">
+            <p className="text-xs font-semibold text-blue-700">Fiche examen</p>
+            <h2 className="mt-2 text-2xl font-semibold text-slate-950">{selectedExam.studentName}</h2>
             <p className="mt-2 text-sm text-slate-500">{selectedExam.type} · {selectedExam.center || '—'}</p>
             <div className="mt-5 grid gap-3">
               <Info label="Date" value={`${selectedExam.exam_date || '—'} à ${selectedExam.exam_time || '—'}`} />
@@ -286,21 +279,21 @@ export default function SecretaryExamsPage() {
             )}
             <div className="mt-5 grid gap-2">
               {selectedExam.status !== 'Confirmé' && (
-                <button className="rounded-2xl bg-navy-950 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-cyan-700" onClick={() => updateStatus(selectedExam.id, 'Confirmé')} type="button">
+                <button className="rounded-2xl bg-[#1769FF] px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700" onClick={() => updateStatus(selectedExam.id, 'Confirmé')} type="button">
                   Confirmer
                 </button>
               )}
               {selectedExam.status !== 'À confirmer' && (
-                <button className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-extrabold text-amber-700 transition hover:bg-amber-100" onClick={() => updateStatus(selectedExam.id, 'À confirmer')} type="button">
+                <button className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-700 transition hover:bg-amber-100" onClick={() => updateStatus(selectedExam.id, 'À confirmer')} type="button">
                   Mettre en attente
                 </button>
               )}
               {selectedExam.status !== 'Dossier incomplet' && (
-                <button className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-extrabold text-rose-700 transition hover:bg-rose-100" onClick={() => updateStatus(selectedExam.id, 'Dossier incomplet')} type="button">
+                <button className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700 transition hover:bg-rose-100" onClick={() => updateStatus(selectedExam.id, 'Dossier incomplet')} type="button">
                   Dossier incomplet
                 </button>
               )}
-              <button className="rounded-2xl bg-rose-600 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-rose-500" onClick={() => removeExam(selectedExam.id)} type="button">
+              <button className="rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-500" onClick={() => removeExam(selectedExam.id)} type="button">
                 Supprimer
               </button>
             </div>
@@ -367,20 +360,20 @@ function statusSavedMessage(status) {
 }
 
 function Kpi({ label, tone = 'cyan', value }) {
-  const color = tone === 'rose' ? 'text-rose-600' : tone === 'amber' ? 'text-amber-600' : 'text-cyan-600'
+  const color = tone === 'rose' ? 'text-rose-600' : tone === 'amber' ? 'text-amber-600' : 'text-blue-600'
   return (
-    <article className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
-      <p className="text-sm font-bold text-slate-500">{label}</p>
-      <p className={`mt-2 text-3xl font-black ${color}`}>{value}</p>
+    <article className="rounded-xl border border-slate-200 bg-white p-5">
+      <p className="text-sm font-semibold text-slate-500">{label}</p>
+      <p className={`mt-2 text-3xl font-semibold ${color}`}>{value}</p>
     </article>
   )
 }
 
 function Info({ label, value }) {
   return (
-    <div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-3">
-      <p className="text-xs font-bold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="font-extrabold text-slate-900">{value}</p>
+    <div className="rounded-2xl border border-slate-300 bg-slate-50 p-3">
+      <p className="text-xs font-semibold text-slate-400">{label}</p>
+      <p className="font-semibold text-slate-900">{value}</p>
     </div>
   )
 }
@@ -388,9 +381,9 @@ function Info({ label, value }) {
 function StudentSelect({ label, onChange, students, value }) {
   return (
     <label className="block md:col-span-2">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
       <select
-        className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100"
+        className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
         onChange={(event) => onChange(event.target.value)}
         required
         value={value}
@@ -409,9 +402,9 @@ function StudentSelect({ label, onChange, students, value }) {
 function TeacherSelect({ label, onChange, teachers, value }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
       <select
-        className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100"
+        className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
         onChange={(event) => onChange(event.target.value)}
         value={value}
       >
@@ -427,8 +420,8 @@ function TeacherSelect({ label, onChange, teachers, value }) {
 function Field({ label, onChange, type = 'text', value }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
-      <input className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100" onChange={(event) => onChange(event.target.value)} type={type} value={value} />
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
+      <input className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-300 focus:ring-4 focus:ring-blue-100" onChange={(event) => onChange(event.target.value)} type={type} value={value} />
     </label>
   )
 }
@@ -436,8 +429,8 @@ function Field({ label, onChange, type = 'text', value }) {
 function Select({ label, onChange, options, value }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
-      <select className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100" onChange={(event) => onChange(event.target.value)} value={value}>
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
+      <select className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-300 focus:ring-4 focus:ring-blue-100" onChange={(event) => onChange(event.target.value)} value={value}>
         {options.map((option) => <option key={option}>{option}</option>)}
       </select>
     </label>

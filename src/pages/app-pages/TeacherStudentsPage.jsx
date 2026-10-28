@@ -1,4 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ArrowLeft, Timer } from 'lucide-react'
+import PageHeader from '../../components/ui/PageHeader'
+import { ui } from '../../components/ui/styles'
+import { CallButton, StudentAvatar, StudentListItem, StudentSummary } from '../../components/teacher/TeacherStudentViews'
+import { useStudentsHoursSummaries } from '../../hooks/useStudentsHoursSummaries'
 import { useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useStudentRemcProgress } from '../../hooks/useStudentRemcProgress'
@@ -39,10 +44,10 @@ import {
 function StudentPanelTab({ active, children, onClick }) {
   return (
     <button
-      className={`rounded-xl px-4 py-2 text-sm font-extrabold transition ${
+      className={`inline-flex h-9 items-center rounded-lg px-3 text-sm font-medium transition ${
         active
-          ? 'bg-navy-950 text-white shadow-md'
-          : 'border-2 border-slate-300 bg-white text-slate-600 hover:border-cyan-200 hover:text-cyan-800'
+          ? 'bg-[#1769FF] text-white'
+          : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
       }`}
       onClick={onClick}
       type="button"
@@ -110,7 +115,7 @@ function mapApiStudentToTracking(student) {
 function ShareToggle({ active, disabled, onClick, compact = false }) {
   return (
     <button
-      className={`rounded-xl border px-3 py-2 text-xs font-extrabold transition ${
+      className={`inline-flex h-8 items-center rounded-lg border px-2.5 text-xs font-medium transition ${
         active
           ? 'border-emerald-300 bg-emerald-50 text-emerald-800'
           : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'
@@ -143,6 +148,7 @@ export default function TeacherStudentsPage() {
   const [studentsLoading, setStudentsLoading] = useState(true)
   const [studentsError, setStudentsError] = useState(null)
   const [selectedStudentId, setSelectedStudentId] = useState(null)
+  const [hoursRefresh, setHoursRefresh] = useState(0)
   const [studentSearchQuery, setStudentSearchQuery] = useState('')
 
   useEffect(() => {
@@ -238,6 +244,17 @@ export default function TeacherStudentsPage() {
     [selectedStudentId, displayStudents],
   )
 
+  const studentIds = useMemo(() => displayStudents.map((student) => student.id), [displayStudents])
+  const hoursByStudent = useStudentsHoursSummaries(studentIds, hoursRefresh)
+
+  // Sur téléphone, la fiche remplace la liste : on repart du haut de l'écran.
+  const selectStudent = (studentId) => {
+    setSelectedStudentId(studentId)
+    setLessonFormOpen(false)
+    setStudentPanelTab('lessons')
+    window.scrollTo({ top: 0 })
+  }
+
   const {
     remc: selectedStudentRemc,
     updateStatus: updateRemcStatus,
@@ -255,7 +272,6 @@ export default function TeacherStudentsPage() {
   const selectedIsPermisB = isPermisBStudent(selectedApiStudent || selectedStudent)
   const selectedIsAac = isAacFormation(selectedApiStudent || selectedStudent)
 
-  const initialAssessmentCompleted = initialAssessment?.status === 'completed'
 
   useEffect(() => {
     if (!selectedStudent?.id || !selectedIsPermisB) {
@@ -390,6 +406,7 @@ export default function TeacherStudentsPage() {
 
     if (lesson) {
       await refreshLessonObservations()
+      setHoursRefresh((value) => value + 1)
       setLessonFormOpen(false)
       return
     }
@@ -414,12 +431,7 @@ export default function TeacherStudentsPage() {
   if (studentsLoading) {
     return (
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <section className="rounded-[2rem] border-2 border-slate-300 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white shadow-[var(--shadow-card)] md:p-8">
-          <p className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-            Mes élèves
-          </p>
-          <h1 className="mt-4 text-3xl font-extrabold sm:text-4xl">Suivi REMC et leçons terrain</h1>
-        </section>
+        <PageHeader description="Ouvrez une leçon, validez les compétences REMC travaillées et notez vos observations." title="Mes élèves" />
         <p className="text-sm font-semibold text-slate-500">Chargement des élèves…</p>
       </div>
     )
@@ -428,17 +440,12 @@ export default function TeacherStudentsPage() {
   if (studentsError) {
     return (
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <section className="rounded-[2rem] border-2 border-slate-300 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white shadow-[var(--shadow-card)] md:p-8">
-          <p className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-            Mes élèves
-          </p>
-          <h1 className="mt-4 text-3xl font-extrabold sm:text-4xl">Suivi REMC et leçons terrain</h1>
-        </section>
+        <PageHeader description="Ouvrez une leçon, validez les compétences REMC travaillées et notez vos observations." title="Mes élèves" />
         <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
           Impossible de charger les élèves : {studentsError}
         </p>
         <p className="text-xs text-slate-500">
-          Ouvrez la console du navigateur (F12) pour voir teacherId, organizationId et le détail de l&apos;erreur Supabase.
+          Rechargez la page. Si le problème continue, contactez le secrétariat de votre auto-école.
         </p>
       </div>
     )
@@ -447,37 +454,29 @@ export default function TeacherStudentsPage() {
   if (!displayStudents.length) {
     return (
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <section className="rounded-[2rem] border-2 border-slate-300 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white shadow-[var(--shadow-card)] md:p-8">
-          <p className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-            Mes élèves
-          </p>
-          <h1 className="mt-4 text-3xl font-extrabold sm:text-4xl">Suivi REMC et leçons terrain</h1>
-        </section>
+        <PageHeader description="Ouvrez une leçon, validez les compétences REMC travaillées et notez vos observations." title="Mes élèves" />
         <EmptyState title="Aucun élève enregistré" message="Aucun élève enregistré pour le moment." icon="🎓" />
       </div>
     )
   }
 
-  return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-      <section className="rounded-[2rem] border-2 border-slate-300 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white shadow-[var(--shadow-card)] md:p-8">
-        <p className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-          Mes élèves
-        </p>
-        <h1 className="mt-4 text-3xl font-extrabold sm:text-4xl">Suivi REMC et leçons terrain</h1>
-        <p className="mt-3 max-w-4xl text-sm leading-7 text-blue-50">
-          Ouvrez une leçon, validez les compétences REMC travaillées sur le terrain, puis enregistrez vos observations.
-        </p>
-      </section>
+  const canStartLesson = Boolean(selectedStudent && selectedIsPermisB && studentPanelTab === 'lessons' && !lessonFormOpen)
+  const selectedPhone = selectedApiStudent?.phone
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr]">
-        <aside className="card-panel flex flex-col gap-4">
+  return (
+    <div className={`mx-auto flex w-full max-w-7xl flex-col gap-6 ${canStartLesson ? 'pb-24 lg:pb-0' : ''}`}>
+      <div className={selectedStudent ? 'hidden lg:block' : ''}>
+        <PageHeader description="Vos élèves, leurs heures et leur progression REMC. Démarrez une leçon depuis leur fiche." title="Mes élèves" />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[340px_1fr]">
+        <aside className={`card-panel flex-col gap-4 ${selectedStudent ? 'hidden lg:flex' : 'flex'}`}>
           <div>
-            <h2 className="text-lg font-extrabold text-slate-900">Liste élèves</h2>
-            <label className="mt-3 block text-sm font-bold text-slate-700">
-              Rechercher par nom et prénom
+            <h2 className={ui.sectionTitle}>Liste des élèves</h2>
+            <label className={`${ui.label} mt-3`}>
+              Rechercher par nom ou prénom
               <input
-                className="mt-2 w-full rounded-xl border-2 border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 outline-none focus:border-cyan-300 focus:ring-2 focus:ring-cyan-100"
+                className={ui.input}
                 onChange={(event) => setStudentSearchQuery(event.target.value)}
                 type="search"
                 value={studentSearchQuery}
@@ -485,83 +484,52 @@ export default function TeacherStudentsPage() {
             </label>
           </div>
 
-          <div className="grid max-h-[min(420px,50vh)] gap-3 overflow-y-auto pr-1">
+          <div className="grid gap-2 lg:max-h-[min(520px,55vh)] lg:overflow-y-auto">
             {filteredStudents.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm font-semibold text-slate-500">
+              <p className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
                 Aucun élève ne correspond à « {studentSearchQuery} ».
               </p>
             ) : (
-              filteredStudents.map((student) => (
-              <button
-                key={student.id}
-                type="button"
-                onClick={() => {
-                  setSelectedStudentId(student.id)
-                  setLessonFormOpen(false)
-                  setStudentPanelTab('lessons')
-                }}
-                className={`card-list-item ${
-                  selectedStudentId === student.id
-                    ? 'border-cyan-300 bg-cyan-50 ring-2 ring-cyan-100'
-                    : 'border-slate-300 bg-slate-50 hover:border-cyan-200 hover:shadow-sm'
-                }`}
-              >
-                <p className="font-extrabold text-slate-900">
-                  {formatPersonName(student)}
-                </p>
-                <p className="mt-1 text-xs font-semibold text-slate-500">{student.permisSummary}</p>
-                {isAacFormation(apiStudents.find((row) => row.id === student.id) || student) && (
-                  <p className="mt-1 text-[11px] font-bold text-cyan-700">Formule AAC</p>
-                )}
-                {selectedStudentId === student.id && selectedRemcProgress?.global > 0 && (
-                  <>
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-white">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-cyan-600 to-cyan-400 transition-all duration-500"
-                    style={{ width: `${selectedRemcProgress.global}%` }}
+              filteredStudents.map((student) => {
+                const apiRow = apiStudents.find((row) => row.id === student.id)
+                return (
+                  <StudentListItem
+                    active={selectedStudentId === student.id}
+                    hours={hoursByStudent[student.id]}
+                    isAac={isAacFormation(apiRow || student)}
+                    key={student.id}
+                    onSelect={() => selectStudent(student.id)}
+                    phone={apiRow?.phone}
+                    student={student}
                   />
-                </div>
-                <p className="mt-2 text-xs font-black text-cyan-700">Progression sous-compétences : {selectedRemcProgress.global}%</p>
-                  </>
-                )}
-              </button>
-              ))
+                )
+              })
             )}
           </div>
 
-          {selectedStudent && selectedIsPermisB && (
-            <button
-              className="w-full rounded-xl bg-navy-950 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-cyan-700"
-              onClick={openLesson}
-              type="button"
-            >
-              {lessonFormOpen ? 'Leçon en cours' : 'Ouvrir une leçon'}
-            </button>
-          )}
-
           <button
-            className="w-full rounded-xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm font-extrabold text-cyan-900 transition hover:border-cyan-300"
+            className={`${ui.btnSecondary} w-full`}
             onClick={() => setPreRegModalOpen(true)}
             type="button"
           >
             Pré-inscrire un élève
           </button>
 
-          <div className="border-t-2 border-slate-300 pt-4">
-            <h3 className="text-sm font-extrabold text-slate-900">Mes pré-inscriptions</h3>
+          <div className="border-t border-slate-200 pt-4">
+            <h3 className="text-sm font-semibold text-slate-900">Mes pré-inscriptions</h3>
             {preRegLoading ? (
-              <p className="mt-2 text-xs font-semibold text-slate-500">Chargement…</p>
+              <p className="mt-2 text-xs text-slate-500">Chargement…</p>
             ) : preRegistrations.length === 0 ? (
-              <p className="mt-2 text-xs font-semibold text-slate-500">Aucune demande pour le moment.</p>
+              <p className="mt-2 text-xs text-slate-500">Aucune demande pour le moment.</p>
             ) : (
               <div className="mt-3 grid max-h-48 gap-2 overflow-y-auto">
                 {preRegistrations.slice(0, 8).map((row) => (
-                  <article className="rounded-xl border-2 border-slate-300 bg-slate-50 px-3 py-2" key={row.id}>
-                    <p className="text-sm font-bold text-slate-900">
+                  <article className="rounded-lg border border-slate-200 bg-white px-3 py-2" key={row.id}>
+                    <p className="text-sm font-medium text-slate-900">
                       {formatPersonName(row)}
                     </p>
                     <p className="mt-0.5 text-xs text-slate-500">{row.desired_training}</p>
-                    <span className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-[10px] font-black ${preRegistrationStatusClass(row.status)}`}>
+                    <span className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${preRegistrationStatusClass(row.status)}`}>
                       {PRE_REGISTRATION_STATUS_LABELS[row.status]}
                     </span>
                   </article>
@@ -571,9 +539,9 @@ export default function TeacherStudentsPage() {
           </div>
         </aside>
 
-        <main className="grid gap-6">
+        <main className="grid min-w-0 gap-6">
           {!selectedStudent ? (
-            <section className="card-panel-lg">
+            <section className="card-panel-lg hidden lg:block">
               <EmptyState
                 icon="👆"
                 message="Recherchez un élève par nom et prénom, puis cliquez sur sa fiche pour ouvrir une leçon."
@@ -583,30 +551,55 @@ export default function TeacherStudentsPage() {
           ) : (
           <>
           <section className="card-panel-lg">
-            <div className="flex flex-wrap items-end justify-between gap-3">
-              <div>
-                <h2 className="text-2xl font-extrabold text-slate-900">
-                  {formatPersonName(selectedStudent)}
-                </h2>
-                <p className="mt-1 text-sm text-slate-500">
-                  {selectedStudent.permisSummary}
-                  {selectedRemcProgress?.global
-                    ? ` · Sous-compétences ${selectedRemcProgress.global}%`
-                    : ''}
-                </p>
-                {selectedIsAac && (
-                  <p className="mt-1 text-xs font-bold text-cyan-700">
-                    Conduite accompagnée — onglet AAC ci-dessous
-                  </p>
-                )}
-                <div className="mt-2">
-                  <StudentCharterStatusBadge studentId={selectedStudent.id} />
+            <button
+              className="-ml-1 mb-4 inline-flex items-center gap-1.5 rounded-lg px-1 py-1 text-sm font-medium text-slate-600 hover:text-slate-900 lg:hidden"
+              onClick={() => setSelectedStudentId(null)}
+              type="button"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Mes élèves
+            </button>
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="flex min-w-0 items-start gap-3">
+                <StudentAvatar size="lg" student={selectedStudent} />
+                <div className="min-w-0">
+                  <h2 className="text-lg font-semibold text-slate-900">{formatPersonName(selectedStudent)}</h2>
+                  <p className="mt-0.5 text-sm text-slate-500">{selectedStudent.permisSummary}</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <StudentCharterStatusBadge studentId={selectedStudent.id} />
+                  </div>
                 </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <CallButton phone={selectedPhone} />
+                {selectedIsPermisB ? (
+                  <span className="hidden lg:block">
+                    <button className={ui.btnPrimary} disabled={lessonFormOpen} onClick={openLesson} type="button">
+                      <Timer className="h-4 w-4" />
+                      {lessonFormOpen ? 'Leçon en cours' : 'Démarrer une leçon'}
+                    </button>
+                  </span>
+                ) : null}
               </div>
             </div>
 
+            {studentPanelTab === 'lessons' && !lessonFormOpen ? (
+              <div className="mt-5">
+                <StudentSummary
+                  apiStudent={selectedApiStudent}
+                  assessment={initialAssessment}
+                  hours={hoursByStudent[selectedStudent.id]}
+                  isPermisB={selectedIsPermisB}
+                  onOpenAssessment={() => setStudentPanelTab('initial-assessment')}
+                  progress={selectedRemcProgress}
+                  remc={selectedStudentRemc}
+                  teacherName={selectedStudent.teacher}
+                />
+              </div>
+            ) : null}
+
             {(selectedIsPermisB || selectedIsAac) && (
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-5 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
                 <StudentPanelTab
                   active={studentPanelTab === 'lessons'}
                   onClick={() => {
@@ -626,7 +619,7 @@ export default function TeacherStudentsPage() {
                     Conduite accompagnée
                   </StudentPanelTab>
                 )}
-                {selectedIsPermisB && !initialAssessmentCompleted && (
+                {selectedIsPermisB && (
                   <StudentPanelTab
                     active={studentPanelTab === 'initial-assessment'}
                     onClick={() => {
@@ -644,7 +637,7 @@ export default function TeacherStudentsPage() {
               <div className="mt-4">
                 <PanelTabs
                   activeId={lessonSessionTab}
-                  className="sticky top-0 z-10 rounded-2xl border border-slate-100 bg-white/95 p-2 backdrop-blur"
+                  className="sticky top-0 z-10 rounded-lg border border-slate-200 bg-white/95 p-1.5 backdrop-blur"
                   onChange={setLessonSessionTab}
                   tabs={[
                     { id: 'lesson', label: 'Leçon' },
@@ -655,49 +648,49 @@ export default function TeacherStudentsPage() {
 
                 {lessonSessionTab === 'lesson' && (
                 <form
-                  className="mt-4 grid grid-cols-1 gap-3 rounded-2xl border border-cyan-100 bg-cyan-50 p-4 md:grid-cols-2"
+                  className="mt-4 grid grid-cols-1 gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4 md:grid-cols-2"
                   onSubmit={handleCreateLesson}
                 >
-                <label className="text-sm font-bold text-slate-700">
+                <label className={ui.label}>
                   Enseignant
                   <input
-                    className="mt-2 w-full rounded-xl border border-cyan-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none"
+                    className={ui.input}
                     disabled
                     readOnly
                     value={currentTeacherName}
                   />
                 </label>
-                <label className="text-sm font-bold text-slate-700">
+                <label className={ui.label}>
                   Élève
                   <input
-                    className="mt-2 w-full rounded-xl border border-cyan-200 bg-white px-3 py-2 text-sm outline-none"
+                    className={ui.input}
                     value={formatPersonName(selectedStudent)}
                     disabled
                   />
                 </label>
-                <label className="text-sm font-bold text-slate-700">
+                <label className={ui.label}>
                   Date d’ouverture
                   <input
-                    className="mt-2 w-full rounded-xl border border-cyan-200 bg-white px-3 py-2 text-sm outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+                    className={ui.input}
                     type="date"
                     required
                     value={newLesson.date}
                     onChange={(event) => setNewLesson((current) => ({ ...current, date: event.target.value }))}
                   />
                 </label>
-                <label className="text-sm font-bold text-slate-700">
+                <label className={ui.label}>
                   Heure d’ouverture
                   <input
-                    className="mt-2 w-full rounded-xl border border-cyan-200 bg-white px-3 py-2 text-sm outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+                    className={ui.input}
                     type="time"
                     value={newLesson.time}
                     onChange={(event) => setNewLesson((current) => ({ ...current, time: event.target.value }))}
                   />
                 </label>
-                <label className="text-sm font-bold text-slate-700">
+                <label className={ui.label}>
                   Durée
                   <select
-                    className="mt-2 w-full rounded-xl border border-cyan-200 bg-white px-3 py-2 text-sm outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+                    className={ui.input}
                     value={newLesson.duration}
                     onChange={(event) => setNewLesson((current) => ({ ...current, duration: event.target.value }))}
                   >
@@ -708,13 +701,13 @@ export default function TeacherStudentsPage() {
                     ))}
                   </select>
                 </label>
-                <p className="text-xs font-semibold text-cyan-800 md:col-span-2">
+                <p className="text-xs text-slate-500 md:col-span-2">
                   La leçon est enregistrée et comptabilisée dès l&apos;enregistrement ({newLesson.duration}).
                 </p>
-                <label className="text-sm font-bold text-slate-700 md:col-span-2">
+                <label className={`${ui.label} md:col-span-2`}>
                   Observations pour la prochaine leçon
                   <textarea
-                    className="mt-2 min-h-24 w-full rounded-xl border border-cyan-200 bg-white px-3 py-2 text-sm outline-none"
+                    className={`${ui.input} h-auto min-h-24 py-2`}
                     value={newLesson.observations}
                     onChange={(event) => setNewLesson((current) => ({ ...current, observations: event.target.value }))}
                     placeholder="Ex : retravailler priorités à droite, manque d’anticipation, revoir installation poste."
@@ -731,7 +724,7 @@ export default function TeacherStudentsPage() {
                         }))
                       }
                     />
-                    <p className="text-xs font-semibold text-slate-500">
+                    <p className="text-xs text-slate-500">
                       {newLesson.sharedWithStudent
                         ? 'Visible par l\'élève dans Historique des leçons.'
                         : 'Visible uniquement par enseignants, secrétariat et gérant.'}
@@ -741,18 +734,18 @@ export default function TeacherStudentsPage() {
                   <button
                     disabled={lessonSaving}
                     type="submit"
-                    className="rounded-xl bg-navy-950 px-5 py-3 text-sm font-extrabold text-white transition hover:bg-cyan-700 disabled:opacity-60"
+                    className={ui.btnPrimary}
                   >
                     {lessonSaving ? 'Enregistrement…' : 'Enregistrer la leçon'}
                   </button>
                   <button
-                    className="rounded-xl border-2 border-slate-300 bg-white px-5 py-3 text-sm font-extrabold text-slate-600 transition hover:border-slate-400"
+                    className={ui.btnSecondary}
                     onClick={() => setLessonFormOpen(false)}
                     type="button"
                   >
                     Annuler
                   </button>
-                  <p className="text-xs font-semibold text-slate-500">
+                  <p className="text-xs text-slate-500">
                     Passez à l’onglet REMC pour valider les sous-compétences de cette leçon.
                   </p>
                   </div>
@@ -792,7 +785,7 @@ export default function TeacherStudentsPage() {
           <section className="card-panel-lg">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
-                <h2 className="text-2xl font-extrabold text-slate-900">Dernier QCU en ligne</h2>
+                <h2 className={ui.sectionTitle}>Dernier QCU en ligne</h2>
                 <p className="mt-1 text-sm text-slate-500">
                   Dernier QCU travaillé et réussi par l&apos;élève (seuil 80 %, minimum 8/10).
                 </p>
@@ -807,13 +800,13 @@ export default function TeacherStudentsPage() {
           {selectedIsPermisB && studentPanelTab === 'lessons' && !lessonFormOpen && (
           <section className="card-panel-lg">
             <div className="flex flex-wrap items-end justify-between gap-3">
-              <h2 className="text-2xl font-extrabold text-slate-900">Historique des leçons</h2>
+              <h2 className={ui.sectionTitle}>Historique des leçons</h2>
               {historyTotalItems > 0 && (
-                <p className="text-xs font-semibold text-slate-500">{historyTotalItems} entrée(s)</p>
+                <p className="text-xs text-slate-500">{historyTotalItems} entrée{historyTotalItems > 1 ? 's' : ''}</p>
               )}
             </div>
             {lessonsLoading ? (
-              <p className="mt-4 text-sm font-semibold text-slate-500">Chargement…</p>
+              <p className="mt-4 text-sm text-slate-500">Chargement…</p>
             ) : lessonHistoryItems.length === 0 ? (
               <EmptyState
                 className="mt-4"
@@ -830,17 +823,17 @@ export default function TeacherStudentsPage() {
                   const teacherComment = (assessment.answers?.teacher_comment || '').trim()
                   return (
                     <article
-                      className="card-muted border border-cyan-200 bg-cyan-50/30"
+                      className="card-muted bg-blue-50/40"
                       key={`assessment-${assessment.id}`}
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <h3 className="font-extrabold text-slate-900">
+                        <h3 className="text-sm font-semibold text-slate-900">
                           Évaluation de départ
                           {assessment.completed_at
                             ? ` · ${formatDateFr(assessment.completed_at.slice(0, 10))}`
                             : ''}
                         </h3>
-                        <span className="rounded-full bg-cyan-100 px-3 py-1 text-xs font-black text-cyan-800">
+                        <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
                           {formatAssessmentStatus(assessment.status)}
                         </span>
                       </div>
@@ -867,7 +860,7 @@ export default function TeacherStudentsPage() {
                         </p>
                       )}
                       <button
-                        className="mt-3 rounded-xl border border-cyan-200 bg-white px-4 py-2 text-xs font-extrabold text-cyan-800 transition hover:border-cyan-300"
+                        className={`${ui.btnSmall} mt-3`}
                         onClick={() => setStudentPanelTab('initial-assessment')}
                         type="button"
                       >
@@ -888,7 +881,7 @@ export default function TeacherStudentsPage() {
                 return (
                 <article key={lesson.id} className="card-muted">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h3 className="font-extrabold text-slate-900">
+                    <h3 className="text-sm font-semibold text-slate-900">
                       Leçon du {formatLessonDateFr(lesson.date) || 'date non renseignée'} · {lesson.time || '--:--'}
                     </h3>
                     <div className="flex flex-wrap items-center gap-2">
@@ -897,7 +890,7 @@ export default function TeacherStudentsPage() {
                         compact
                         onClick={() => handleToggleLessonShare(lesson)}
                       />
-                      <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-emerald-700">
+                      <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
                         Terminée · {lesson.duration}
                       </span>
                     </div>
@@ -924,7 +917,7 @@ export default function TeacherStudentsPage() {
                   </p>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {(lesson.skills || []).map((skill) => (
-                      <span key={skill} className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-bold text-cyan-700">
+                      <span key={skill} className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
                         {skill}
                       </span>
                     ))}
@@ -950,7 +943,11 @@ export default function TeacherStudentsPage() {
             <section className="card-panel-lg">
               <AacPanel
                 birthDate={(selectedApiStudent || selectedStudent)?.birth_date}
+                key={selectedStudent.id}
+                lockedTeacher={{ id: profileId, name: currentTeacherName }}
                 mode="staff"
+                showRvp={false}
+                showTrips={false}
                 organizationId={organizationId}
                 senderName={profile?.full_name}
                 studentId={selectedStudent.id}
@@ -986,6 +983,15 @@ export default function TeacherStudentsPage() {
           )}
         </main>
       </div>
+
+      {canStartLesson ? (
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur lg:hidden">
+          <button className={`${ui.btnPrimary} h-12 w-full text-base`} onClick={openLesson} type="button">
+            <Timer className="h-5 w-5" />
+            Démarrer une leçon
+          </button>
+        </div>
+      ) : null}
 
       <PreRegistrationFormModal
         onClose={() => setPreRegModalOpen(false)}

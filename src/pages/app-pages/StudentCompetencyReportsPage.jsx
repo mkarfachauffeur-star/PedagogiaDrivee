@@ -6,8 +6,10 @@ import { fetchStudentRemcStats } from '../../services/remcStats'
 import { listLessonObservationsForStudent } from '../../services/studentLessonObservations'
 import RemcProgressOverview from '../../components/remc/RemcProgressOverview'
 import PanelTabs from '../../components/ui/PanelTabs'
+import PageHeader from '../../components/ui/PageHeader'
 import PaginationBar from '../../components/ui/PaginationBar'
 import { useClientPagination } from '../../hooks/useClientPagination'
+import { formatDateTime } from '../../lib/format'
 
 function formatLessonDateFr(dateString) {
   if (!dateString) return ''
@@ -26,16 +28,6 @@ function buildLessonHistory(lessons = []) {
     .sort((a, b) => new Date(b.sortAt) - new Date(a.sortAt))
 }
 
-function formatDateTimeFr(iso) {
-  if (!iso) return '—'
-  return new Date(iso).toLocaleString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
 
 export default function StudentCompetencyReportsPage() {
   const { profileId } = useAuth()
@@ -101,13 +93,12 @@ export default function StudentCompetencyReportsPage() {
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8">
-      <header className="mb-8">
-        <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700">Historique des leçons</p>
-        <h1 className="mt-2 text-3xl font-extrabold text-slate-900">Votre progression REMC</h1>
-        <p className="mt-2 text-sm text-slate-500">
-          Synthèse de vos compétences, leçons de conduite et observations partagées par votre enseignant.
-        </p>
-      </header>
+      <div className="mb-6">
+        <PageHeader
+          description="Vos compétences REMC, vos leçons de conduite et les observations de votre enseignant."
+          title="Historique des leçons"
+        />
+      </div>
 
       <PanelTabs
         activeId={viewTab}
@@ -124,7 +115,7 @@ export default function StudentCompetencyReportsPage() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-slate-500">Progression globale</p>
-            <p className="text-4xl font-black text-indigo-700">{globalProgress} %</p>
+            <p className="text-4xl font-semibold text-indigo-700">{globalProgress} %</p>
             <div className="mt-3 h-3 max-w-md overflow-hidden rounded-full bg-indigo-50">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-indigo-700 to-violet-400 transition-all duration-700 ease-out"
@@ -140,6 +131,7 @@ export default function StudentCompetencyReportsPage() {
         </div>
         <div className="mt-4">
           <RemcProgressOverview
+            compact
             globalProgress={globalProgress}
             itemProgress={itemProgress}
             showGlobalPercent={false}
@@ -151,7 +143,7 @@ export default function StudentCompetencyReportsPage() {
 
       {viewTab === 'history' && (
       <section className="card-panel-lg">
-        <h2 className="text-xl font-extrabold text-slate-900">Historique récent</h2>
+        <h2 className="text-xl font-semibold text-slate-900">Historique récent</h2>
         <p className="mt-1 text-sm text-slate-500">
           Leçons de conduite et observations partagées par votre enseignant.
         </p>
@@ -174,22 +166,22 @@ export default function StudentCompetencyReportsPage() {
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wide text-indigo-700">
+                        <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-[10px] font-semibold text-indigo-700">
                           Leçon
                         </span>
-                        <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-black text-slate-600">
+                        <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-semibold text-slate-600">
                           {lesson.status}
                         </span>
                       </div>
-                      <p className="mt-2 text-sm font-bold text-slate-800">{lessonTitle}</p>
+                      <p className="mt-2 text-sm font-semibold text-slate-800">{lessonTitle}</p>
                       {lesson.teacherName && (
                         <p className="mt-1 text-xs font-semibold text-slate-500">
                           Par {lesson.teacherName}
                         </p>
                       )}
                       {lesson.sharedWithStudent && lesson.observations ? (
-                        <p className="mt-2 rounded-xl border border-cyan-100 bg-cyan-50/60 px-3 py-2 text-sm leading-6 text-slate-700">
-                          <span className="font-bold text-cyan-800">Observations : </span>
+                        <p className="mt-2 rounded-xl border border-blue-100 bg-blue-50/60 px-3 py-2 text-sm leading-6 text-slate-700">
+                          <span className="font-semibold text-blue-800">Observations : </span>
                           {lesson.observations}
                         </p>
                       ) : (
@@ -199,7 +191,7 @@ export default function StudentCompetencyReportsPage() {
                       )}
                     </div>
                     <time className="shrink-0 text-xs font-semibold text-slate-400">
-                      {formatDateTimeFr(item.sortAt)}
+                      {formatDateTime(item.sortAt)}
                     </time>
                   </div>
                 </li>

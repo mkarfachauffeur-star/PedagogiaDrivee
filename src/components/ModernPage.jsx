@@ -6,7 +6,7 @@ const toneStyles = {
     card: 'border-blue-100 bg-white',
     badge: 'bg-blue-50 text-blue-700 ring-blue-100',
     dot: 'bg-blue-500',
-    progress: 'from-blue-600 to-cyan-400',
+    progress: 'from-blue-600 to-blue-400',
   },
   navy: {
     card: 'border-slate-300 bg-white',
@@ -83,11 +83,11 @@ function Hero({ hero, onAction }) {
       initial={{ opacity: 0, y: 12 }}
       transition={{ duration: 0.45 }}
     >
-      <div className="relative grid grid-cols-1 gap-6 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-4 text-white sm:p-6 md:grid-cols-[1fr_auto] md:p-8">
+      <div className="relative grid grid-cols-1 gap-6 bg-gradient-to-br from-navy-950 via-navy-900 to-blue-900 p-4 text-white sm:p-6 md:grid-cols-[1fr_auto] md:p-8">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_88%_12%,rgba(239,68,68,0.18),transparent_42%),radial-gradient(circle_at_10%_90%,rgba(59,130,246,0.14),transparent_38%)]" />
         <div className="relative">
           {hero.eyebrow && (
-            <span className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
+            <span className="inline-flex rounded-full border border-blue-300/30 bg-blue-300/10 px-4 py-1 text-sm font-semibold text-blue-100">
               {hero.eyebrow}
             </span>
           )}
@@ -99,11 +99,11 @@ function Hero({ hero, onAction }) {
             }
           >
             <div>
-              <h1 className="max-w-4xl text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+              <h1 className="max-w-4xl text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                 {hero.title}
               </h1>
               {hero.subtitle && (
-                <p className="mt-3 max-w-3xl text-base leading-7 text-cyan-50/85">{hero.subtitle}</p>
+                <p className="mt-3 max-w-3xl text-base leading-7 text-blue-50/85">{hero.subtitle}</p>
               )}
             </div>
             {hero.actions?.length > 0 && (
@@ -124,16 +124,16 @@ function Hero({ hero, onAction }) {
         </div>
 
         {hero.focus && (
-          <aside className="relative w-full min-w-0 rounded-[1.5rem] border border-white/15 bg-white p-5 text-slate-900 shadow-2xl md:min-w-64">
-            <p className="text-sm font-semibold uppercase tracking-wide text-slate-400">
+          <aside className="relative w-full min-w-0 rounded-xl border border-white/15 bg-white p-5 text-slate-900 shadow-2xl md:min-w-64">
+            <p className="text-sm font-semibold text-slate-400">
               {hero.focus.label}
             </p>
-            <p className="mt-1 text-5xl font-black text-cyan-600">{hero.focus.value}</p>
+            <p className="mt-1 text-5xl font-semibold text-blue-600">{hero.focus.value}</p>
             {hero.focus.progress != null && (
               <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100">
                 <motion.div
                   animate={{ width: `${hero.focus.progress}%` }}
-                  className="h-full rounded-full bg-gradient-to-r from-cyan-600 to-cyan-400"
+                  className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400"
                   initial={{ width: 0 }}
                   transition={{ duration: 0.6, ease: 'easeOut' }}
                 />
@@ -183,7 +183,7 @@ function Metrics({ metrics = [], activeDetail, onSelect }) {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold text-slate-600">{metric.label}</p>
-                <p className="mt-2 text-3xl font-black text-slate-900">{metric.value}</p>
+                <p className="mt-2 text-3xl font-semibold text-slate-900">{metric.value}</p>
               </div>
               <span className={`mt-1 h-3 w-3 rounded-full ${styles.dot}`} />
             </div>
@@ -242,17 +242,17 @@ function CardSection({ section, activeDetail, onSelect }) {
                 <div className="min-w-0 flex-1">
                   <motion.div className="flex flex-wrap items-center gap-2">
                     {item.badge && (
-                      <span className={`rounded-full px-3 py-1 text-xs font-black ring-1 ${styles.badge}`}>
+                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ring-1 ${styles.badge}`}>
                         {item.badge}
                       </span>
                     )}
                     {item.status && (
-                      <span className="rounded-full border-2 border-slate-300 bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">
+                      <span className="rounded-full border border-slate-300 bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
                         {item.status}
                       </span>
                     )}
                   </motion.div>
-                  <h3 className="mt-3 text-lg font-extrabold text-slate-900">{item.title}</h3>
+                  <h3 className="mt-3 text-lg font-semibold text-slate-900">{item.title}</h3>
                   {item.description && (
                     <p className="mt-2 text-sm leading-6 text-slate-600">{item.description}</p>
                   )}
@@ -263,13 +263,13 @@ function CardSection({ section, activeDetail, onSelect }) {
                 <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {item.meta.map((meta) => (
                     <div
-                      className="rounded-2xl border-2 border-slate-300 bg-slate-50 px-3 py-2"
+                      className="rounded-2xl border border-slate-300 bg-slate-50 px-3 py-2"
                       key={`${item.title}-${meta.label}`}
                     >
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      <p className="text-xs font-semibold text-slate-500">
                         {meta.label}
                       </p>
-                      <p className="text-sm font-bold text-slate-800">{meta.value}</p>
+                      <p className="text-sm font-semibold text-slate-800">{meta.value}</p>
                     </div>
                   ))}
                 </div>
@@ -284,8 +284,8 @@ function CardSection({ section, activeDetail, onSelect }) {
 
 function TableSection({ section, activeDetail, onSelect }) {
   return (
-    <section className="overflow-hidden rounded-[1.5rem] border-2 border-slate-300 bg-white shadow-[var(--shadow-soft)]">
-      <motion.div className="border-b-2 border-slate-300 p-5">
+    <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <motion.div className="border-b border-slate-300 p-5">
         <SectionHeader section={section} compact />
       </motion.div>
       {!section.rows?.length ? (
@@ -329,7 +329,7 @@ function TableSection({ section, activeDetail, onSelect }) {
                     {row.map((cell, cellIndex) => (
                       <span
                         className={`px-5 py-4 ${
-                          cellIndex === 0 ? 'font-extrabold text-slate-900' : 'text-slate-600'
+                          cellIndex === 0 ? 'font-semibold text-slate-900' : 'text-slate-600'
                         }`}
                         key={`${cell}-${cellIndex}`}
                       >
@@ -369,7 +369,7 @@ function TimelineSection({ section, activeDetail, onSelect }) {
           return (
             <motion.button
               animate={{ opacity: 1, y: 0 }}
-              className={`flex flex-col gap-3 rounded-[1.25rem] border-2 border-slate-300 bg-white p-4 text-left shadow-[var(--shadow-soft)] transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-[var(--shadow-card)] focus:outline-none focus:ring-4 focus:ring-blue-500/20 sm:flex-row sm:items-center ${
+              className={`flex flex-col gap-3 rounded-xl border border-slate-300 bg-white p-4 text-left transition-all duration-300 hover:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-500/20 sm:flex-row sm:items-center ${
                 active ? 'border-blue-300 ring-4 ring-blue-500/15' : ''
               }`}
               initial={{ opacity: 0, y: 8 }}
@@ -391,14 +391,14 @@ function TimelineSection({ section, activeDetail, onSelect }) {
               type="button"
             >
               <div className={`rounded-2xl px-4 py-3 text-center ring-1 ${styles.badge}`}>
-                <p className="text-sm font-black">{item.time}</p>
+                <p className="text-sm font-semibold">{item.time}</p>
               </div>
               <div className="min-w-0 flex-1">
-                <h3 className="font-extrabold text-slate-900">{item.title}</h3>
+                <h3 className="font-semibold text-slate-900">{item.title}</h3>
                 <p className="text-sm text-slate-600">{item.description}</p>
               </div>
               {item.status && (
-                <span className="w-fit rounded-full border-2 border-slate-300 bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">
+                <span className="w-fit rounded-full border border-slate-300 bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
                   {item.status}
                 </span>
               )}
@@ -442,16 +442,16 @@ function DetailPanel({ detail, onClose }) {
   return (
     <motion.section
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-[1.75rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]"
+      className="rounded-xl border border-slate-200 bg-white p-5"
       initial={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.35 }}
     >
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
         <div>
-          <span className={`rounded-full px-3 py-1 text-xs font-black ring-1 ${styles.badge}`}>
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ring-1 ${styles.badge}`}>
             {detail.subtitle || 'Détail'}
           </span>
-          <h2 className="mt-3 text-2xl font-extrabold text-slate-900">{detail.title}</h2>
+          <h2 className="mt-3 text-2xl font-semibold text-slate-900">{detail.title}</h2>
           {detail.description && (
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{detail.description}</p>
           )}
@@ -466,9 +466,9 @@ function DetailPanel({ detail, onClose }) {
       {detail.meta?.length > 0 && (
         <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {detail.meta.map((meta) => (
-            <motion.div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4" key={meta.label}>
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{meta.label}</p>
-              <p className="mt-1 text-sm font-extrabold text-slate-900">{meta.value}</p>
+            <motion.div className="rounded-2xl border border-slate-300 bg-slate-50 p-4" key={meta.label}>
+              <p className="text-xs font-semibold text-slate-500">{meta.label}</p>
+              <p className="mt-1 text-sm font-semibold text-slate-900">{meta.value}</p>
             </motion.div>
           ))}
         </div>
@@ -476,7 +476,7 @@ function DetailPanel({ detail, onClose }) {
 
       {isAction && (
         <form
-          className="mt-5 rounded-[1.5rem] border-2 border-blue-300 bg-blue-50 p-4"
+          className="mt-5 rounded-xl border border-blue-300 bg-blue-50 p-4"
           onSubmit={(event) => {
             event.preventDefault()
             setActionForm((current) => ({ ...current, saved: true }))
@@ -484,7 +484,7 @@ function DetailPanel({ detail, onClose }) {
         >
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Responsable</span>
+              <span className="text-sm font-semibold text-slate-700">Responsable</span>
               <input
                 className="pd-input mt-2"
                 onChange={(event) => updateActionForm('responsible', event.target.value)}
@@ -493,7 +493,7 @@ function DetailPanel({ detail, onClose }) {
               />
             </label>
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Échéance</span>
+              <span className="text-sm font-semibold text-slate-700">Échéance</span>
               <input
                 className="pd-input mt-2"
                 onChange={(event) => updateActionForm('dueDate', event.target.value)}
@@ -502,7 +502,7 @@ function DetailPanel({ detail, onClose }) {
               />
             </label>
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Priorité</span>
+              <span className="text-sm font-semibold text-slate-700">Priorité</span>
               <select
                 className="pd-input mt-2"
                 onChange={(event) => updateActionForm('priority', event.target.value)}
@@ -514,7 +514,7 @@ function DetailPanel({ detail, onClose }) {
               </select>
             </label>
             <label className="block md:col-span-3">
-              <span className="text-sm font-bold text-slate-700">Note administrative</span>
+              <span className="text-sm font-semibold text-slate-700">Note administrative</span>
               <textarea
                 className="pd-input mt-2 min-h-24 py-3"
                 onChange={(event) => updateActionForm('note', event.target.value)}

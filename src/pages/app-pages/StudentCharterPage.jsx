@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import PageHero from '../../components/ui/PageHero'
+import PageHeader from '../../components/ui/PageHeader'
 import PageShell from '../../components/ui/PageShell'
 import CharterContentView from '../../components/students/CharterContentView'
 import { useStudentAccount } from '../../hooks/useStudentAccount'
@@ -38,11 +38,7 @@ export default function StudentCharterPage() {
 
   return (
     <PageShell className="pb-[max(3rem,calc(env(safe-area-inset-bottom,0px)+2.5rem))]">
-      <PageHero
-        eyebrow="Mon profil"
-        title={status?.charter?.title || 'Charte d\'engagement de l\'élève'}
-        subtitle="Consultez à tout moment les engagements de votre formation."
-      />
+      <PageHeader description="Les engagements de votre formation, consultables à tout moment." title="Charte d’engagement" />
 
       {status?.acceptance?.acceptedAt && (
         <p className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
@@ -57,7 +53,7 @@ export default function StudentCharterPage() {
         </p>
       )}
 
-      <section className="rounded-[1.75rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)] sm:p-8">
+      <section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-8">
         {status?.charter?.content ? (
           <CharterContentView content={status.charter.content} />
         ) : (

@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ArrowDownLeft, ArrowUpRight, Scale } from 'lucide-react'
 import EmptyState from '../../components/ui/EmptyState'
 import AppModal, { AppModalFooter } from '../../components/ui/AppModal'
-import PageHero from '../../components/ui/PageHero'
+import PageHeader from '../../components/ui/PageHeader'
+import StatCard from '../../components/ui/StatCard'
+import { ui } from '../../components/ui/styles'
+import { formatEuros } from '../../lib/format'
 import { useAuth } from '../../context/AuthContext'
 import { getUserFacingError } from '../../lib/userFacingError'
 import { listStudents } from '../../services/students'
@@ -148,25 +152,19 @@ export default function TeacherFinancePage() {
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
-      <PageHero
-        eyebrow="Finances"
-        title="Encaissements & dépenses"
-        subtitle="Enregistrez vos dépenses (carburant, etc.) et les paiements reçus de vos élèves. Tout est visible dans les statistiques du gérant."
+      <PageHeader
         actions={profileId ? (
           <>
-            <button type="button" className="pd-btn-primary" onClick={() => { setExpenseForm({ ...emptyExpenseForm, date: todayIso() }); setModal('expense') }}>
-              + Dépense
-            </button>
-            <button
-              type="button"
-              className="rounded-2xl border border-white/30 bg-white/10 px-4 py-2.5 text-sm font-black text-white hover:bg-white/20"
-              onClick={() => { setPaymentForm({ ...emptyPaymentForm, date: todayIso() }); setModal('payment') }}
-              disabled={students.length === 0}
-            >
+            <button type="button" className={ui.btnSecondary} onClick={() => { setPaymentForm({ ...emptyPaymentForm, date: todayIso() }); setModal('payment') }} disabled={students.length === 0}>
               + Encaissement
+            </button>
+            <button type="button" className={ui.btnPrimary} onClick={() => { setExpenseForm({ ...emptyExpenseForm, date: todayIso() }); setModal('expense') }}>
+              + Dépense
             </button>
           </>
         ) : null}
+        description="Vos dépenses (carburant, etc.) et les paiements reçus de vos élèves. Le gérant les retrouve dans ses statistiques."
+        title="Finances"
       />
 
       {!profileId ? (
@@ -178,10 +176,18 @@ export default function TeacherFinancePage() {
         <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">{error}</div>
       )}
 
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Kpi label="Mes encaissements" value={formatEur(totals.collected)} />
-        <Kpi label="Mes dépenses" value={formatEur(totals.spent)} tone="rose" />
-        <Kpi label="Solde" value={formatEur(totals.net)} tone={totals.net >= 0 ? 'cyan' : 'rose'} />
+      <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+        <StatCard accent="emerald" icon={ArrowDownLeft} label="Mes encaissements" value={formatEuros(totals.collected)} />
+        <StatCard accent="rose" icon={ArrowUpRight} label="Mes dépenses" value={formatEuros(totals.spent)} />
+        <div className="col-span-2 lg:col-span-1">
+          <StatCard
+            accent="blue"
+            icon={Scale}
+            label="Solde"
+            tone={totals.net < 0 ? 'danger' : 'default'}
+            value={formatEuros(totals.net)}
+          />
+        </div>
       </section>
 
       <div className="flex gap-2">
@@ -197,16 +203,16 @@ export default function TeacherFinancePage() {
           emptyMessage="Enregistrez un plein de carburant ou autre frais."
           items={expenses}
           renderItem={(item) => (
-            <article className="rounded-2xl border-2 border-slate-300 bg-white p-4" key={item.id}>
+            <article className="rounded-2xl border border-slate-300 bg-white p-4" key={item.id}>
               <div className="flex justify-between gap-3">
                 <div>
-                  <p className="font-extrabold text-slate-950">{item.category}</p>
+                  <p className="font-semibold text-slate-950">{item.category}</p>
                   <p className="mt-1 text-sm text-slate-500">
                     {formatDateFr(item.spent_at)}
                     {vehicleLabel(item.vehicles) ? ` · ${vehicleLabel(item.vehicles)}` : ''}
                   </p>
                 </div>
-                <p className="font-black text-rose-600">− {formatEur(item.amount)}</p>
+                <p className="font-semibold text-rose-600">− {formatEur(item.amount)}</p>
               </div>
               {item.comment && <p className="mt-2 text-sm text-slate-500">{item.comment}</p>}
             </article>
@@ -218,15 +224,15 @@ export default function TeacherFinancePage() {
           emptyMessage="Enregistrez un paiement reçu d'un élève."
           items={myPayments}
           renderItem={(item) => (
-            <article className="rounded-2xl border-2 border-slate-300 bg-white p-4" key={item.id}>
+            <article className="rounded-2xl border border-slate-300 bg-white p-4" key={item.id}>
               <div className="flex justify-between gap-3">
                 <div>
-                  <p className="font-extrabold text-slate-950">{studentLabel(item.students)}</p>
+                  <p className="font-semibold text-slate-950">{studentLabel(item.students)}</p>
                   <p className="mt-1 text-sm text-slate-500">
                     {formatDateFr(item.paid_at)} · {item.nature} · {item.method}
                   </p>
                 </div>
-                <p className="font-black text-emerald-600">+ {formatEur(item.amount)}</p>
+                <p className="font-semibold text-emerald-600">+ {formatEur(item.amount)}</p>
               </div>
             </article>
           )}
@@ -253,8 +259,8 @@ export default function TeacherFinancePage() {
           <Field label="Montant (€) *" type="number" value={expenseForm.amount} onChange={(v) => setExpenseForm((c) => ({ ...c, amount: v }))} />
           <Field label="Date *" type="date" value={expenseForm.date} onChange={(v) => setExpenseForm((c) => ({ ...c, date: v }))} />
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">Véhicule</span>
-            <select className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 px-4 text-sm" value={expenseForm.vehicleId} onChange={(e) => setExpenseForm((c) => ({ ...c, vehicleId: e.target.value }))}>
+            <span className="text-sm font-semibold text-slate-700">Véhicule</span>
+            <select className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 px-4 text-sm" value={expenseForm.vehicleId} onChange={(e) => setExpenseForm((c) => ({ ...c, vehicleId: e.target.value }))}>
               <option value="">—</option>
               {vehicles.map((v) => <option key={v.id} value={v.id}>{vehicleLabel(v)}</option>)}
             </select>
@@ -280,9 +286,9 @@ export default function TeacherFinancePage() {
       >
         <form id="teacher-payment-form" onSubmit={savePayment} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="block sm:col-span-2">
-            <span className="text-sm font-bold text-slate-700">Élève *</span>
+            <span className="text-sm font-semibold text-slate-700">Élève *</span>
             <select
-              className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 px-4 text-sm"
+              className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 px-4 text-sm"
               value={paymentForm.studentId}
               onChange={(e) => setPaymentForm((c) => ({ ...c, studentId: e.target.value }))}
             >
@@ -315,20 +321,10 @@ function TabButton({ active, children, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-2xl px-4 py-2 text-sm font-black ${active ? 'bg-navy-950 text-white' : 'border-2 border-slate-300 bg-white text-slate-600'}`}
+      className={`rounded-2xl px-4 py-2 text-sm font-semibold ${active ? 'bg-[#1769FF] text-white' : 'border border-slate-300 bg-white text-slate-600'}`}
     >
       {children}
     </button>
-  )
-}
-
-function Kpi({ label, tone = 'cyan', value }) {
-  const color = tone === 'rose' ? 'text-rose-600' : 'text-cyan-600'
-  return (
-    <article className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
-      <p className="text-sm font-bold text-slate-500">{label}</p>
-      <p className={`mt-2 text-2xl font-black ${color}`}>{value}</p>
-    </article>
   )
 }
 
@@ -347,8 +343,8 @@ function ListSection({ emptyTitle, emptyMessage, items, renderItem }) {
 function Field({ label, type, value, onChange }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
-      <input className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 px-4 text-sm" type={type} value={value} onChange={(e) => onChange(e.target.value)} />
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
+      <input className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 px-4 text-sm" type={type} value={value} onChange={(e) => onChange(e.target.value)} />
     </label>
   )
 }
@@ -356,8 +352,8 @@ function Field({ label, type, value, onChange }) {
 function Textarea({ label, value, onChange }) {
   return (
     <label className="block sm:col-span-2">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
-      <textarea className="mt-2 min-h-20 w-full rounded-2xl border-2 border-slate-300 px-4 py-3 text-sm" value={value} onChange={(e) => onChange(e.target.value)} />
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
+      <textarea className="mt-2 min-h-20 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm" value={value} onChange={(e) => onChange(e.target.value)} />
     </label>
   )
 }
@@ -365,8 +361,8 @@ function Textarea({ label, value, onChange }) {
 function Select({ label, options, value, onChange }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
-      <select className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 px-4 text-sm" value={value} onChange={(e) => onChange(e.target.value)}>
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
+      <select className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 px-4 text-sm" value={value} onChange={(e) => onChange(e.target.value)}>
         {options.map((opt) => <option key={opt}>{opt}</option>)}
       </select>
     </label>

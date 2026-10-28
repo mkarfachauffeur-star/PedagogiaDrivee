@@ -250,7 +250,7 @@ export default function SecretaryPaiementsPage() {
         actions={profileId ? (
           <>
             <button
-              className="rounded-2xl bg-cyan-300 px-5 py-3 text-sm font-black text-navy-950 shadow-xl transition hover:-translate-y-0.5 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-2xl bg-blue-300 px-5 py-3 text-sm font-semibold text-navy-950 shadow-xl transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
               onClick={openPaymentForm}
               type="button"
               disabled={students.length === 0}
@@ -258,7 +258,7 @@ export default function SecretaryPaiementsPage() {
               + Encaissement
             </button>
             <button
-              className="rounded-2xl border border-white/30 bg-white/10 px-5 py-3 text-sm font-black text-white shadow-xl transition hover:-translate-y-0.5 hover:bg-white/20"
+              className="rounded-2xl border border-white/30 bg-white/10 px-5 py-3 text-sm font-semibold text-white shadow-xl transition hover:bg-white/20"
               onClick={openExpenseForm}
               type="button"
             >
@@ -299,9 +299,9 @@ export default function SecretaryPaiementsPage() {
         <p className="text-sm font-medium text-slate-500">Chargement…</p>
       ) : tab === 'payments' ? (
         <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_420px]">
-          <div className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
+          <div className="rounded-xl border border-slate-200 bg-white p-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <h2 className="text-2xl font-extrabold text-slate-950">Dossiers financiers</h2>
+              <h2 className="text-2xl font-semibold text-slate-950">Dossiers financiers</h2>
               {students.length > 0 && (
                 <ListSearchField onChange={setStudentSearchQuery} value={studentSearchQuery} />
               )}
@@ -331,24 +331,24 @@ export default function SecretaryPaiementsPage() {
                       : 'Partiel'
                 return (
                   <button
-                    className={`rounded-2xl border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-lg ${selectedStudent?.id === student.id ? 'border-cyan-300 bg-cyan-50' : 'border-slate-300 bg-slate-50'}`}
+                    className={`rounded-2xl border p-4 text-left transition hover:shadow-lg ${selectedStudent?.id === student.id ? 'border-blue-300 bg-blue-50' : 'border-slate-300 bg-slate-50'}`}
                     key={student.id}
                     onClick={() => setSelectedStudentId(student.id)}
                     type="button"
                   >
                     <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                       <div>
-                        <h3 className="font-extrabold text-slate-950">{studentLabel(student)}</h3>
+                        <h3 className="font-semibold text-slate-950">{studentLabel(student)}</h3>
                         <p className="mt-1 text-sm text-slate-500">
                           {student.formation_type || student.package_name || 'Formation'} · {student.file_number || student.id.slice(0, 8)}
                         </p>
                       </div>
-                      <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-cyan-700">{status}</span>
+                      <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-blue-700">{status}</span>
                     </div>
                     <div className="mt-4 h-2 overflow-hidden rounded-full bg-white">
-                      <div className="h-full rounded-full bg-gradient-to-r from-cyan-600 to-cyan-300" style={{ width: `${progress}%` }} />
+                      <div className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-300" style={{ width: `${progress}%` }} />
                     </div>
-                    <p className="mt-2 text-sm font-bold text-slate-600">
+                    <p className="mt-2 text-sm font-semibold text-slate-600">
                       {formatEur(summary.paid)} / {formatEur(summary.contractTotal)}
                     </p>
                   </button>
@@ -366,23 +366,23 @@ export default function SecretaryPaiementsPage() {
           </div>
 
           {selectedStudent && (
-            <aside className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
-              <p className="text-xs font-black uppercase tracking-wide text-cyan-700">Fiche financière</p>
-              <h2 className="mt-2 text-2xl font-extrabold text-slate-950">{studentLabel(selectedStudent)}</h2>
+            <aside className="rounded-xl border border-slate-200 bg-white p-5">
+              <p className="text-xs font-semibold text-blue-700">Fiche financière</p>
+              <h2 className="mt-2 text-2xl font-semibold text-slate-950">{studentLabel(selectedStudent)}</h2>
               <div className="mt-5 grid gap-3">
                 <Info label="Montant du contrat" value={formatEur(selectedSummary.contractTotal)} />
                 <Info label="Déjà encaissé" value={formatEur(selectedSummary.paid)} />
                 <Info label="Reste à payer" value={formatEur(selectedSummary.remaining)} />
               </div>
               <div className="mt-6">
-                <p className="text-sm font-black text-slate-700">Historique</p>
+                <p className="text-sm font-semibold text-slate-700">Historique</p>
                 <div className="mt-3 grid gap-2">
                   {selectedHistory.length === 0 && <InlineNotice label="Aucun encaissement enregistré." />}
                   {historyPageItems.map((item) => (
-                    <div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-3" key={item.id}>
+                    <div className="rounded-2xl border border-slate-300 bg-slate-50 p-3" key={item.id}>
                       <div className="flex items-center justify-between gap-3">
-                        <p className="font-black text-slate-950">{formatEur(item.amount)}</p>
-                        <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-cyan-700">{item.method}</span>
+                        <p className="font-semibold text-slate-950">{formatEur(item.amount)}</p>
+                        <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-blue-700">{item.method}</span>
                       </div>
                       <p className="mt-1 text-xs font-semibold text-slate-500">
                         {formatDateFr(item.paid_at)} · {item.nature}
@@ -404,23 +404,23 @@ export default function SecretaryPaiementsPage() {
           )}
         </section>
       ) : (
-        <section className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
-          <h2 className="text-2xl font-extrabold text-slate-950">Historique des dépenses</h2>
+        <section className="rounded-xl border border-slate-200 bg-white p-5">
+          <h2 className="text-2xl font-semibold text-slate-950">Historique des dépenses</h2>
           <div className="mt-5 grid gap-3">
             {expenses.length === 0 && (
               <EmptyState title="Aucune dépense" message="Enregistrez carburant, code de la route, frais divers…" icon="📤" />
             )}
             {expensePageItems.map((item) => (
-              <article className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4" key={item.id}>
+              <article className="rounded-2xl border border-slate-300 bg-slate-50 p-4" key={item.id}>
                 <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
                   <div>
-                    <p className="font-extrabold text-slate-950">{item.category}</p>
+                    <p className="font-semibold text-slate-950">{item.category}</p>
                     <p className="mt-1 text-sm text-slate-500">
                       {formatDateFr(item.spent_at)}
                       {vehicleLabel(item.vehicles) ? ` · ${vehicleLabel(item.vehicles)}` : ''}
                     </p>
                   </div>
-                  <p className="text-xl font-black text-rose-600">− {formatEur(item.amount)}</p>
+                  <p className="text-xl font-semibold text-rose-600">− {formatEur(item.amount)}</p>
                 </div>
                 {item.comment && <p className="mt-2 text-sm text-slate-500">{item.comment}</p>}
               </article>
@@ -455,9 +455,9 @@ export default function SecretaryPaiementsPage() {
         <form id="secretary-payment-form" onSubmit={savePayment}>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <label className="block md:col-span-2">
-              <span className="text-sm font-bold text-slate-700">Élève (dossier) *</span>
+              <span className="text-sm font-semibold text-slate-700">Élève (dossier) *</span>
               <select
-                className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100"
+                className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
                 onChange={(e) => handleSelectStudentInForm(e.target.value)}
                 value={paymentForm.studentId}
               >
@@ -476,8 +476,8 @@ export default function SecretaryPaiementsPage() {
             <Field label="Montant du contrat (€)" type="number" value={paymentForm.contractTotal} onChange={(v) => setPaymentForm((c) => ({ ...c, contractTotal: v }))} />
             <Textarea label="Commentaire" value={paymentForm.comment} onChange={(v) => setPaymentForm((c) => ({ ...c, comment: v }))} />
           </div>
-          <div className="mt-5 rounded-[1.5rem] border border-cyan-100 bg-cyan-50/70 p-4">
-            <p className="text-sm font-black text-cyan-800">Récapitulatif</p>
+          <div className="mt-5 rounded-xl border border-blue-100 bg-blue-50/70 p-4">
+            <p className="text-sm font-semibold text-blue-800">Récapitulatif</p>
             <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Info label="Contrat" value={formatEur(paymentFormSummary.contractTotal)} />
               <Info label="Déjà encaissé" value={formatEur(paymentFormSummary.alreadyPaid)} />
@@ -509,9 +509,9 @@ export default function SecretaryPaiementsPage() {
             <Field label="Montant (€) *" type="number" value={expenseForm.amount} onChange={(v) => setExpenseForm((c) => ({ ...c, amount: v }))} />
             <Field label="Date *" type="date" value={expenseForm.date} onChange={(v) => setExpenseForm((c) => ({ ...c, date: v }))} />
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Véhicule (optionnel)</span>
+              <span className="text-sm font-semibold text-slate-700">Véhicule (optionnel)</span>
               <select
-                className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800"
+                className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800"
                 value={expenseForm.vehicleId}
                 onChange={(e) => setExpenseForm((c) => ({ ...c, vehicleId: e.target.value }))}
               >
@@ -536,7 +536,7 @@ function TabButton({ active, children, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-2xl px-4 py-2 text-sm font-black transition ${active ? 'bg-navy-950 text-white' : 'bg-white text-slate-600 border-2 border-slate-300'}`}
+      className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${active ? 'bg-[#1769FF] text-white' : 'bg-white text-slate-600 border border-slate-300'}`}
     >
       {children}
     </button>
@@ -544,20 +544,20 @@ function TabButton({ active, children, onClick }) {
 }
 
 function Kpi({ label, tone = 'cyan', value }) {
-  const color = tone === 'rose' ? 'text-rose-600' : tone === 'amber' ? 'text-amber-600' : 'text-cyan-600'
+  const color = tone === 'rose' ? 'text-rose-600' : tone === 'amber' ? 'text-amber-600' : 'text-blue-600'
   return (
-    <article className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
-      <p className="text-sm font-bold text-slate-500">{label}</p>
-      <p className={`mt-2 text-3xl font-black ${color}`}>{value}</p>
+    <article className="rounded-xl border border-slate-200 bg-white p-5">
+      <p className="text-sm font-semibold text-slate-500">{label}</p>
+      <p className={`mt-2 text-3xl font-semibold ${color}`}>{value}</p>
     </article>
   )
 }
 
 function Info({ label, value }) {
   return (
-    <div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-3">
-      <p className="text-xs font-bold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="font-extrabold text-slate-900">{value}</p>
+    <div className="rounded-2xl border border-slate-300 bg-slate-50 p-3">
+      <p className="text-xs font-semibold text-slate-400">{label}</p>
+      <p className="font-semibold text-slate-900">{value}</p>
     </div>
   )
 }
@@ -573,9 +573,9 @@ function InlineNotice({ label }) {
 function Field({ label, onChange, type = 'text', value }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
       <input
-        className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100"
+        className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
         onChange={(e) => onChange(e.target.value)}
         type={type}
         value={value}
@@ -587,9 +587,9 @@ function Field({ label, onChange, type = 'text', value }) {
 function Textarea({ label, onChange, value }) {
   return (
     <label className="block md:col-span-2">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
       <textarea
-        className="mt-2 min-h-24 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-800 outline-none focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100"
+        className="mt-2 min-h-24 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-800 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
         onChange={(e) => onChange(e.target.value)}
         value={value}
       />
@@ -600,9 +600,9 @@ function Textarea({ label, onChange, value }) {
 function Select({ label, onChange, options, value }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
       <select
-        className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100"
+        className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
         onChange={(e) => onChange(e.target.value)}
         value={value}
       >

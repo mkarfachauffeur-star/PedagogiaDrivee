@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ui } from '../../components/ui/styles'
+import PageHeader from '../../components/ui/PageHeader'
 import CreateUserModal from '../../components/users/CreateUserModal'
 import AppModal, { AppModalFooter } from '../../components/ui/AppModal'
 import EmptyState from '../../components/ui/EmptyState'
@@ -114,7 +116,7 @@ export default function AdminUsersPage() {
     setResetConfirmUser(null)
 
     if (error) {
-      setFeedback({ type: 'error', text: getUserFacingError(error, 'password') })
+      setFeedback({ type: 'error', text: getUserFacingError(error, 'L’e-mail de réinitialisation n’a pas pu être envoyé. Veuillez réessayer.') })
     } else {
       setFeedback({ type: 'ok', text: message })
     }
@@ -122,22 +124,15 @@ export default function AdminUsersPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-      <section className="rounded-[2rem] border-2 border-slate-300 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white shadow-[var(--shadow-card)] md:p-8">
-        <p className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-          Utilisateurs
-        </p>
-        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-extrabold sm:text-4xl">Comptes et accès</h1>
-            <p className="mt-3 max-w-3xl text-sm leading-7 text-blue-50">
-              Gérez les comptes de connexion, les rôles et les invitations de votre auto-école.
-            </p>
-          </div>
-          <button type="button" onClick={() => setModalOpen(true)} className="pd-btn-primary shrink-0" disabled={!canWrite}>
-            Créer un utilisateur
-          </button>
-        </div>
-      </section>
+      <PageHeader
+        actions={
+            <button className={ui.btnPrimary} disabled={!canWrite} onClick={() => setModalOpen(true)} type="button">
+              Créer un utilisateur
+            </button>
+        }
+        description="Comptes de connexion, rôles et invitations de votre auto-école."
+        title="Utilisateurs"
+      />
 
       {feedback && (
         <p className={`rounded-2xl px-4 py-3 text-sm font-semibold ${feedback.type === 'ok' ? 'border border-emerald-200 bg-emerald-50 text-emerald-700' : 'border border-rose-200 bg-rose-50 text-rose-700'}`}>
@@ -145,7 +140,7 @@ export default function AdminUsersPage() {
         </p>
       )}
 
-      <section className="overflow-hidden rounded-[1.5rem] border-2 border-slate-300 bg-white shadow-[var(--shadow-soft)]">
+      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
         {!profileId ? (
           <div className="p-5"><EmptyState title="Connexion requise" message="Connectez-vous avec votre compte gérant." icon="🔐" /></div>
         ) : loading ? (
@@ -156,23 +151,23 @@ export default function AdminUsersPage() {
           <div className="p-5"><EmptyState title="Aucun utilisateur" message="Créez le premier compte staff de votre auto-école." icon="👤" /></div>
         ) : (
           <>
-          <div className="flex flex-col gap-3 border-b-2 border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 border-b border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
             <ListSearchField onChange={setSearchQuery} value={searchQuery} />
-            <p className="text-xs font-semibold text-slate-500">{totalItems} utilisateur(s)</p>
+            <p className="text-xs text-slate-500">{totalItems} utilisateur{totalItems > 1 ? 's' : ''}</p>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm">
-              <thead className="border-b-2 border-slate-300 bg-slate-50 text-xs font-bold uppercase tracking-wide text-slate-500">
+            <table className="block min-w-full text-left text-sm md:table">
+              <thead className="hidden border-b border-slate-200 bg-slate-50 text-xs text-slate-500 md:table-header-group">
                 <tr>
-                  <th className="px-4 py-3">Nom complet</th>
-                  <th className="px-4 py-3">E-mail</th>
-                  <th className="px-4 py-3">Rôle</th>
-                  <th className="px-4 py-3">Statut</th>
-                  <th className="px-4 py-3">Dernière connexion</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
+                  <th className="px-4 py-3 font-medium">Nom complet</th>
+                  <th className="px-4 py-3 font-medium">E-mail</th>
+                  <th className="px-4 py-3 font-medium">Rôle</th>
+                  <th className="px-4 py-3 font-medium">Statut</th>
+                  <th className="px-4 py-3 font-medium">Dernière connexion</th>
+                  <th className="px-4 py-3 text-right font-medium">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="block md:table-row-group">
                 {pageItems.map((user) => {
                   const status = computeAccountStatus({
                     isActive: user.is_active,
@@ -184,27 +179,27 @@ export default function AdminUsersPage() {
                   const isSelf = user.id === profileId
                   const isRegistered = status.label === 'Actif'
                   return (
-                    <tr key={user.id} className="border-b-2 border-slate-200 last:border-0">
-                      <td className="px-4 py-3 font-extrabold text-slate-900">
+                    <tr key={user.id} className="block border-b border-slate-100 px-4 py-3 last:border-0 md:table-row md:p-0">
+                      <td className="block font-medium text-slate-900 md:table-cell md:px-4 md:py-3">
                         {user.full_name || '—'}
                         {isSelf && (
-                          <span className="ml-2 text-xs font-bold text-slate-400">(vous)</span>
+                          <span className="ml-2 text-xs font-normal text-slate-400">(vous)</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-slate-600">{user.email || '—'}</td>
-                      <td className="px-4 py-3">
-                        <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-black text-indigo-700">
+                      <td className="block break-all text-sm text-slate-600 md:table-cell md:break-normal md:px-4 md:py-3">{user.email || '—'}</td>
+                      <td className="mt-2 mr-2 inline-block md:mt-0 md:mr-0 md:table-cell md:px-4 md:py-3">
+                        <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
                           {staffRoleLabel(user.role, user.gender) || user.role}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
-                        <span className={`rounded-full px-2.5 py-1 text-xs font-black ring-1 ${STATUS_BADGE[status.tone]}`}>
+                      <td className="inline-block md:table-cell md:px-4 md:py-3">
+                        <span className={`rounded-md px-2 py-0.5 text-xs font-medium ring-1 ${STATUS_BADGE[status.tone]}`}>
                           {status.label}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-slate-500">{formatDateTimeFr(user.last_sign_in_at)}</td>
-                      <td className="px-4 py-3">
-                        <div className="flex flex-wrap justify-end gap-2">
+                      <td className="mt-1 block text-xs text-slate-500 md:mt-0 md:table-cell md:px-4 md:py-3 md:text-sm"><span className="md:hidden">Dernière connexion : </span>{formatDateTimeFr(user.last_sign_in_at)}</td>
+                      <td className="mt-3 block md:mt-0 md:table-cell md:px-4 md:py-3">
+                        <div className="flex flex-wrap gap-2 md:justify-end">
                           {status.label === 'Invitation en attente' && (
                             <ActionBtn disabled={busy || !canWrite} onClick={() => runAction('resend_invite', user)} label="Renvoyer" />
                           )}
@@ -271,7 +266,7 @@ export default function AdminUsersPage() {
           <div className="space-y-3 text-sm leading-6 text-slate-600">
             <p>
               Voulez-vous réinitialiser le mot de passe de{' '}
-              <span className="font-bold text-slate-900">{resetConfirmUser.full_name || 'cet utilisateur'}</span>
+              <span className="font-semibold text-slate-900">{resetConfirmUser.full_name || 'cet utilisateur'}</span>
               {' '}?
             </p>
             <p>
@@ -298,7 +293,7 @@ function ActionBtn({ label, onClick, disabled, tone = 'slate' }) {
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`rounded-xl border px-2.5 py-1.5 text-xs font-bold transition disabled:opacity-50 ${tones[tone]}`}
+      className={`inline-flex h-8 items-center rounded-lg border bg-white px-2.5 text-xs font-medium transition disabled:opacity-50 ${tones[tone]}`}
     >
       {label}
     </button>

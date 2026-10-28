@@ -15,7 +15,7 @@ import { roleDestinations } from '../utils/authSession'
 import { PASSWORD_POLICY_HINT, validatePassword } from '../lib/passwordPolicy'
 
 const inputClass =
-  'mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100'
+  'mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-100'
 
 export default function AcceptInvitePage() {
   const navigate = useNavigate()
@@ -135,16 +135,16 @@ export default function AcceptInvitePage() {
   const blocked = Boolean(hashError)
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-navy-950 to-cyan-950 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-navy-950 to-blue-950 p-4">
       <PageSeo
         description="Activation de compte Pedagogia Drive — lien d'invitation sécurisé."
         noindex
         path="/accept-invite"
         title={`Activation de compte — ${SITE_NAME}`}
       />
-      <div className="w-full max-w-md rounded-[2rem] bg-white p-8 shadow-2xl">
+      <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-2xl">
         <BrandLogo />
-        <h1 className="mt-6 text-2xl font-extrabold text-slate-950">Activer votre compte</h1>
+        <h1 className="mt-6 text-2xl font-semibold text-slate-950">Activer votre compte</h1>
         <p className="mt-2 text-sm text-slate-500">
           Définissez votre mot de passe pour accéder à PEDAGOGIA DRIVE.
         </p>
@@ -170,7 +170,7 @@ export default function AcceptInvitePage() {
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">Nouveau mot de passe</span>
+            <span className="text-sm font-semibold text-slate-700">Nouveau mot de passe</span>
             <input
               className={inputClass}
               type="password"
@@ -183,7 +183,7 @@ export default function AcceptInvitePage() {
             <span className="mt-1 block text-xs font-semibold text-slate-500">{PASSWORD_POLICY_HINT}</span>
           </label>
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">Confirmation</span>
+            <span className="text-sm font-semibold text-slate-700">Confirmation</span>
             <input
               className={inputClass}
               type="password"
@@ -201,7 +201,7 @@ export default function AcceptInvitePage() {
             {busy ? 'Enregistrement…' : 'Activer mon compte'}
           </button>
         </form>
-        <Link to="/login" className="mt-4 block text-center text-sm font-bold text-cyan-700">
+        <Link to="/login" className="mt-4 block text-center text-sm font-semibold text-blue-700">
           Déjà un compte ? Se connecter
         </Link>
       </div>

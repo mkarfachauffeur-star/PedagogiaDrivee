@@ -120,7 +120,7 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
     return (
       <span
         aria-label={`${notificationCount} message${notificationCount > 1 ? 's' : ''} non lu${notificationCount > 1 ? 's' : ''}`}
-        className={`flex shrink-0 items-center justify-center rounded-full bg-red-500 font-bold text-white ${
+        className={`flex shrink-0 items-center justify-center rounded-full bg-red-500 font-semibold text-white ${
           compact
             ? 'absolute -right-1 -top-1 h-4 min-w-4 px-0.5 text-[10px]'
             : 'ml-auto h-5 min-w-5 px-1.5 text-[11px] leading-none'
@@ -137,7 +137,7 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
     return (
       <span
         aria-label={`${count} nouvelle${count > 1 ? 's' : ''} demande${count > 1 ? 's' : ''}`}
-        className={`flex shrink-0 items-center justify-center rounded-full bg-amber-500 font-bold text-white ${
+        className={`flex shrink-0 items-center justify-center rounded-full bg-amber-500 font-semibold text-white ${
           compact
             ? 'absolute -right-1 -top-1 h-4 min-w-4 px-0.5 text-[10px]'
             : 'ml-auto h-5 min-w-5 px-1.5 text-[11px] leading-none'

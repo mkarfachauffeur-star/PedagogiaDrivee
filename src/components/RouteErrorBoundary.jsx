@@ -28,7 +28,7 @@ export default class RouteErrorBoundary extends Component {
           message={error?.message || 'Une erreur inattendue est survenue.'}
           className="border-rose-200 bg-rose-50/80"
         />
-        <pre className="overflow-x-auto rounded-2xl border-2 border-slate-300 bg-slate-950 p-4 text-xs text-emerald-300">
+        <pre className="overflow-x-auto rounded-2xl border border-slate-300 bg-slate-950 p-4 text-xs text-emerald-300">
           {String(error?.stack || error)}
         </pre>
       </PageShell>

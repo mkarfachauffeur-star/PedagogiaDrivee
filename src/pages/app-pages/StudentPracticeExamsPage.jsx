@@ -89,15 +89,15 @@ export default function StudentPracticeExamsPage() {
             ].map((item) => (
               <article className="card-panel" key={item.label}>
                 <p className="text-sm font-semibold text-slate-500">{item.label}</p>
-                <p className="mt-2 text-3xl font-black text-slate-950">{item.value}</p>
+                <p className="mt-2 text-3xl font-semibold text-slate-950">{item.value}</p>
               </article>
             ))}
           </section>
 
           <section className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
-            <div className="rounded-[1.5rem] border border-cyan-200 bg-cyan-50/70 p-5">
-              <p className="text-sm font-black uppercase tracking-wide text-cyan-700">Préparation à l&apos;examen</p>
-              <p className="mt-2 text-2xl font-black text-slate-950">
+            <div className="rounded-xl border border-blue-200 bg-blue-50/70 p-5">
+              <p className="text-sm font-semibold text-blue-700">Préparation à l&apos;examen</p>
+              <p className="mt-2 text-2xl font-semibold text-slate-950">
                 {readinessEmoji(readiness)} {readinessLabel(readiness)}
               </p>
               {probability !== null && (
@@ -116,20 +116,20 @@ export default function StudentPracticeExamsPage() {
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
             <aside className="card-panel">
-              <h2 className="text-lg font-extrabold text-slate-900">Historique</h2>
+              <h2 className="text-lg font-semibold text-slate-900">Historique</h2>
               <div className="mt-4 grid gap-2">
                 {exams.map((exam) => (
                   <button
                     className={`rounded-2xl border px-4 py-3 text-left transition ${
                       selectedExam?.id === exam.id
-                        ? 'border-cyan-300 bg-cyan-50 ring-2 ring-cyan-100'
-                        : 'border-slate-300 bg-slate-50 hover:border-cyan-200'
+                        ? 'border-blue-300 bg-blue-50 ring-2 ring-blue-100'
+                        : 'border-slate-300 bg-slate-50 hover:border-blue-200'
                     }`}
                     key={exam.id}
                     onClick={() => setSelectedExamId(exam.id)}
                     type="button"
                   >
-                    <p className="font-black text-slate-900">
+                    <p className="font-semibold text-slate-900">
                       {new Date(exam.exam_date).toLocaleDateString('fr-FR')}
                     </p>
                     <p className="mt-1 text-sm font-semibold text-slate-600">{exam.score_total}/31</p>

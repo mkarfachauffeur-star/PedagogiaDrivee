@@ -59,11 +59,11 @@ export default function StudentObservationsPage() {
       ) : (
         <section className="grid gap-4">
           {lessons.map((lesson) => (
-            <article className="rounded-2xl border-2 border-slate-300 bg-white p-5 shadow-sm" key={lesson.id}>
+            <article className="rounded-2xl border border-slate-300 bg-white p-5 shadow-sm" key={lesson.id}>
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
-                  <p className="text-xs font-black uppercase tracking-wide text-cyan-700">Leçon partagée</p>
-                  <h2 className="mt-1 text-lg font-extrabold text-slate-950">
+                  <p className="text-xs font-semibold text-blue-700">Leçon partagée</p>
+                  <h2 className="mt-1 text-lg font-semibold text-slate-950">
                     {lesson.date ? `Le ${formatDateFr(lesson.date)}` : 'Leçon'}
                     {lesson.time ? ` · ${lesson.time}` : ''}
                   </h2>
@@ -73,7 +73,7 @@ export default function StudentObservationsPage() {
                     </p>
                   )}
                 </div>
-                <span className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-700">
+                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
                   {lesson.status}
                 </span>
               </div>
@@ -83,7 +83,7 @@ export default function StudentObservationsPage() {
               {lesson.skills?.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {lesson.skills.map((skill) => (
-                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600" key={skill}>
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600" key={skill}>
                       {skill}
                     </span>
                   ))}

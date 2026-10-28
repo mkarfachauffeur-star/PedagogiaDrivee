@@ -7,7 +7,7 @@ import { useConversationMessages } from '../../hooks/useConversationMessages'
 import { findOrCreateDirectConversation, sendMessageWithAttachments } from '../../services/messaging'
 import { getStudentIdByProfile, listInternalContacts, listStudentContacts } from '../../services/directory'
 import { linkAttachmentToDocument } from '../../services/attachments'
-import { AttachmentList, ChatMessageBubble, MessageComposer } from '../../components/messaging/Attachments'
+import { AttachmentList, ChatMessageBubble, MessageComposer, MessageMeta } from '../../components/messaging/Attachments'
 import { getUserFacingError } from '../../lib/userFacingError'
 import { contactDisplayName, roleLabel } from '../../utils/messagingLabels'
 
@@ -236,7 +236,7 @@ export default function SecretaryMessagesPage() {
                     key={item.id}
                     type="button"
                     onClick={() => setActiveId(item.id)}
-                    className={`rounded-2xl border p-4 text-left transition-all duration-200 ${activeId === item.id ? 'pd-msg-thread-active' : 'pd-msg-thread hover:-translate-y-0.5'}`}
+                    className={`rounded-2xl border p-4 text-left transition-all duration-200 ${activeId === item.id ? 'pd-msg-thread-active' : 'pd-msg-thread'}`}
                   >
                     <div className="flex items-center justify-between gap-2">
                       <p className="font-semibold text-slate-900">{item.title}</p>
@@ -278,10 +278,7 @@ export default function SecretaryMessagesPage() {
                         attachments={message.attachments}
                         classify={activeConversation.kind === 'student' ? (att, type) => classifyAttachment(message, att, type) : undefined}
                       />
-                      <p className={`mt-2 text-[11px] font-medium ${message.mine ? 'text-white/75' : 'text-slate-500'}`}>
-                        {formatTime(message.created_at)}
-                        {message.mine && message.status ? ` · ${message.status}` : ''}
-                      </p>
+                      <MessageMeta mine={message.mine} status={message.status} time={formatTime(message.created_at)} />
                     </ChatMessageBubble>
                   ))}
                 </div>

@@ -28,7 +28,7 @@ import ImageUploadField from '../ui/ImageUploadField'
 
 const FORM_ID = 'teacher-form'
 const inputClass =
-  'mt-2 min-h-11 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100'
+  'mt-2 min-h-11 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-100'
 
 function teacherToForm(teacher) {
   const { firstName, lastName } = splitFullName(teacher?.full_name || '')
@@ -240,7 +240,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
     >
       <form id={FORM_ID} className="space-y-5" onSubmit={handleSubmit}>
         <label className="block">
-          <span className="text-sm font-bold text-slate-700">Type de ressource</span>
+          <span className="text-sm font-semibold text-slate-700">Type de ressource</span>
           <select
             className={inputClass}
             value={form.resourceType}
@@ -273,7 +273,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
 
         {!isEdit && !readOnly && !isSimulator && linkableProfiles.length > 0 && (
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">Lier à un compte enseignant existant (optionnel)</span>
+            <span className="text-sm font-semibold text-slate-700">Lier à un compte enseignant existant (optionnel)</span>
             <select
               className={inputClass}
               value={form.linkProfileId}
@@ -308,13 +308,13 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">{isSimulator ? 'Nom du simulateur' : 'Nom'}</span>
+            <span className="text-sm font-semibold text-slate-700">{isSimulator ? 'Nom du simulateur' : 'Nom'}</span>
             <input className={inputClass} value={form.lastName} onChange={(e) => update('lastName', e.target.value)} disabled={readOnly || !canWrite || busy} />
             {errors.lastName && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.lastName}</p>}
           </label>
           {!isSimulator && (
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Prénom</span>
+              <span className="text-sm font-semibold text-slate-700">Prénom</span>
               <input className={inputClass} value={form.firstName} onChange={(e) => update('firstName', e.target.value)} disabled={readOnly || !canWrite || busy} />
               {errors.firstName && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.firstName}</p>}
             </label>
@@ -323,21 +323,21 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
 
         {!isSimulator && (
           <fieldset className="block">
-            <legend className="text-sm font-bold text-slate-700">Genre *</legend>
+            <legend className="text-sm font-semibold text-slate-700">Genre *</legend>
             <div className="mt-2 flex flex-wrap gap-3">
               {GENDER_OPTIONS.map((option) => (
                 <label
                   key={option.value}
-                  className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-2xl border-2 px-4 text-sm font-semibold transition ${
+                  className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-2xl border px-4 text-sm font-semibold transition ${
                     form.gender === option.value
-                      ? 'border-cyan-400 bg-cyan-50 text-cyan-900'
+                      ? 'border-blue-400 bg-blue-50 text-blue-900'
                       : 'border-slate-300 bg-white text-slate-700'
                   }`}
                 >
                   <input
                     type="radio"
                     name="teacher-gender"
-                    className="accent-cyan-600"
+                    className="accent-blue-600"
                     checked={form.gender === option.value}
                     disabled={readOnly || !canWrite || busy}
                     onChange={() => update('gender', option.value)}
@@ -353,7 +353,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
         {!isSimulator && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">E-mail</span>
+            <span className="text-sm font-semibold text-slate-700">E-mail</span>
             <input
               className={inputClass}
               type="email"
@@ -364,7 +364,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
             {errors.email && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.email}</p>}
           </label>
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">Téléphone</span>
+            <span className="text-sm font-semibold text-slate-700">Téléphone</span>
             <input
               className={inputClass}
               type="tel"
@@ -383,17 +383,17 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
 
         {!isSimulator && (
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">Date de naissance</span>
+            <span className="text-sm font-semibold text-slate-700">Date de naissance</span>
             <input className={inputClass} type="date" value={form.birthDate} onChange={(e) => update('birthDate', e.target.value)} disabled={readOnly || !canWrite || busy} />
           </label>
         )}
 
         {!isSimulator && (
-        <fieldset className="rounded-2xl border-2 border-slate-300 bg-slate-50/50 p-4">
-          <legend className="px-1 text-sm font-bold text-slate-700">Adresse</legend>
+        <fieldset className="rounded-2xl border border-slate-300 bg-slate-50/50 p-4">
+          <legend className="px-1 text-sm font-semibold text-slate-700">Adresse</legend>
           <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">N° de rue</span>
+              <span className="text-sm font-semibold text-slate-700">N° de rue</span>
               <input
                 autoComplete="address-line2"
                 className={inputClass}
@@ -404,7 +404,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
               />
             </label>
             <label className="block sm:col-span-2">
-              <span className="text-sm font-bold text-slate-700">Rue / voie</span>
+              <span className="text-sm font-semibold text-slate-700">Rue / voie</span>
               <input
                 autoComplete="street-address"
                 className={inputClass}
@@ -415,7 +415,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
               />
             </label>
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Code postal</span>
+              <span className="text-sm font-semibold text-slate-700">Code postal</span>
               <input
                 autoComplete="postal-code"
                 className={inputClass}
@@ -428,7 +428,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
               />
             </label>
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Commune</span>
+              <span className="text-sm font-semibold text-slate-700">Commune</span>
               <input
                 autoComplete="address-level2"
                 className={inputClass}
@@ -444,7 +444,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">{getAuthorizationFieldLabel(form.resourceType)}</span>
+            <span className="text-sm font-semibold text-slate-700">{getAuthorizationFieldLabel(form.resourceType)}</span>
             <input
               className={inputClass}
               value={form.authorizationNumber}
@@ -456,14 +456,14 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
             {errors.authorizationNumber && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.authorizationNumber}</p>}
           </label>
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">Validité de l&apos;autorisation</span>
+            <span className="text-sm font-semibold text-slate-700">Validité de l&apos;autorisation</span>
             <input className={inputClass} type="date" value={form.authorizationExpiresAt} onChange={(e) => update('authorizationExpiresAt', e.target.value)} disabled={readOnly || !canWrite || busy} />
           </label>
         </div>
 
         {!isSimulator && (
-        <fieldset className="rounded-2xl border-2 border-slate-300 bg-slate-50/80 p-4">
-          <legend className="px-1 text-sm font-bold text-slate-700">Autorisation d&apos;enseigner — dossier</legend>
+        <fieldset className="rounded-2xl border border-slate-300 bg-slate-50/80 p-4">
+          <legend className="px-1 text-sm font-semibold text-slate-700">Autorisation d&apos;enseigner — dossier</legend>
           <p className="mt-1 text-xs font-medium text-slate-500">
             Ajoutez le recto et le verso de la carte pour archivage dans le dossier moniteur.
           </p>
@@ -490,7 +490,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
 
         {!isSimulator && (
         <fieldset>
-          <legend className="text-sm font-bold text-slate-700">Catégories enseignées</legend>
+          <legend className="text-sm font-semibold text-slate-700">Catégories enseignées</legend>
           <div className="-mx-1 mt-3 flex gap-2 overflow-x-auto px-1 pb-1 [-webkit-overflow-scrolling:touch]">
             {TEACHER_CATEGORY_OPTIONS.map((category) => {
               const selected = form.categories.includes(category)
@@ -500,8 +500,8 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
                   type="button"
                   onClick={() => toggleCategory(category)}
                   disabled={readOnly || !canWrite || busy}
-                  className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold transition ${
-                    selected ? 'bg-cyan-600 text-white' : 'border-2 border-slate-300 bg-slate-50 text-slate-700'
+                  className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                    selected ? 'bg-blue-600 text-white' : 'border border-slate-300 bg-slate-50 text-slate-700'
                   }`}
                 >
                   {category}
@@ -515,7 +515,7 @@ export default function TeacherFormModal({ open, mode = 'create', teacher, onClo
 
         {!isSimulator && (
         <label className="block">
-          <span className="text-sm font-bold text-slate-700">Statut</span>
+          <span className="text-sm font-semibold text-slate-700">Statut</span>
           <select className={inputClass} value={form.employmentStatus} onChange={(e) => update('employmentStatus', e.target.value)} disabled={readOnly || !canWrite || busy}>
             {EMPLOYMENT_STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>

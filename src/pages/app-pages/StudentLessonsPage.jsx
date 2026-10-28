@@ -5,6 +5,7 @@ import { useRemcUnlock } from '../../hooks/useRemcUnlock'
 import { useClientPagination } from '../../hooks/useClientPagination'
 import RemcLockedBanner from '../../components/remc/RemcLockedBanner'
 import PaginationBar from '../../components/ui/PaginationBar'
+import PageHeader from '../../components/ui/PageHeader'
 import { REMC_COMPETENCY_ORDER } from '../../data/remcCompetencies'
 import {
   fetchLessonModuleProgressMap,
@@ -1758,7 +1759,7 @@ function StatusPill({ label, value, complete }) {
         {complete ? '✓' : '○'}
       </span>
       <div className="min-w-0">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">{label}</p>
+        <p className="text-[11px] font-semibold text-slate-400">{label}</p>
         <p className="truncate text-sm font-medium text-slate-800">{value}</p>
       </div>
     </div>
@@ -1817,7 +1818,7 @@ function ChoiceButton({ checked, children, disabled, onClick, status }) {
       : status === 'wrong'
         ? 'border-rose-300 bg-rose-50 text-rose-900 ring-2 ring-rose-100'
         : checked
-          ? 'border-cyan-300 bg-cyan-50 text-cyan-950 ring-2 ring-cyan-100'
+          ? 'border-blue-300 bg-blue-50 text-blue-950 ring-2 ring-blue-100'
           : 'border-white/80 bg-white/50 text-slate-700 hover:bg-white/75'
 
   return (
@@ -2184,21 +2185,13 @@ export default function StudentLessonsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-      <header className="flex items-center gap-3 px-1">
-        <span className="grid h-11 w-11 place-items-center rounded-2xl border border-white/80 bg-white/55 text-sky-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-md">
-          <Car aria-hidden="true" className="h-5 w-5" strokeWidth={1.75} />
-        </span>
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-sky-700/80">Permis B</p>
-          <h1 className="text-xl font-semibold tracking-tight text-slate-900">Compétences</h1>
-        </div>
-      </header>
+      <PageHeader description="Les leçons et les QCU des 4 compétences du REMC." title="Compétences" />
 
       <section className="lesson-glass p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-sm text-slate-500">Progression globale</p>
-            <p className="mt-1 text-3xl font-semibold tabular-nums tracking-tight text-slate-900">{progressValue}%</p>
+            <p className="mt-1 text-3xl font-semibold tabular-nums tracking-tight text-slate-900">{progressValue} %</p>
             <p className="mt-1 text-sm text-slate-500">
               Compétence {activeCompetency.number} · {activeCompetency.title}
             </p>
@@ -2309,7 +2302,7 @@ export default function StudentLessonsPage() {
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-slate-400">
+                            <span className="text-[11px] font-medium text-slate-400">
                               {item.id}
                             </span>
                             {moduleState === 'validé' && (
@@ -2370,11 +2363,11 @@ export default function StudentLessonsPage() {
 
       {openedModule && activeCompetencyUnlocked && (
         <div className="fixed inset-0 z-[120] flex items-center justify-center overflow-hidden bg-slate-900/20 backdrop-blur-md sm:p-5 lg:p-8">
-          <div className="lesson-glass flex h-full min-h-0 w-full max-w-[1200px] flex-col overflow-hidden rounded-none sm:h-[90vh] sm:max-h-[90vh] sm:rounded-[1.6rem]">
+          <div className="lesson-glass flex h-full min-h-0 w-full max-w-[1200px] flex-col overflow-hidden rounded-none sm:h-[90vh] sm:max-h-[90vh] sm:rounded-xl">
             <div className="shrink-0 border-b border-white/70 bg-white/40 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))] backdrop-blur-xl sm:p-5">
               <div className="flex flex-col justify-between gap-2.5 lg:flex-row lg:items-start">
                 <div className="min-w-0">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-sky-700/80">
+                  <p className="text-[11px] font-semibold text-sky-700/80">
                     Module {openedModule.id} · {activeCompetency.title}
                   </p>
                   <h2 className="mt-0.5 truncate text-lg font-semibold tracking-tight text-slate-900 sm:text-2xl">
@@ -2445,7 +2438,7 @@ export default function StudentLessonsPage() {
                       <div className="grid gap-4 p-4">
                         {openedLesson.images.map((image) => (
                           <figure
-                            className="overflow-hidden rounded-[1.5rem] border-2 border-slate-300 bg-slate-50"
+                            className="overflow-hidden rounded-xl border border-slate-300 bg-slate-50"
                             key={image.src}
                           >
                             <button
@@ -2462,7 +2455,7 @@ export default function StudentLessonsPage() {
                               />
                             </button>
                             {image.caption && (
-                              <figcaption className="border-t-2 border-slate-200 p-4">
+                              <figcaption className="border-t border-slate-200 p-4">
                                 <p className="text-sm font-semibold leading-6 text-slate-500">{image.caption}</p>
                               </figcaption>
                             )}
@@ -2478,7 +2471,7 @@ export default function StudentLessonsPage() {
                       kicker={openedLesson.dashboardSection.kicker}
                       title={openedLesson.dashboardSection.title}
                     >
-                      <div className="border-b border-cyan-100/80 bg-gradient-to-r from-amber-50 to-cyan-50/80 px-4 py-4 sm:px-5">
+                      <div className="border-b border-blue-100/80 bg-gradient-to-r from-amber-50 to-blue-50/80 px-4 py-4 sm:px-5">
                         <p className="text-sm leading-6 text-slate-600">
                           {openedLesson.dashboardSection.intro}
                         </p>
@@ -2503,23 +2496,23 @@ export default function StudentLessonsPage() {
                             src={openedLesson.dashboardSection.image.src}
                           />
                         </div>
-                        <p className="border-t-2 border-slate-200 px-4 py-3 text-sm font-semibold text-slate-500">
+                        <p className="border-t border-slate-200 px-4 py-3 text-sm font-semibold text-slate-500">
                           {openedLesson.dashboardSection.image.caption}
                         </p>
                       </button>
                       <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2">
                         {openedLesson.dashboardSection.lights.map((light) => (
                           <article
-                            className="flex gap-3 rounded-2xl border-2 border-slate-300 bg-slate-50/80 p-4 transition hover:border-cyan-200 hover:bg-white"
+                            className="flex gap-3 rounded-2xl border border-slate-300 bg-slate-50/80 p-4 transition hover:border-blue-200 hover:bg-white"
                             key={light.id}
                           >
                             <DashboardWarningIcon alt={light.title} type={light.id} />
                             <div className="min-w-0 flex-1">
                               <div className="flex flex-wrap items-center gap-2">
-                                <span className="text-xs font-black text-slate-400">{light.number}.</span>
-                                <h4 className="font-extrabold text-slate-950">{light.title}</h4>
+                                <span className="text-xs font-semibold text-slate-400">{light.number}.</span>
+                                <h4 className="font-semibold text-slate-950">{light.title}</h4>
                                 <span
-                                  className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase ring-1 ${severityBadge[light.severity]}`}
+                                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ring-1 ${severityBadge[light.severity]}`}
                                 >
                                   {light.severity === 'danger'
                                     ? 'Danger'
@@ -2529,12 +2522,12 @@ export default function StudentLessonsPage() {
                                 </span>
                               </div>
                               <p className="mt-1 text-sm leading-6 text-slate-600">{light.description}</p>
-                              <p className="mt-2 text-xs font-bold leading-5 text-cyan-800">{light.action}</p>
+                              <p className="mt-2 text-xs font-semibold leading-5 text-blue-800">{light.action}</p>
                             </div>
                           </article>
                         ))}
                       </div>
-                      <div className="border-t border-cyan-100/80 bg-cyan-50/50 p-4">
+                      <div className="border-t border-blue-100/80 bg-blue-50/50 p-4">
                         <button
                           className="w-full lesson-btn px-4 py-3 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40"
                           disabled={!openedCourseReadComplete}
@@ -2549,19 +2542,19 @@ export default function StudentLessonsPage() {
 
                   <CollapsibleSection kicker="Résumé" title="Résumé de leçon">
                     {openedLesson?.summaryIntro && (
-                      <p className="border-b border-cyan-100/80 px-4 py-3 text-sm leading-6 text-slate-600 sm:px-5">
+                      <p className="border-b border-blue-100/80 px-4 py-3 text-sm leading-6 text-slate-600 sm:px-5">
                         {openedLesson.summaryIntro}
                       </p>
                     )}
                     <div className="grid gap-3 p-4">
                       {(openedLesson?.summary || [{ title: openedModule.title, description: openedModule.description }]).map((item, index) => (
-                        <article className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4" key={item.title}>
+                        <article className="rounded-2xl border border-slate-300 bg-slate-50 p-4" key={item.title}>
                           <div className="flex gap-3">
-                            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-cyan-100 text-sm font-black text-cyan-700">
+                            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-blue-100 text-sm font-semibold text-blue-700">
                               {index + 1}
                             </span>
                             <div>
-                              <h4 className="font-extrabold text-slate-950">{item.title}</h4>
+                              <h4 className="font-semibold text-slate-950">{item.title}</h4>
                               <p className="mt-1 text-sm leading-6 text-slate-600">{item.description}</p>
                             </div>
                           </div>
@@ -2571,11 +2564,11 @@ export default function StudentLessonsPage() {
                   </CollapsibleSection>
 
                   {openedLesson && (
-                    <CollapsibleSection className="bg-cyan-50/70" kicker="Points essentiels" title="Conseils de sécurité">
+                    <CollapsibleSection className="bg-blue-50/70" kicker="Points essentiels" title="Conseils de sécurité">
                       <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2">
                         {openedLesson.safetyAdvice.map((advice) => (
                           <div className="rounded-2xl border border-white bg-white/80 p-4 shadow-sm" key={advice}>
-                            <p className="text-sm font-bold leading-6 text-slate-700">{advice}</p>
+                            <p className="text-sm font-semibold leading-6 text-slate-700">{advice}</p>
                           </div>
                         ))}
                       </div>
@@ -2583,10 +2576,10 @@ export default function StudentLessonsPage() {
                   )}
                 </div>
 
-                <aside className="order-first h-fit rounded-[1.75rem] border-2 border-slate-300 bg-slate-50 p-4 sm:p-5 lg:order-none">
-                  <p className="text-sm font-black uppercase tracking-wide text-cyan-700">Progression</p>
+                <aside className="order-first h-fit rounded-xl border border-slate-300 bg-slate-50 p-4 sm:p-5 lg:order-none">
+                  <p className="text-sm font-semibold text-blue-700">Progression</p>
                   <div className="mt-4 rounded-2xl bg-white p-4">
-                    <p className="text-3xl font-black text-slate-950">
+                    <p className="text-3xl font-semibold text-slate-950">
                       {currentProgress.qcuPassed ? '100%' : openedCourseReadComplete ? '65%' : '20%'}
                     </p>
                     <p className="mt-1 text-sm text-slate-500">
@@ -2598,7 +2591,7 @@ export default function StudentLessonsPage() {
                     </p>
                     <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-cyan-600 to-cyan-300"
+                        className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-300"
                         style={{
                           width: currentProgress.qcuPassed
                             ? '100%'
@@ -2631,16 +2624,16 @@ export default function StudentLessonsPage() {
             ) : (
               <div className="p-4 sm:p-5 lg:p-6">
                 {openedLesson ? (
-                  <div className="rounded-[1.75rem] border-2 border-slate-300 bg-slate-50 p-4 md:p-5">
+                  <div className="rounded-xl border border-slate-300 bg-slate-50 p-4 md:p-5">
                     <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                       <div>
-                        <p className="text-sm font-black uppercase tracking-wide text-cyan-700">QCU interactif</p>
-                        <h3 className="mt-2 text-2xl font-extrabold text-slate-950">{openedLesson.title}</h3>
+                        <p className="text-sm font-semibold text-blue-700">QCU interactif</p>
+                        <h3 className="mt-2 text-2xl font-semibold text-slate-950">{openedLesson.title}</h3>
                         <p className="mt-2 text-sm font-semibold text-slate-500">
                           {getQuizIntro(openedLesson, quizDisplayTotal)}
                         </p>
                       </div>
-                      <span className="w-fit rounded-full border border-cyan-200 bg-white px-4 py-2 text-sm font-black text-cyan-700">
+                      <span className="w-fit rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-700">
                         {Math.min(currentQuizIndex + 1, quizDisplayTotal)}/{quizDisplayTotal}
                         {openedLesson?.quizSize ? ' · aléatoire' : ''}
                       </span>
@@ -2649,7 +2642,7 @@ export default function StudentLessonsPage() {
                     {!currentValidated && currentQuestions.length > 0 && (
                       <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200">
                         <div
-                          className="h-full rounded-full bg-gradient-to-r from-cyan-600 to-cyan-400 transition-all duration-300"
+                          className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-300"
                           style={{
                             width: `${Math.round(((currentQuizIndex + (currentQuizAnswered ? 1 : 0)) / currentQuestions.length) * 100)}%`,
                           }}
@@ -2658,45 +2651,45 @@ export default function StudentLessonsPage() {
                     )}
 
                     {currentValidated ? (
-                        <article className="mt-5 rounded-[1.5rem] border border-white bg-white p-5 text-center shadow-sm">
-                          <p className="text-sm font-black uppercase tracking-wide text-cyan-700">Résultat final</p>
-                          <p className="mt-3 text-5xl font-black text-slate-950">{percentage}%</p>
+                        <article className="mt-5 rounded-xl border border-white bg-white p-5 text-center shadow-sm">
+                          <p className="text-sm font-semibold text-blue-700">Résultat final</p>
+                          <p className="mt-3 text-5xl font-semibold text-slate-950">{percentage}%</p>
                           <div className="mx-auto mt-4 h-3 max-w-xs overflow-hidden rounded-full bg-slate-100">
                             <div
-                              className={`h-full rounded-full transition-all duration-500 ${percentage >= 80 ? 'bg-gradient-to-r from-emerald-500 to-cyan-500' : 'bg-gradient-to-r from-amber-400 to-orange-500'}`}
+                              className={`h-full rounded-full transition-all duration-500 ${percentage >= 80 ? 'bg-gradient-to-r from-emerald-500 to-blue-500' : 'bg-gradient-to-r from-amber-400 to-orange-500'}`}
                               style={{ width: `${percentage}%` }}
                             />
                           </div>
-                          <p className="mt-2 text-sm font-bold text-slate-500">
+                          <p className="mt-2 text-sm font-semibold text-slate-500">
                             Score : {score}/{quizDisplayTotal} · Seuil de validation : 80 %
                           </p>
-                          <p className={`mt-4 text-2xl font-black ${percentage >= 80 ? 'text-emerald-600' : 'text-amber-600'}`}>
+                          <p className={`mt-4 text-2xl font-semibold ${percentage >= 80 ? 'text-emerald-600' : 'text-amber-600'}`}>
                             {percentage >= 80 ? 'Module validé' : 'Module à retravailler'}
                           </p>
                         </article>
                       ) : currentQuizQuestion ? (
-                        <article className="mt-5 rounded-[1.5rem] border border-white bg-white p-5 shadow-sm">
+                        <article className="mt-5 rounded-xl border border-white bg-white p-5 shadow-sm">
                           <div className="flex flex-wrap items-center justify-between gap-3">
-                            <span className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-700 ring-1 ring-cyan-100">
+                            <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-100">
                               {currentQuizQuestion.iconType ? 'Témoin tableau de bord' : 'Question organes'}{' '}
                               {currentQuizIndex + 1}
                             </span>
-                            <span className="text-xs font-bold text-slate-400">
+                            <span className="text-xs font-semibold text-slate-400">
                               {answeredCount}/{quizDisplayTotal} réponses
                             </span>
                           </div>
                           {currentQuizQuestion.iconType && (
-                            <div className="mt-5 flex flex-col items-center rounded-[1.5rem] bg-gradient-to-br from-slate-50 to-white p-6 shadow-inner">
+                            <div className="mt-5 flex flex-col items-center rounded-xl bg-gradient-to-br from-slate-50 to-white p-6 shadow-inner">
                               <DashboardWarningIcon
                                 pulse={!currentQuizAnswered}
                                 type={currentQuizQuestion.iconType}
                               />
-                              <p className="mt-3 text-center text-sm font-bold text-slate-500">
+                              <p className="mt-3 text-center text-sm font-semibold text-slate-500">
                                 Identifiez la signification de ce témoin
                               </p>
                             </div>
                           )}
-                          <h4 className="mt-4 text-xl font-extrabold leading-8 text-slate-950">
+                          <h4 className="mt-4 text-xl font-semibold leading-8 text-slate-950">
                             {currentQuizQuestion.question}
                           </h4>
                           <div
@@ -2733,12 +2726,12 @@ export default function StudentLessonsPage() {
                                   : 'border-rose-200 bg-rose-50 text-rose-950'
                               }`}
                             >
-                              <p className="font-black">
+                              <p className="font-semibold">
                                 {currentQuizAnswer === currentQuizQuestion.answer
                                   ? 'Bonne réponse'
                                   : 'Réponse incorrecte'}
                               </p>
-                              <p className="mt-2 font-black text-slate-800">
+                              <p className="mt-2 font-semibold text-slate-800">
                                 Correction : {currentQuizQuestion.choices[currentQuizQuestion.answer]}
                               </p>
                               <p className="mt-1 text-slate-700">{currentQuizQuestion.explanation}</p>
@@ -2755,9 +2748,9 @@ export default function StudentLessonsPage() {
                       ) : null}
                   </div>
                 ) : (
-                  <div className="rounded-[1.75rem] border-2 border-slate-300 bg-slate-50 p-6 text-center">
-                    <p className="text-sm font-black uppercase tracking-wide text-cyan-700">QCU interactif</p>
-                    <h3 className="mt-2 text-2xl font-black text-slate-950">QCU en préparation</h3>
+                  <div className="rounded-xl border border-slate-300 bg-slate-50 p-6 text-center">
+                    <p className="text-sm font-semibold text-blue-700">QCU interactif</p>
+                    <h3 className="mt-2 text-2xl font-semibold text-slate-950">QCU en préparation</h3>
                     <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">
                       Cette interface est prête pour les questions du module « {openedModule.title} ». Le module d’installation contient déjà le QCU complet et validable.
                     </p>
@@ -2774,10 +2767,10 @@ export default function StudentLessonsPage() {
                 {currentValidated ? (
                   <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
                     <div>
-                      <p className="text-sm font-bold text-slate-500">
+                      <p className="text-sm font-semibold text-slate-500">
                         Score : {score}/{quizDisplayTotal} · Réussite : {percentage}%
                       </p>
-                      <p className={`mt-1 text-2xl font-black ${percentage >= 80 ? 'text-emerald-600' : 'text-amber-600'}`}>
+                      <p className={`mt-1 text-2xl font-semibold ${percentage >= 80 ? 'text-emerald-600' : 'text-amber-600'}`}>
                         {percentage >= 80 ? 'Module validé' : 'Module à retravailler'}
                       </p>
                     </div>
@@ -2801,7 +2794,7 @@ export default function StudentLessonsPage() {
                   </div>
                 ) : (
                   <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
-                    <p className="text-sm font-bold text-slate-500">
+                    <p className="text-sm font-semibold text-slate-500">
                       Répondez question par question. La question suivante apparaît uniquement après correction.
                     </p>
                     <span className="lesson-chip px-4 py-2 text-sm font-medium text-sky-800">

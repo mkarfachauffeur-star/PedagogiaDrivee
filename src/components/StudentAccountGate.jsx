@@ -7,7 +7,7 @@ function ErrorDetail({ label, value }) {
   if (!value) return null
   return (
     <p className="text-xs text-rose-800">
-      <span className="font-bold">{label} :</span>{' '}
+      <span className="font-semibold">{label} :</span>{' '}
       {typeof value === 'string' ? value : JSON.stringify(value)}
     </p>
   )
@@ -49,7 +49,7 @@ export default function StudentAccountGate({ children }) {
           className="border-rose-200 bg-rose-50/80"
         />
         <div className="rounded-2xl border border-rose-200 bg-white p-4 text-left shadow-sm">
-          <p className="text-sm font-bold text-rose-900">Détails techniques</p>
+          <p className="text-sm font-semibold text-rose-900">Détails techniques</p>
           <div className="mt-3 space-y-1 font-mono text-xs text-rose-800">
             <ErrorDetail label="Code" value={issue.code} />
             <ErrorDetail label="User ID" value={profileId} />

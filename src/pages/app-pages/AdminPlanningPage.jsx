@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import PageHeader from '../../components/ui/PageHeader'
+import { ui } from '../../components/ui/styles'
+import { useSecretaryDuties } from '../../hooks/useSecretaryDuties'
 import AppModal, { AppModalFooter } from '../../components/ui/AppModal'
 import EmptyState from '../../components/ui/EmptyState'
 import { useAuth } from '../../context/AuthContext'
@@ -61,7 +64,8 @@ function formatSlotTime(iso) {
 }
 
 export default function AdminPlanningPage() {
-  const { organizationId, canWrite } = useAuth()
+  const { organizationId } = useAuth()
+  const { canDoSecretaryTasks, managerCovers } = useSecretaryDuties()
   const [weekAnchor, setWeekAnchor] = useState(() => new Date())
   const [appointments, setAppointments] = useState([])
   const [options, setOptions] = useState({ students: [], teachers: [], vehicles: [] })
@@ -128,7 +132,7 @@ export default function AdminPlanningPage() {
 
   const saveLesson = async (event) => {
     event.preventDefault()
-    if (!canWrite || !organizationId) return
+    if (!canDoSecretaryTasks || !organizationId) return
     if (!form.studentId || !form.teacherId) {
       setFeedback({ type: 'error', text: 'Sélectionnez un élève et un enseignant.' })
       return
@@ -163,27 +167,21 @@ export default function AdminPlanningPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-      <section className="rounded-[2rem] border-2 border-slate-300 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white shadow-[var(--shadow-card)] md:p-8">
-        <p className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-          Planning global
-        </p>
-        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-extrabold sm:text-4xl">Planning global de l&apos;auto-école</h1>
-            <p className="mt-3 max-w-3xl text-sm leading-7 text-blue-50">
-              Organisez les créneaux de conduite par enseignant, élève et véhicule.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={openCreateModal}
-            className="pd-btn-primary shrink-0"
-            disabled={!canWrite || loading || optionsLoading}
-          >
-            {loading || optionsLoading ? 'Chargement…' : 'Nouvelle leçon'}
-          </button>
-        </div>
-      </section>
+      <PageHeader
+        actions={
+          canDoSecretaryTasks ? (
+            <button className={ui.btnPrimary} disabled={loading || optionsLoading} onClick={openCreateModal} type="button">
+              {loading || optionsLoading ? 'Chargement…' : 'Nouvelle leçon'}
+            </button>
+          ) : null
+        }
+        description={
+          managerCovers
+            ? 'Les créneaux de conduite par enseignant, élève et véhicule. Sans secrétaire, c’est vous qui planifiez.'
+            : 'Vue d’ensemble des leçons par enseignant, élève et véhicule. La planification se fait par le secrétariat.'
+        }
+        title="Planning global"
+      />
 
       {feedback && (
         <p
@@ -203,13 +201,13 @@ export default function AdminPlanningPage() {
         <Kpi label="Enseignants actifs" value={options.teachers.length} tone="cyan" />
       </section>
 
-      <section className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
+      <section className="rounded-xl border border-slate-200 bg-white p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
-                className="rounded-xl border-2 border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
                 onClick={() => {
                   const next = new Date(weekAnchor)
                   next.setDate(next.getDate() - 7)
@@ -220,14 +218,14 @@ export default function AdminPlanningPage() {
               </button>
               <button
                 type="button"
-                className="rounded-xl border-2 border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
                 onClick={() => setWeekAnchor(new Date())}
               >
                 Cette semaine
               </button>
               <button
                 type="button"
-                className="rounded-xl border-2 border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
                 onClick={() => {
                   const next = new Date(weekAnchor)
                   next.setDate(next.getDate() + 7)
@@ -237,7 +235,7 @@ export default function AdminPlanningPage() {
                 Semaine suivante →
               </button>
             </div>
-            <h2 className="mt-3 text-xl font-extrabold text-slate-900">{formatWeekLabel(week.start, week.end)}</h2>
+            <h2 className="mt-3 text-xl font-semibold text-slate-900">{formatWeekLabel(week.start, week.end)}</h2>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <FilterSelect
@@ -271,18 +269,18 @@ export default function AdminPlanningPage() {
               {appointments.map((item) => (
                 <article
                   key={item.id}
-                  className="flex flex-col gap-3 rounded-2xl border-2 border-slate-300 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-300 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{formatSlotTime(item.starts_at)}</p>
-                    <h3 className="mt-1 text-lg font-extrabold text-slate-900">{item.studentLabel}</h3>
+                    <p className="text-xs font-semibold text-slate-500">{formatSlotTime(item.starts_at)}</p>
+                    <h3 className="mt-1 text-lg font-semibold text-slate-900">{item.studentLabel}</h3>
                     <p className="mt-1 text-sm text-slate-600">
                       {item.teacherLabel} · {item.vehicleLabel} · {item.duration_minutes} min · {item.kind}
                     </p>
                     {item.notes && <p className="mt-2 text-sm text-slate-500">{item.notes}</p>}
                   </div>
                   <span
-                    className={`w-fit rounded-full border px-3 py-1 text-xs font-black ${
+                    className={`w-fit rounded-full border px-3 py-1 text-xs font-semibold ${
                       STATUS_STYLES[item.status] || STATUS_STYLES.Planifié
                     }`}
                   >
@@ -307,7 +305,7 @@ export default function AdminPlanningPage() {
             onClose={() => setModalOpen(false)}
             submitForm="planning-lesson-form"
             submitLabel={saving ? 'Enregistrement…' : 'Planifier la leçon'}
-            submitDisabled={saving || !canWrite || optionsLoading || !hasPlanningChoices}
+            submitDisabled={saving || !canDoSecretaryTasks || optionsLoading || !hasPlanningChoices}
           />
         )}
       >
@@ -408,19 +406,19 @@ function Kpi({ label, value, tone = 'slate' }) {
   const tones = {
     slate: 'text-slate-900',
     emerald: 'text-emerald-700',
-    cyan: 'text-cyan-700',
+    cyan: 'text-blue-700',
   }
   return (
-    <div className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
-      <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{label}</p>
-      <p className={`mt-2 text-3xl font-black ${tones[tone] || tones.slate}`}>{value}</p>
+    <div className="rounded-xl border border-slate-200 bg-white p-5">
+      <p className="text-xs font-semibold text-slate-500">{label}</p>
+      <p className={`mt-2 text-3xl font-semibold ${tones[tone] || tones.slate}`}>{value}</p>
     </div>
   )
 }
 
 function FilterSelect({ label, value, onChange, options }) {
   return (
-    <label className="block text-sm font-bold text-slate-700">
+    <label className="block text-sm font-semibold text-slate-700">
       {label}
       <select className="pd-input mt-2 w-full" value={value} onChange={(e) => onChange(e.target.value)}>
         {options.map((option) => (
@@ -433,7 +431,7 @@ function FilterSelect({ label, value, onChange, options }) {
 
 function Field({ label, children, className = '' }) {
   return (
-    <label className={`block text-sm font-bold text-slate-700 ${className}`}>
+    <label className={`block text-sm font-semibold text-slate-700 ${className}`}>
       {label}
       {children}
     </label>

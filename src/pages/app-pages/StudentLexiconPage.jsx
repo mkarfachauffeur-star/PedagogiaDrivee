@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PageHeader from '../../components/ui/PageHeader'
 import PanelTabs from '../../components/ui/PanelTabs'
 import franceC20a from '../../assets/signs/france-c20a.svg?url'
 
@@ -495,17 +496,11 @@ export default function StudentLexiconPage() {
 
   return (
     <div className="mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-6">
-      <section className="overflow-hidden rounded-[2rem] border-2 border-slate-300 bg-white shadow-[var(--shadow-card)]">
-        <div className="bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white md:p-8">
-          <span className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">{labels.studentOnly}</span>
-          <h1 className="mt-5 text-3xl font-extrabold tracking-tight sm:text-4xl">{labels.title}</h1>
-          <p className="mt-4 max-w-3xl text-base leading-7 text-blue-50">{labels.subtitle}</p>
-        </div>
-      </section>
+      <PageHeader description={labels.subtitle} title={labels.title} />
 
       <PanelTabs
         activeId={sectionTab}
-        className="sticky top-0 z-10 rounded-2xl border-2 border-slate-300 bg-white/95 p-3 shadow-sm backdrop-blur"
+        className="sticky top-0 z-10 rounded-2xl border border-slate-300 bg-white/95 p-3 shadow-sm backdrop-blur"
         onChange={setSectionTab}
         tabs={[
           { id: 'vocab', label: 'Vocabulaire' },
@@ -516,14 +511,14 @@ export default function StudentLexiconPage() {
 
       {sectionTab === 'vocab' && (
       <section className="grid grid-cols-1 min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="min-w-0 overflow-hidden rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
+        <div className="min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white p-5">
           <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>
-              <p className="text-sm font-black uppercase tracking-wide text-cyan-700">Définitions du lexique</p>
-              <h2 className="mt-1 text-2xl font-black text-slate-950">Cartes interactives</h2>
+              <p className="text-sm font-semibold text-blue-700">Définitions du lexique</p>
+              <h2 className="mt-1 text-2xl font-semibold text-slate-950">Cartes interactives</h2>
               <p className="mt-2 text-xs font-semibold text-slate-500 sm:text-sm">Faites défiler pour parcourir tous les mots →</p>
             </div>
-            <p className="rounded-full bg-cyan-50 px-4 py-2 text-sm font-bold text-cyan-700">{terms.length} mots clés</p>
+            <p className="rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700">{terms.length} mots clés</p>
           </div>
           <HorizontalCarousel ariaLabel="Lexique — cartes défilables">
             {terms.map((term) => {
@@ -531,10 +526,10 @@ export default function StudentLexiconPage() {
               const isActive = activeTerm.word === term.word
               return (
                 <button
-                  className={`snap-start shrink-0 w-[17.5rem] rounded-[1.5rem] border p-4 text-left transition hover:-translate-y-1 hover:shadow-lg sm:w-[19rem] ${
+                  className={`snap-start shrink-0 w-[17.5rem] rounded-xl border p-4 text-left transition hover:-translate-y-1 hover:shadow-lg sm:w-[19rem] ${
                     isActive
-                      ? 'border-cyan-300 bg-cyan-50/80 shadow-md'
-                      : 'border-slate-300 bg-slate-50 hover:border-cyan-200 hover:bg-cyan-50/60'
+                      ? 'border-blue-300 bg-blue-50/80 shadow-md'
+                      : 'border-slate-300 bg-slate-50 hover:border-blue-200 hover:bg-blue-50/60'
                   }`}
                   key={term.word}
                   onClick={() => {
@@ -543,11 +538,11 @@ export default function StudentLexiconPage() {
                   }}
                   type="button"
                 >
-                  <p className="text-lg font-black text-slate-950">{term.word}</p>
+                  <p className="text-lg font-semibold text-slate-950">{term.word}</p>
                   <p className="mt-3 min-h-[4.5rem] text-sm leading-6 text-slate-600">
                     {isFlipped ? term.explanation : term.definition}
                   </p>
-                  <span className="mt-4 inline-flex rounded-full bg-white px-3 py-1 text-xs font-black text-cyan-700">
+                  <span className="mt-4 inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-blue-700">
                     {isFlipped ? 'Explication' : 'Définition'}
                   </span>
                 </button>
@@ -555,24 +550,24 @@ export default function StudentLexiconPage() {
             })}
           </HorizontalCarousel>
         </div>
-        <aside className="h-fit rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
-          <p className="text-sm font-black uppercase tracking-wide text-cyan-700">Carte sélectionnée</p>
-          <h3 className="mt-2 text-3xl font-black text-slate-950">{activeTerm.word}</h3>
-          <p className="mt-4 rounded-2xl bg-cyan-50 p-4 text-sm font-bold leading-6 text-cyan-900">{activeTerm.definition}</p>
+        <aside className="h-fit rounded-xl border border-slate-200 bg-white p-5">
+          <p className="text-sm font-semibold text-blue-700">Carte sélectionnée</p>
+          <h3 className="mt-2 text-3xl font-semibold text-slate-950">{activeTerm.word}</h3>
+          <p className="mt-4 rounded-2xl bg-blue-50 p-4 text-sm font-semibold leading-6 text-blue-900">{activeTerm.definition}</p>
           <p className="mt-4 text-sm leading-6 text-slate-600">{activeTerm.explanation}</p>
         </aside>
       </section>
       )}
 
       {sectionTab === 'signs' && (
-      <section className="min-w-0 overflow-hidden rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)] sm:p-7">
+      <section className="min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white p-5 sm:p-7">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
           <div>
-            <p className="text-sm font-black uppercase tracking-wide text-cyan-700">Panneaux de signalisation</p>
-            <h2 className="mt-1 text-2xl font-black text-slate-950 sm:text-[1.65rem]">Les panneaux les plus rencontrés</h2>
+            <p className="text-sm font-semibold text-blue-700">Panneaux de signalisation</p>
+            <h2 className="mt-1 text-2xl font-semibold text-slate-950 sm:text-[1.65rem]">Les panneaux les plus rencontrés</h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">Faites défiler pour parcourir tous les panneaux →</p>
           </div>
-          <p className="rounded-full bg-slate-50 px-4 py-2 text-sm font-bold text-slate-700">{signs.length} panneaux à reconnaître</p>
+          <p className="rounded-full bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700">{signs.length} panneaux à reconnaître</p>
         </div>
 
         <HorizontalCarousel ariaLabel="Panneaux de signalisation — galerie défilable">
@@ -580,7 +575,7 @@ export default function StudentLexiconPage() {
             <article
               key={sign.type}
               lang="fr"
-              className="group flex w-[16.5rem] shrink-0 snap-start flex-col overflow-hidden rounded-[1.75rem] border-2 border-slate-300 bg-white shadow-[0_8px_24px_-12px_rgba(15,23,42,0.18)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_38px_-18px_rgba(15,23,42,0.35)] sm:w-[18rem]"
+              className="group flex w-[16.5rem] shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-[0_8px_24px_-12px_rgba(15,23,42,0.18)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_38px_-18px_rgba(15,23,42,0.35)] sm:w-[18rem]"
             >
               <div className="relative flex h-44 items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100">
                 <div
@@ -591,11 +586,11 @@ export default function StudentLexiconPage() {
                       'radial-gradient(circle at 18% 22%, rgba(15,23,42,0.18) 0, transparent 38%), radial-gradient(circle at 82% 78%, rgba(15,23,42,0.12) 0, transparent 45%)',
                   }}
                 />
-                <span className="absolute left-3 top-3 inline-flex rounded-full bg-white px-2.5 py-1 text-[10px] font-black text-slate-500 shadow-sm ring-1 ring-slate-300">
+                <span className="absolute left-3 top-3 inline-flex rounded-full bg-white px-2.5 py-1 text-[10px] font-semibold text-slate-500 shadow-sm ring-1 ring-slate-300">
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <span
-                  className={`absolute right-3 top-3 inline-flex rounded-full px-2.5 py-1 text-[10px] font-black uppercase ${accentBadge[sign.accent]}`}
+                  className={`absolute right-3 top-3 inline-flex rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase ${accentBadge[sign.accent]}`}
                   style={{ letterSpacing: '0.04em' }}
                 >
                   {sign.category}
@@ -606,7 +601,7 @@ export default function StudentLexiconPage() {
               </div>
 
               <div className="flex flex-1 flex-col gap-2 p-4">
-                <h3 className="text-left text-base font-extrabold leading-snug text-slate-950">{sign.name}</h3>
+                <h3 className="text-left text-base font-semibold leading-snug text-slate-950">{sign.name}</h3>
                 <p className="text-left text-sm leading-6 text-slate-600">{sign.explanation}</p>
               </div>
             </article>
@@ -616,27 +611,27 @@ export default function StudentLexiconPage() {
       )}
 
       {sectionTab === 'quiz' && (
-      <section className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)] sm:p-7" lang="fr">
+      <section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-7" lang="fr">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
           <div>
-            <p className="text-sm font-black uppercase tracking-wide text-cyan-700">Quiz aléatoire</p>
-            <h2 className="mt-1 text-2xl font-black text-slate-950 sm:text-[1.65rem]">Quiz QCU aléatoire</h2>
+            <p className="text-sm font-semibold text-blue-700">Quiz aléatoire</p>
+            <h2 className="mt-1 text-2xl font-semibold text-slate-950 sm:text-[1.65rem]">Quiz QCU aléatoire</h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">{QUIZ_SAMPLE_SIZE} questions tirées au hasard parmi {quiz.length}. Une seule bonne réponse par question.</p>
           </div>
           {session && !finished && (
-            <p className="rounded-full bg-cyan-50 px-4 py-2 text-sm font-black text-cyan-800">Question {Math.min(currentIndex + 1, session.length)} / {session.length}</p>
+            <p className="rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-800">Question {Math.min(currentIndex + 1, session.length)} / {session.length}</p>
           )}
         </div>
 
         {!session && (
-          <div className="mt-6 grid place-items-center rounded-[1.75rem] border border-dashed border-slate-300 bg-slate-50/60 px-6 py-12 text-center">
-            <div className="grid h-16 w-16 place-items-center rounded-full bg-cyan-100 text-3xl">🎯</div>
-            <h3 className="mt-5 text-xl font-black text-slate-950">Prêt pour le défi ?</h3>
+          <div className="mt-6 grid place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50/60 px-6 py-12 text-center">
+            <div className="grid h-16 w-16 place-items-center rounded-full bg-blue-100 text-3xl">🎯</div>
+            <h3 className="mt-5 text-xl font-semibold text-slate-950">Prêt pour le défi ?</h3>
             <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">Vocabulaire auto-école et panneaux mélangés. {QUIZ_SAMPLE_SIZE} questions à choix unique, ordre et propositions aléatoires.</p>
             <button
               type="button"
               onClick={startQuiz}
-              className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-600 to-sky-600 px-6 py-3 text-sm font-black text-white shadow-lg shadow-cyan-600/20 transition hover:shadow-xl hover:shadow-cyan-600/30 active:scale-[0.98]"
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:shadow-xl hover:shadow-blue-600/30 active:scale-[0.98]"
             >
               Lancer le quiz aléatoire
             </button>
@@ -646,17 +641,17 @@ export default function StudentLexiconPage() {
         {currentQuestion && (
           <div className="mt-6">
             <div className="mb-4 h-2 w-full overflow-hidden rounded-full bg-slate-100">
-              <div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-sky-500 transition-all duration-500" style={{ width: `${progress}%` }} />
+              <div className="h-full rounded-full bg-gradient-to-r from-blue-500 to-sky-500 transition-all duration-500" style={{ width: `${progress}%` }} />
             </div>
 
-            <article className="rounded-[1.75rem] border-2 border-slate-300 bg-slate-50/70 p-5 sm:p-6">
+            <article className="rounded-xl border border-slate-300 bg-slate-50/70 p-5 sm:p-6">
               {currentQuestion.visualType && (
-                <div className="mb-5 grid place-items-center rounded-[1.5rem] bg-white p-5 shadow-inner">
+                <div className="mb-5 grid place-items-center rounded-xl bg-white p-5 shadow-inner">
                   <SignVisual type={currentQuestion.visualType} size="lg" />
                 </div>
               )}
               <h3
-                className="text-left text-lg font-extrabold text-slate-950 sm:text-xl"
+                className="text-left text-lg font-semibold text-slate-950 sm:text-xl"
                 style={{ overflowWrap: 'break-word', wordBreak: 'normal', hyphens: 'manual', letterSpacing: 'normal', lineHeight: '1.35' }}
               >
                 {currentIndex + 1}. {currentQuestion.question}
@@ -667,7 +662,7 @@ export default function StudentLexiconPage() {
                   const isSelected = selectedChoice === choice
                   const isCorrect = choice === currentQuestion.answer
                   const showResult = Boolean(selectedChoice)
-                  let style = 'border-slate-300 bg-white text-slate-700 hover:border-cyan-300 hover:bg-cyan-50'
+                  let style = 'border-slate-300 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50'
                   if (showResult) {
                     if (isCorrect) style = 'border-emerald-300 bg-emerald-50 text-emerald-900'
                     else if (isSelected) style = 'border-rose-300 bg-rose-50 text-rose-900'
@@ -679,7 +674,7 @@ export default function StudentLexiconPage() {
                       type="button"
                       onClick={() => handleSelect(choice)}
                       disabled={showResult}
-                      className={`rounded-2xl border px-4 py-3.5 text-left text-[15px] font-bold transition ${style}`}
+                      className={`rounded-2xl border px-4 py-3.5 text-left text-[15px] font-semibold transition ${style}`}
                       style={{ overflowWrap: 'break-word', wordBreak: 'normal', hyphens: 'manual', letterSpacing: 'normal', lineHeight: '1.45' }}
                     >
                       {choice}
@@ -691,7 +686,7 @@ export default function StudentLexiconPage() {
               {selectedChoice && (
                 <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <p
-                    className={`text-sm font-black ${
+                    className={`text-sm font-semibold ${
                       selectedChoice === currentQuestion.answer ? 'text-emerald-700' : 'text-rose-700'
                     }`}
                   >
@@ -700,7 +695,7 @@ export default function StudentLexiconPage() {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-cyan-600 px-5 py-2.5 text-sm font-black text-white transition hover:bg-cyan-700 active:scale-[0.98]"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98]"
                   >
                     {currentIndex + 1 >= session.length ? 'Voir le score' : 'Question suivante'} →
                   </button>
@@ -711,10 +706,10 @@ export default function StudentLexiconPage() {
         )}
 
         {finished && session && (
-          <div className="mt-6 grid place-items-center rounded-[1.75rem] border-2 border-slate-300 bg-gradient-to-br from-cyan-50 via-white to-sky-50 px-6 py-10 text-center">
-            <p className="text-sm font-black uppercase tracking-wide text-cyan-700">Score final</p>
-            <p className="mt-3 text-5xl font-black text-slate-950">{score} <span className="text-slate-400">/ {session.length}</span></p>
-            <p className="mt-2 text-base font-bold text-slate-600">{percentage} % de bonnes réponses</p>
+          <div className="mt-6 grid place-items-center rounded-xl border border-slate-300 bg-gradient-to-br from-blue-50 via-white to-sky-50 px-6 py-10 text-center">
+            <p className="text-sm font-semibold text-blue-700">Score final</p>
+            <p className="mt-3 text-5xl font-semibold text-slate-950">{score} <span className="text-slate-400">/ {session.length}</span></p>
+            <p className="mt-2 text-base font-semibold text-slate-600">{percentage} % de bonnes réponses</p>
             <p className="mt-3 max-w-md text-sm leading-6 text-slate-500">
               {percentage >= 80
                 ? 'Excellent ! Tu maîtrises bien le lexique et les panneaux.'
@@ -725,7 +720,7 @@ export default function StudentLexiconPage() {
             <button
               type="button"
               onClick={startQuiz}
-              className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-600 to-sky-600 px-6 py-3 text-sm font-black text-white shadow-lg shadow-cyan-600/20 transition hover:shadow-xl active:scale-[0.98]"
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:shadow-xl active:scale-[0.98]"
             >
               Recommencer un quiz aléatoire
             </button>

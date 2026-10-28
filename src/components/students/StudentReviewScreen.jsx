@@ -16,7 +16,7 @@ function StarSelector({ value, onChange, disabled }) {
             disabled={disabled}
             aria-label={`${star} étoile${star > 1 ? 's' : ''}`}
             onClick={() => onChange(star)}
-            className={`rounded-2xl border-2 px-3 py-2 text-3xl transition hover:scale-105 disabled:opacity-50 ${
+            className={`rounded-2xl border px-3 py-2 text-3xl transition hover:scale-105 disabled:opacity-50 ${
               value >= star
                 ? 'border-amber-300 bg-amber-50'
                 : 'border-slate-200 bg-white text-slate-300'
@@ -63,9 +63,9 @@ function ReviewForm({ onSubmitted }) {
       <StarSelector disabled={saving} onChange={setRating} value={rating} />
 
       <label className="block">
-        <span className="text-sm font-bold text-slate-700">Souhaitez-vous nous laisser un commentaire ?</span>
+        <span className="text-sm font-semibold text-slate-700">Souhaitez-vous nous laisser un commentaire ?</span>
         <textarea
-          className="mt-2 min-h-28 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 py-3 text-sm text-slate-800 outline-none focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100"
+          className="mt-2 min-h-28 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-800 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
           disabled={saving}
           onChange={(event) => setComment(event.target.value)}
           placeholder="Écrivez ici votre avis..."
@@ -80,7 +80,7 @@ function ReviewForm({ onSubmitted }) {
       )}
 
       <button
-        className="rounded-2xl bg-navy-950 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="rounded-2xl bg-[#1769FF] px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
         disabled={rating < 1 || saving}
         type="submit"
       >
@@ -96,13 +96,13 @@ function ReviewThankYou({ rating, onContinue }) {
   if (isPositive) {
     return (
       <div className="mx-auto flex w-full max-w-xl flex-col gap-5 text-center">
-        <p className="text-2xl font-black text-slate-950">Merci beaucoup pour votre retour ❤️</p>
+        <p className="text-2xl font-semibold text-slate-950">Merci beaucoup pour votre retour ❤️</p>
         <p className="text-sm leading-7 text-slate-600">
           Souhaitez-vous également laisser un avis public sur notre application ?
         </p>
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <button
-            className="rounded-2xl bg-navy-950 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-cyan-700"
+            className="rounded-2xl bg-[#1769FF] px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
             onClick={() => {
               openAppStore()
               onContinue?.()
@@ -112,7 +112,7 @@ function ReviewThankYou({ rating, onContinue }) {
             ⭐ Laisser un avis
           </button>
           <button
-            className="rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-extrabold text-slate-700 transition hover:bg-slate-50"
+            className="rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
             onClick={() => onContinue?.()}
             type="button"
           >
@@ -125,12 +125,12 @@ function ReviewThankYou({ rating, onContinue }) {
 
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-4 text-center">
-      <p className="text-2xl font-black text-slate-950">Merci pour votre retour.</p>
+      <p className="text-2xl font-semibold text-slate-950">Merci pour votre retour.</p>
       <p className="text-sm leading-7 text-slate-600">
         Votre avis nous aidera à améliorer Pedagogia Drive.
       </p>
       <button
-        className="mx-auto rounded-2xl bg-navy-950 px-6 py-3 text-sm font-extrabold text-white transition hover:bg-cyan-700"
+        className="mx-auto rounded-2xl bg-[#1769FF] px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
         onClick={() => onContinue?.()}
         type="button"
       >
@@ -145,8 +145,8 @@ export default function StudentReviewScreen({ onCompleted }) {
 
   return (
     <div className="fixed inset-0 z-[210] flex flex-col bg-[#f0f7ff]">
-      <div className="border-b-2 border-slate-300 bg-white px-4 py-5 sm:px-6">
-        <h1 className="mt-1 text-2xl font-black text-slate-950 sm:text-3xl">
+      <div className="border-b border-slate-300 bg-white px-4 py-5 sm:px-6">
+        <h1 className="mt-1 text-2xl font-semibold text-slate-950 sm:text-3xl">
           ⭐ Votre avis compte
         </h1>
         {!submittedRating && (
@@ -155,7 +155,7 @@ export default function StudentReviewScreen({ onCompleted }) {
             <p>
               Votre avis est précieux pour nous permettre d&apos;améliorer continuellement l&apos;application.
             </p>
-            <p className="font-bold text-slate-800">Comment évaluez-vous votre expérience ?</p>
+            <p className="font-semibold text-slate-800">Comment évaluez-vous votre expérience ?</p>
           </div>
         )}
       </div>
