@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import EmptyState from '../../components/ui/EmptyState'
-import PageHero from '../../components/ui/PageHero'
+import PageHeader from '../../components/ui/PageHeader'
 import PageShell from '../../components/ui/PageShell'
 import { useAuth } from '../../context/AuthContext'
 import { supabase } from '../../lib/supabase'
@@ -70,7 +70,7 @@ export default function StudentPlanningPage() {
 
   return (
     <PageShell>
-      <PageHero eyebrow="Espace élève" title="Planning" subtitle="Consultez vos séances programmées avec votre enseignant." />
+      <PageHeader description="Vos leçons à venir et passées avec votre enseignant." title="Planning" />
       <section className="pd-section-card pd-section-card-body space-y-6">
         {loading ? (
           <p className="text-sm text-slate-500">Chargement du planning…</p>

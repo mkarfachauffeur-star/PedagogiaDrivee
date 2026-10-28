@@ -31,17 +31,17 @@ export default function RemcProgressOverview({
   const showCompetencyBars = Boolean(itemProgress)
 
   return (
-    <section className={compact ? 'space-y-3' : 'rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]'}>
+    <section className={compact ? 'space-y-3' : 'rounded-xl border border-slate-200 bg-white p-5 sm:p-6'}>
       {!compact && (
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
           <div>
-            <h2 className="text-xl font-extrabold text-slate-950">Progression REMC</h2>
+            <h2 className="text-base font-semibold text-slate-900">Progression REMC</h2>
             <p className="mt-1 text-sm text-slate-500">
               Parcours progressif — compétences débloquées par votre enseignant.
             </p>
           </div>
           {showGlobalPercent && (
-            <p className="text-3xl font-black text-cyan-700">{globalProgress} %</p>
+            <p className="text-2xl font-semibold tabular-nums tracking-[-0.02em] text-[#1769FF]">{globalProgress} %</p>
           )}
         </div>
       )}

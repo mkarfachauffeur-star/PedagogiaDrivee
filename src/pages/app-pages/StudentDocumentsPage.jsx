@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import EmptyState from '../../components/ui/EmptyState'
-import PageHero from '../../components/ui/PageHero'
+import PageHeader from '../../components/ui/PageHeader'
+import { formatDate } from '../../lib/format'
 import PageShell from '../../components/ui/PageShell'
 import { useAuth } from '../../context/AuthContext'
 import { useStudentAccount } from '../../hooks/useStudentAccount'
@@ -11,19 +12,6 @@ import {
   subscribeToDocuments,
   uploadDocumentFromStudent,
 } from '../../services/documents'
-
-function formatDateFr(value) {
-  if (!value) return '—'
-  try {
-    return new Date(value).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
-  } catch {
-    return '—'
-  }
-}
 
 export default function StudentDocumentsPage() {
   const { profileId, organizationId, profile } = useAuth()
@@ -139,11 +127,7 @@ export default function StudentDocumentsPage() {
 
   return (
     <PageShell>
-      <PageHero
-        eyebrow="Espace élève"
-        subtitle="Dossier numérique et justificatifs."
-        title="Documents"
-      />
+      <PageHeader description="Votre dossier et vos justificatifs." title="Documents" />
 
       <section className="pd-section-card pd-section-card-body">
         <div className="flex flex-wrap items-end justify-between gap-3">
@@ -272,7 +256,7 @@ export default function StudentDocumentsPage() {
                     )}
                     <p className="mt-1 truncate text-sm text-slate-500">{document.file_name || 'Sans fichier'}</p>
                     <p className="mt-1 text-xs font-semibold text-slate-400">
-                      Déposé le {formatDateFr(document.sent_at || document.classified_at)}
+                      Déposé le {formatDate(document.sent_at || document.classified_at)}
                       {document.status ? ` · ${document.status}` : ''}
                     </p>
                   </div>

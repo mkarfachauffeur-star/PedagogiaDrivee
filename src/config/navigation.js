@@ -57,6 +57,7 @@ export const NAVIGATION = {
     ],
   },
   student: {
+    spaceLabel: 'Espace élève',
     user: null,
     items: PERMIS_B_ITEMS,
   },

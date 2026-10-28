@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import EmptyState from '../../components/ui/EmptyState'
-import PageHero from '../../components/ui/PageHero'
+import PageHeader from '../../components/ui/PageHeader'
 import PageShell from '../../components/ui/PageShell'
 import { useStudentAccount } from '../../hooks/useStudentAccount'
 import { fetchStudentContractOverview, formatDateFr, formatEur } from '../../services/finance'
@@ -93,11 +93,7 @@ export default function StudentContractPage() {
 
   return (
     <PageShell>
-      <PageHero
-        eyebrow="Espace élève"
-        subtitle="Formule, heures et conditions contractuelles."
-        title="Contrat"
-      />
+      <PageHeader description="Votre formule, vos heures et le récapitulatif financier." title="Contrat" />
 
       {!hasOverview ? (
         <section className="pd-section-card pd-section-card-body">

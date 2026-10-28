@@ -6,8 +6,10 @@ import { fetchStudentRemcStats } from '../../services/remcStats'
 import { listLessonObservationsForStudent } from '../../services/studentLessonObservations'
 import RemcProgressOverview from '../../components/remc/RemcProgressOverview'
 import PanelTabs from '../../components/ui/PanelTabs'
+import PageHeader from '../../components/ui/PageHeader'
 import PaginationBar from '../../components/ui/PaginationBar'
 import { useClientPagination } from '../../hooks/useClientPagination'
+import { formatDateTime } from '../../lib/format'
 
 function formatLessonDateFr(dateString) {
   if (!dateString) return ''
@@ -26,16 +28,6 @@ function buildLessonHistory(lessons = []) {
     .sort((a, b) => new Date(b.sortAt) - new Date(a.sortAt))
 }
 
-function formatDateTimeFr(iso) {
-  if (!iso) return '—'
-  return new Date(iso).toLocaleString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
 
 export default function StudentCompetencyReportsPage() {
   const { profileId } = useAuth()
@@ -101,13 +93,12 @@ export default function StudentCompetencyReportsPage() {
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8">
-      <header className="mb-8">
-        <p className="text-sm font-semibold uppercase tracking-wide text-cyan-700">Historique des leçons</p>
-        <h1 className="mt-2 text-3xl font-extrabold text-slate-900">Votre progression REMC</h1>
-        <p className="mt-2 text-sm text-slate-500">
-          Synthèse de vos compétences, leçons de conduite et observations partagées par votre enseignant.
-        </p>
-      </header>
+      <div className="mb-6">
+        <PageHeader
+          description="Vos compétences REMC, vos leçons de conduite et les observations de votre enseignant."
+          title="Historique des leçons"
+        />
+      </div>
 
       <PanelTabs
         activeId={viewTab}
@@ -140,6 +131,7 @@ export default function StudentCompetencyReportsPage() {
         </div>
         <div className="mt-4">
           <RemcProgressOverview
+            compact
             globalProgress={globalProgress}
             itemProgress={itemProgress}
             showGlobalPercent={false}
@@ -199,7 +191,7 @@ export default function StudentCompetencyReportsPage() {
                       )}
                     </div>
                     <time className="shrink-0 text-xs font-semibold text-slate-400">
-                      {formatDateTimeFr(item.sortAt)}
+                      {formatDateTime(item.sortAt)}
                     </time>
                   </div>
                 </li>

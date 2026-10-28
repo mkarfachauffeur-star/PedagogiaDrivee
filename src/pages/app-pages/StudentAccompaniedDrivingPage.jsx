@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import AacPanel from '../../components/aac/AacPanel'
 import EmptyState from '../../components/ui/EmptyState'
-import PageHero from '../../components/ui/PageHero'
+import PageHeader from '../../components/ui/PageHeader'
 import PageShell from '../../components/ui/PageShell'
 import { useAuth } from '../../context/AuthContext'
 import { useStudentAccount } from '../../hooks/useStudentAccount'
@@ -56,11 +56,7 @@ export default function StudentAccompaniedDrivingPage() {
   if (!isAac) {
     return (
       <PageShell>
-        <PageHero
-          eyebrow="Permis B"
-          subtitle="Cet espace est réservé aux élèves en conduite accompagnée."
-          title="Conduite accompagnée"
-        />
+        <PageHeader description="Cet espace est réservé aux élèves en conduite accompagnée." title="Conduite accompagnée" />
         <section className="pd-section-card pd-section-card-body">
           <p className="max-w-xl text-sm leading-6 text-slate-600">
             Contactez le secrétariat si vous souhaitez basculer sur cette formule.
@@ -75,11 +71,7 @@ export default function StudentAccompaniedDrivingPage() {
 
   return (
     <PageShell>
-      <PageHero
-        eyebrow="Permis B"
-        subtitle="Suivi des kilomètres, des trajets et des rendez-vous pédagogiques."
-        title="Conduite accompagnée"
-      />
+      <PageHeader description="Vos kilomètres, vos trajets et vos rendez-vous pédagogiques." title="Conduite accompagnée" />
       <AacPanel
         birthDate={student.birthDate}
         mode="student"

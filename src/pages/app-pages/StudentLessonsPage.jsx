@@ -5,6 +5,7 @@ import { useRemcUnlock } from '../../hooks/useRemcUnlock'
 import { useClientPagination } from '../../hooks/useClientPagination'
 import RemcLockedBanner from '../../components/remc/RemcLockedBanner'
 import PaginationBar from '../../components/ui/PaginationBar'
+import PageHeader from '../../components/ui/PageHeader'
 import { REMC_COMPETENCY_ORDER } from '../../data/remcCompetencies'
 import {
   fetchLessonModuleProgressMap,
@@ -2184,21 +2185,13 @@ export default function StudentLessonsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-      <header className="flex items-center gap-3 px-1">
-        <span className="grid h-11 w-11 place-items-center rounded-2xl border border-white/80 bg-white/55 text-sky-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-md">
-          <Car aria-hidden="true" className="h-5 w-5" strokeWidth={1.75} />
-        </span>
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-sky-700/80">Permis B</p>
-          <h1 className="text-xl font-semibold tracking-tight text-slate-900">Compétences</h1>
-        </div>
-      </header>
+      <PageHeader description="Les leçons et les QCU des 4 compétences du REMC." title="Compétences" />
 
       <section className="lesson-glass p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-sm text-slate-500">Progression globale</p>
-            <p className="mt-1 text-3xl font-semibold tabular-nums tracking-tight text-slate-900">{progressValue}%</p>
+            <p className="mt-1 text-3xl font-semibold tabular-nums tracking-tight text-slate-900">{progressValue} %</p>
             <p className="mt-1 text-sm text-slate-500">
               Compétence {activeCompetency.number} · {activeCompetency.title}
             </p>

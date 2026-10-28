@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import InitialAssessmentStudentResults from '../../components/initial-assessment/InitialAssessmentStudentResults'
 import EmptyState from '../../components/ui/EmptyState'
-import PageHero from '../../components/ui/PageHero'
+import PageHeader from '../../components/ui/PageHeader'
+import { formatDate } from '../../lib/format'
 import PageShell from '../../components/ui/PageShell'
 import { useAuth } from '../../context/AuthContext'
 import { useStudentTrack } from '../../hooks/useStudentTrack'
@@ -14,15 +15,6 @@ import {
   formatAssessmentStatus,
   getInitialAssessmentForStudent,
 } from '../../services/initialAssessment'
-
-function formatDateFr(value) {
-  if (!value) return '—'
-  try {
-    return new Date(value).toLocaleDateString('fr-FR')
-  } catch {
-    return '—'
-  }
-}
 
 export default function StudentInitialAssessmentPage() {
   const { profileId } = useAuth()
@@ -51,7 +43,7 @@ export default function StudentInitialAssessmentPage() {
     return [
       { label: 'Statut', value: formatAssessmentStatus(assessment?.status || 'pending') },
       ...(completed ? [
-        { label: 'Date de réalisation', value: formatDateFr(assessment?.completed_at) },
+        { label: 'Date de réalisation', value: formatDate(assessment?.completed_at) },
         { label: 'Heures préconisées', value: formatRecommendedHours(assessment) },
         ...(assessment?.teacherName ? [{ label: 'Enseignant', value: assessment.teacherName }] : []),
       ] : []),
@@ -80,10 +72,9 @@ export default function StudentInitialAssessmentPage() {
 
   return (
     <PageShell>
-      <PageHero
-        eyebrow="Permis B"
-        subtitle="Consultez les résultats de votre évaluation de départ, le commentaire de votre enseignant et le volume horaire préconisé."
-        title="Mon évaluation de départ"
+      <PageHeader
+        description="Résultats, commentaire de votre enseignant et nombre d’heures de conduite préconisé."
+        title="Évaluation de départ"
       />
 
       {fetchError && (

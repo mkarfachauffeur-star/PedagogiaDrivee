@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import EmptyState from '../../components/ui/EmptyState'
+import PageHeader from '../../components/ui/PageHeader'
 import { useAuth } from '../../context/AuthContext'
 import { useConversationFromLocation } from '../../hooks/useConversationFromLocation'
 import { useConversations } from '../../hooks/useConversations'
@@ -114,18 +115,7 @@ export default function StudentMessagesPage() {
 
   return (
     <div className="pd-page pd-msg-page">
-      <section className="pd-card overflow-hidden p-0">
-        <div className="pd-hero-banner">
-          <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(107,143,178,0.22),transparent_42%)]" />
-          <span className="relative z-10 inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-1 text-sm font-semibold text-cyan-100/90">
-            Messagerie élève
-          </span>
-          <h1 className="relative z-10 mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">Secrétariat</h1>
-          <p className="pd-hero-lead relative z-10 mt-3 max-w-3xl text-base leading-7">
-            Échangez avec le secrétariat de votre auto-école, en temps réel.
-          </p>
-        </div>
-      </section>
+      <PageHeader description="Échangez avec le secrétariat de votre auto-école." title="Messagerie" />
 
       {!profileId ? (
         <EmptyState title="Connexion requise" message="Connectez-vous avec votre compte pour accéder à la messagerie." icon="💬" />
