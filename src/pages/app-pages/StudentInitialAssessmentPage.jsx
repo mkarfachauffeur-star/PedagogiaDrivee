@@ -86,9 +86,9 @@ export default function StudentInitialAssessmentPage() {
       {statCards.length > 0 && (
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {statCards.map((item) => (
-            <article className="rounded-2xl border-2 border-slate-300 bg-white p-4 shadow-sm" key={item.label}>
+            <article className="rounded-2xl border border-slate-300 bg-white p-4 shadow-sm" key={item.label}>
               <p className="text-sm font-semibold text-slate-500">{item.label}</p>
-              <p className="mt-1 text-xl font-black text-slate-950">{toDisplayText(item.value)}</p>
+              <p className="mt-1 text-xl font-semibold text-slate-950">{toDisplayText(item.value)}</p>
             </article>
           ))}
         </section>

@@ -6,11 +6,11 @@ function CompetencyProgressBar({ percent }) {
     <div className="mt-2">
       <div className="mb-1 flex items-center justify-between gap-2">
         <span className="text-xs font-semibold text-slate-500">Progression</span>
-        <span className="text-xs font-black text-cyan-700">{percent} %</span>
+        <span className="text-xs font-semibold text-blue-700">{percent} %</span>
       </div>
       <div className="h-2 overflow-hidden rounded-full bg-slate-200">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-cyan-600 to-cyan-300 transition-all duration-700 ease-out"
+          className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-300 transition-all duration-700 ease-out"
           style={{ width: `${Math.min(100, Math.max(0, percent))}%` }}
         />
       </div>
@@ -67,7 +67,7 @@ export default function RemcProgressOverview({
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-black text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900">
                     {code} · {meta?.shortTitle || meta?.title}
                   </p>
                   {!compact && entry?.validated && entry.validatedAt && (

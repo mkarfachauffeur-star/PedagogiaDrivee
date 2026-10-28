@@ -150,7 +150,7 @@ export default function ManagerOnboardingTutorial() {
             {!isLast && step.href && (
               <button
                 type="button"
-                className="text-sm font-bold text-cyan-700 hover:text-cyan-900"
+                className="text-sm font-semibold text-blue-700 hover:text-blue-900"
                 onClick={handleNext}
                 disabled={busy}
               >
@@ -167,20 +167,20 @@ export default function ManagerOnboardingTutorial() {
             <span
               key={item.id}
               className={`h-2 flex-1 rounded-full transition-colors ${
-                index <= stepIndex ? 'bg-cyan-500' : 'bg-slate-200'
+                index <= stepIndex ? 'bg-blue-500' : 'bg-slate-200'
               }`}
               aria-hidden
             />
           ))}
         </div>
 
-        <div className="rounded-2xl border-2 border-cyan-100 bg-gradient-to-br from-cyan-50 to-white p-6 text-center">
+        <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6 text-center">
           <span className="text-5xl" role="img" aria-hidden>
             {step.icon}
           </span>
           <p className="mt-4 text-base leading-relaxed text-slate-700">{step.description}</p>
           {step.id === 'welcome' && trialEndLabel && !isNativeApp && (
-            <p className="mt-3 text-sm font-bold text-cyan-800">
+            <p className="mt-3 text-sm font-semibold text-blue-800">
               Essai gratuit actif jusqu&apos;au {trialEndLabel}
             </p>
           )}

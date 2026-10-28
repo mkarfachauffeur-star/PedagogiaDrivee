@@ -14,7 +14,7 @@ function AppointmentRow({ appointment }) {
   const end = new Date(start.getTime() + Number(appointment.duration_minutes || 60) * 60000)
   return (
     <li className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-      <p className="text-sm font-bold text-slate-900">{capitalize(dateFormatter.format(start))}</p>
+      <p className="text-sm font-semibold text-slate-900">{capitalize(dateFormatter.format(start))}</p>
       <p className="mt-0.5 text-sm text-slate-700">
         {timeFormatter.format(start)} – {timeFormatter.format(end)} · {appointment.kind || 'Leçon'}
         {appointment.teacher?.full_name ? ` avec ${appointment.teacher.full_name}` : ''}
@@ -81,7 +81,7 @@ export default function StudentPlanningPage() {
         ) : (
           <>
             <div>
-              <h2 className="text-base font-bold text-slate-900">À venir</h2>
+              <h2 className="text-base font-semibold text-slate-900">À venir</h2>
               {upcoming.length ? (
                 <ul className="mt-3 space-y-2">
                   {upcoming.map((row) => <AppointmentRow appointment={row} key={row.id} />)}
@@ -92,7 +92,7 @@ export default function StudentPlanningPage() {
             </div>
             {past.length > 0 && (
               <div>
-                <h2 className="text-base font-bold text-slate-900">Séances passées</h2>
+                <h2 className="text-base font-semibold text-slate-900">Séances passées</h2>
                 <ul className="mt-3 space-y-2">
                   {past.map((row) => <AppointmentRow appointment={row} key={row.id} />)}
                 </ul>

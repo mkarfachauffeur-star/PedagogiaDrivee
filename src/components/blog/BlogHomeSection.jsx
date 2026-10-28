@@ -14,7 +14,7 @@ export default function BlogHomeSection({ isDark, skin, shouldReduceMotion, reve
           <BookOpen aria-hidden="true" className="mr-1 inline h-3.5 w-3.5" />
           Blog
         </p>
-        <h2 className={`mt-3 text-2xl font-black sm:text-3xl ${skin.heading}`}>
+        <h2 className={`mt-3 text-2xl font-semibold sm:text-3xl ${skin.heading}`}>
           Guides pour les gérants d&apos;auto-école
         </h2>
         <p className={`mt-4 text-base leading-8 ${skin.bodyMuted}`}>
@@ -34,7 +34,7 @@ export default function BlogHomeSection({ isDark, skin, shouldReduceMotion, reve
       <div className="mt-8 text-center">
         <Link
           aria-label="Voir tous les articles du blog Pedagogia Drive"
-          className={`inline-flex items-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-black transition ${isDark ? 'border border-white/15 bg-white/[0.04] text-white hover:bg-white/10' : 'border-2 border-slate-300 bg-white text-slate-900 shadow-sm hover:border-blue-400 hover:text-blue-700'}`}
+          className={`inline-flex items-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-semibold transition ${isDark ? 'border border-white/15 bg-white/[0.04] text-white hover:bg-white/10' : 'border border-slate-300 bg-white text-slate-900 shadow-sm hover:border-blue-400 hover:text-blue-700'}`}
           to="/blog"
         >
           Voir tous les articles

@@ -194,7 +194,7 @@ export default function NotificationBell({ role, unreadCount }) {
       >
         <Bell className="h-4 w-4" />
         {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-0.5 text-[10px] font-bold text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-0.5 text-[10px] font-semibold text-white">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -287,7 +287,7 @@ export default function NotificationBell({ role, unreadCount }) {
                           <button
                             type="button"
                             onClick={(event) => openStudentDossier(event, item)}
-                            className="inline-flex w-fit items-center gap-1 rounded-xl bg-navy-950 px-3 py-2 text-xs font-extrabold text-white transition hover:bg-cyan-700"
+                            className="inline-flex w-fit items-center gap-1 rounded-xl bg-[#1769FF] px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-700"
                           >
                             ➡️ Ouvrir le dossier élève
                           </button>

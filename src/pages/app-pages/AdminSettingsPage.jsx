@@ -167,30 +167,30 @@ export default function AdminSettingsPage() {
         <>
           <StudentCharterAdminSection canWrite={canWrite} />
 
-          <section className="rounded-2xl border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
-            <h2 className="text-lg font-extrabold text-slate-950">Formules & tarifs</h2>
+          <section className="rounded-xl border border-slate-200 bg-white p-5">
+            <h2 className="text-lg font-semibold text-slate-950">Formules & tarifs</h2>
             <p className="mt-1 text-sm text-slate-500">Forfaits, heures incluses et tarifs AAC / CS de votre auto-école.</p>
             <Link
               to="/manager/packages"
-              className="mt-4 flex items-center justify-between rounded-2xl border border-cyan-100 bg-cyan-50 px-4 py-3 text-sm font-bold text-cyan-800 transition hover:bg-cyan-100"
+              className="mt-4 flex items-center justify-between rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-800 transition hover:bg-blue-100"
             >
               Gérer les formules
               <ChevronRight className="h-4 w-4" />
             </Link>
           </section>
 
-          <form className="space-y-6 rounded-2xl border-2 border-slate-300 bg-white p-6" noValidate onSubmit={save}>
+          <form className="space-y-6 rounded-2xl border border-slate-300 bg-white p-6" noValidate onSubmit={save}>
             <div>
-              <h2 className="text-lg font-extrabold text-slate-950">Logo</h2>
+              <h2 className="text-lg font-semibold text-slate-950">Logo</h2>
               <p className="mt-1 text-sm text-slate-500">Affiché sur le tableau de bord et prêt pour vos documents PDF.</p>
               <div className="mt-4 flex items-center gap-4">
                 {logoUrl ? (
-                  <img src={logoUrl} alt={`Logo ${form.name || 'auto-école'}`} className="h-20 w-20 rounded-2xl border-2 border-slate-200 object-cover" />
+                  <img src={logoUrl} alt={`Logo ${form.name || 'auto-école'}`} className="h-20 w-20 rounded-2xl border border-slate-200 object-cover" />
                 ) : (
-                  <div className="grid h-20 w-20 place-items-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 text-3xl">🏫</div>
+                  <div className="grid h-20 w-20 place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 text-3xl">🏫</div>
                 )}
                 {canWrite && (
-                  <label className="cursor-pointer text-sm font-bold text-cyan-700">
+                  <label className="cursor-pointer text-sm font-semibold text-blue-700">
                     {logoBusy ? 'Import…' : logoUrl ? 'Changer le logo' : 'Importer un logo'}
                     <input type="file" accept="image/*" className="hidden" disabled={logoBusy} onChange={onLogo} />
                   </label>
@@ -201,7 +201,7 @@ export default function AdminSettingsPage() {
             <hr className="border-slate-300" />
 
             <div>
-              <h2 className="text-lg font-extrabold text-slate-950">Identité</h2>
+              <h2 className="text-lg font-semibold text-slate-950">Identité</h2>
               <div className="mt-4 space-y-4">
                 <Field
                   disabled={!canWrite}
@@ -221,7 +221,7 @@ export default function AdminSettingsPage() {
             </div>
 
             <div>
-              <h2 className="text-lg font-extrabold text-slate-950">Coordonnées</h2>
+              <h2 className="text-lg font-semibold text-slate-950">Coordonnées</h2>
               <div className="mt-4 space-y-4">
                 <Field
                   disabled={!canWrite}
@@ -279,9 +279,9 @@ export default function AdminSettingsPage() {
             </div>
 
             <div>
-              <h2 className="text-lg font-extrabold text-slate-950">Administratif</h2>
+              <h2 className="text-lg font-semibold text-slate-950">Administratif</h2>
               <div className="mt-4 space-y-4">
-                <label className="block text-sm font-bold text-slate-700">
+                <label className="block text-sm font-semibold text-slate-700">
                   SIRET *
                   <input
                     className={inputClass}
@@ -311,7 +311,7 @@ export default function AdminSettingsPage() {
             <hr className="border-slate-300" />
 
             <div>
-              <h2 className="text-lg font-extrabold text-slate-950">Séances simulateur</h2>
+              <h2 className="text-lg font-semibold text-slate-950">Séances simulateur</h2>
               <p className="mt-1 text-sm text-slate-500">Paramètre compatible RdvPermis.</p>
               <div className="mt-4 space-y-3">
                 {SIMULATOR_SESSION_SUPERVISOR_MODE_OPTIONS.map((option) => (
@@ -319,7 +319,7 @@ export default function AdminSettingsPage() {
                     key={option.value}
                     className={`flex cursor-pointer gap-3 rounded-2xl border p-4 transition ${
                       normalizeSupervisorMode(form.simulator_session_supervisor_mode) === option.value
-                        ? 'border-cyan-300 bg-cyan-50'
+                        ? 'border-blue-300 bg-blue-50'
                         : 'border-slate-300 bg-white hover:border-slate-400'
                     } ${!canWrite ? 'cursor-default opacity-80' : ''}`}
                   >
@@ -333,7 +333,7 @@ export default function AdminSettingsPage() {
                       value={option.value}
                     />
                     <span>
-                      <span className="block text-sm font-extrabold text-slate-900">{option.label}</span>
+                      <span className="block text-sm font-semibold text-slate-900">{option.label}</span>
                       <span className="mt-1 block text-sm text-slate-600">{option.description}</span>
                     </span>
                   </label>
@@ -372,7 +372,7 @@ function Field({
   placeholder,
 }) {
   return (
-    <label className="block text-sm font-bold text-slate-700">
+    <label className="block text-sm font-semibold text-slate-700">
       {label}
       {hint && <span className="ml-1 text-xs font-medium text-slate-400">({hint})</span>}
       <input

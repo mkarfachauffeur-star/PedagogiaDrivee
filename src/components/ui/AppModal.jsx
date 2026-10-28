@@ -44,7 +44,6 @@ export default function AppModal({
   onClose,
   title,
   subtitle,
-  eyebrow,
   size = 'lg',
   zIndex = DEFAULT_Z_INDEX,
   disableClose = false,
@@ -87,43 +86,38 @@ export default function AppModal({
     >
       <div
         aria-hidden
-        className="absolute inset-0 bg-slate-950/55 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-slate-900/40"
         onClick={handleBackdrop}
       />
 
       <div
-        className={`relative z-10 isolate flex max-h-[min(90dvh,90vh)] w-full flex-col overflow-hidden rounded-[1.75rem] border-2 border-slate-300 bg-white shadow-2xl ${SIZE_CLASS[size] || SIZE_CLASS.lg}`}
+        className={`relative z-10 isolate flex max-h-[min(90dvh,90vh)] w-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl ${SIZE_CLASS[size] || SIZE_CLASS.lg}`}
         onClick={(event) => event.stopPropagation()}
       >
-        <header className="flex shrink-0 items-start justify-between gap-3 border-b-2 border-slate-200 bg-white px-4 py-4 sm:px-5">
+        <header className="flex shrink-0 items-start justify-between gap-3 border-b border-slate-100 bg-white px-5 py-4 sm:px-6">
           <div className="min-w-0 pr-2">
-            {eyebrow && (
-              <p className="text-xs font-bold uppercase tracking-wide text-cyan-700">{eyebrow}</p>
-            )}
-            <h2 className={`font-extrabold text-slate-950 ${eyebrow ? 'mt-1 text-xl sm:text-2xl' : 'text-xl sm:text-2xl'}`}>
-              {title}
-            </h2>
+            <h2 className="text-base font-semibold text-slate-900">{title}</h2>
             {subtitle && (
-              <p className="mt-1 text-sm leading-6 text-slate-500">{subtitle}</p>
+              <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
             )}
           </div>
           <button
             type="button"
             onClick={onClose}
             disabled={disableClose}
-            className="shrink-0 rounded-xl border-2 border-slate-300 p-2 text-slate-500 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="-mr-1 grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Fermer"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </header>
 
-        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain bg-white px-4 py-4 sm:px-5 sm:py-5">
+        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain bg-white px-5 py-4 sm:px-6 sm:py-5">
           {children}
         </div>
 
         {footer && (
-          <footer className="relative z-10 shrink-0 border-t-2 border-slate-200 bg-white px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5">
+          <footer className="relative z-10 shrink-0 border-t border-slate-100 bg-slate-50/60 px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-6">
             {footer}
           </footer>
         )}
@@ -145,7 +139,7 @@ export function AppModalFooter({
   children,
 }) {
   return (
-    <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
+    <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
       {!hideClose && (
         <button type="button" className="pd-btn-secondary w-full sm:w-auto" onClick={onClose}>
           {closeLabel}

@@ -32,7 +32,9 @@ import {
   AAC_DRIVING_CONDITIONS,
   AAC_MAX_RVP_COUNT,
   AAC_REQUIRED_RVP_COUNT,
+  ageOnDate,
   countMandatoryRvpCompleted,
+  examEligibleDate,
   drivingConditionLabel,
   formatDateFr,
   rvpRequirementLabel,
@@ -75,8 +77,14 @@ export default function AacPanel({
   birthDate = null,
   userId = null,
   senderName = null,
+  showTrips = true,
+  showRvp = true,
+  lockedTeacher = null,
+  readOnly = false,
 }) {
   const isStaff = mode === 'staff'
+  // Auto-école consultée sans droit de saisie (gérant ayant un secrétariat) : tout est affiché, rien n'est modifiable.
+  const canEdit = isStaff && !readOnly
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [bundle, setBundle] = useState(null)
@@ -111,6 +119,8 @@ export default function AacPanel({
   const flushPointsRef = useRef(async () => {})
   const aliveRef = useRef(true)
   const hasBundleRef = useRef(false)
+  const studentIdRef = useRef(studentId)
+  studentIdRef.current = studentId
   const organizationIdRef = useRef(organizationId)
   const detailsRef = useRef({ mandatoryRvp: [], extraRvp: [], drivingConditions: [] })
   organizationIdRef.current = organizationId
@@ -121,6 +131,8 @@ export default function AacPanel({
     if (!hasBundleRef.current) setLoading(true)
     setError('')
     const { bundle: next, error: loadError } = await getAacBundle(studentId)
+    // Une réponse arrivée après un changement d'élève ne doit jamais s'afficher sous le mauvais nom.
+    if (studentIdRef.current !== studentId) return
     if (loadError) setError(loadError.message || 'Chargement impossible.')
     setBundle(next)
     hasBundleRef.current = Boolean(next)
@@ -136,6 +148,21 @@ export default function AacPanel({
   useEffect(() => {
     void reload()
   }, [reload])
+
+  // Côté auto-école, les kilomètres se mettent à jour quand l'élève termine un trajet :
+  // on recharge toutes les minutes tant que la page est affichée, et au retour sur l'onglet.
+  useEffect(() => {
+    if (!isStaff) return undefined
+    const refreshIfVisible = () => {
+      if (document.visibilityState === 'visible') void reload()
+    }
+    const timer = window.setInterval(refreshIfVisible, 60000)
+    document.addEventListener('visibilitychange', refreshIfVisible)
+    return () => {
+      window.clearInterval(timer)
+      document.removeEventListener('visibilitychange', refreshIfVisible)
+    }
+  }, [isStaff, reload])
 
   useEffect(() => {
     if (!isStaff) return
@@ -247,6 +274,9 @@ export default function AacPanel({
   const trips = bundle?.trips || []
   const conditions = profile?.conditions
   const progress = profile?.progress
+  const studentBirthDate = bundle?.student?.birth_date || birthDate
+  const eligibility = examEligibleDate({ startedAt: profile?.startedAt, birthDate: studentBirthDate })
+  const ageAtExam = eligibility.date ? ageOnDate(studentBirthDate, eligibility.date) : null
 
   async function flushPoints(tripId, orgId) {
     const batch = pointBufferRef.current
@@ -588,6 +618,7 @@ export default function AacPanel({
     if (saveError) setError(saveError.message)
     else await reload()
     setSaving(false)
+    return !saveError
   }
 
   async function handleFfiUpload(event) {
@@ -666,9 +697,9 @@ export default function AacPanel({
         <p>
           Aucun profil de conduite accompagnée.
           {' '}
-          {isStaff ? 'Indiquez la date d’entrée pour l’activer.' : 'Contactez le secrétariat.'}
+          {canEdit ? 'Indiquez la date d’entrée pour l’activer.' : 'Contactez le secrétariat.'}
         </p>
-        {isStaff && (
+        {canEdit && (
           <form className="mt-4 flex flex-wrap items-end gap-2" onSubmit={saveStartDate}>
             <label className="text-sm font-medium text-slate-800">
               Date d’entrée
@@ -690,6 +721,23 @@ export default function AacPanel({
 
   const completedTrips = trips.filter((trip) => trip.status === 'completed')
 
+  /**
+   * Kilomètres validés à la fin d'une journée : total actuel moins les trajets terminés après.
+   * Les 50 derniers trajets seulement sont chargés : si la date est plus ancienne que le plus
+   * ancien trajet chargé et que la liste est pleine, on ne peut pas répondre sûrement.
+   */
+  const kmAtDate = (isoDay) => {
+    const totalKm = Number(progress?.km)
+    if (!isoDay || !Number.isFinite(totalKm)) return null
+    const endOfDay = new Date(`${isoDay}T23:59:59`)
+    const oldestLoaded = trips.length ? new Date(trips[trips.length - 1].startedAt || 0) : null
+    if (trips.length >= 50 && oldestLoaded && oldestLoaded > endOfDay) return null
+    const later = completedTrips
+      .filter((trip) => trip.endedAt && new Date(trip.endedAt) > endOfDay)
+      .reduce((sum, trip) => sum + (Number(trip.distanceKm) || 0), 0)
+    return Math.max(0, Math.round((totalKm - later) * 10) / 10)
+  }
+
   return (
     <div className={`flex flex-col gap-5 ${tripActive && !isStaff ? 'pb-28' : ''}`}>
       {stopBar}
@@ -700,19 +748,22 @@ export default function AacPanel({
       )}
 
       <AacJourneyCard
-        examEligibleAt={profile.examEligibleAt}
+        examEligibleAt={eligibility.date || profile.examEligibleAt}
+        examEligibleReason={eligibility.reason}
+        seventeenAt={eligibility.ageDate}
         ffiAt={bundle?.ffi?.sentAt || bundle?.ffi?.createdAt || null}
         progress={progress}
         rvp={rvp}
         rvpCompleted={countMandatoryRvpCompleted(rvp)}
         rvpRequired={AAC_REQUIRED_RVP_COUNT}
+        showRvp={showRvp}
         startedAt={profile.startedAt}
         statusText={statusLabel(profile.status)}
         tripActive={tripActive && !isStaff}
         tripCount={profile.tripCount || 0}
       />
 
-      {isStaff && (
+      {canEdit && (
         <section className="lesson-glass p-5">
           <form className="flex flex-wrap items-end gap-3" onSubmit={saveStartDate}>
             <label className="text-sm font-medium text-slate-700">
@@ -750,7 +801,12 @@ export default function AacPanel({
         <ul className="mt-4 space-y-3">
           <Cond ok={conditions?.yearOk} label="Une année complète de conduite accompagnée, jour pour jour" />
           <Cond ok={conditions?.kmOk} label="3 000 km parcourus au minimum" />
-          <Cond ok={conditions?.ageOk} label={`17 ans minimum${conditions?.age != null ? ` · ${conditions.age} ans aujourd’hui` : ''}`} />
+          <Cond
+            ok={conditions?.ageOk}
+            label={`17 ans minimum le jour de l’examen${
+              ageAtExam != null && eligibility.date ? ` · ${ageAtExam} ans le ${formatDateFr(eligibility.date)}` : ''
+            }`}
+          />
           <Cond ok={conditions?.rvpOk} label="Les deux rendez-vous pédagogiques obligatoires effectués" />
         </ul>
         {conditions?.allMet && (
@@ -761,7 +817,7 @@ export default function AacPanel({
       </section>
 
       {!isStaff && (
-        <section className="aac-rec relative overflow-hidden rounded-3xl border border-sky-400/25 bg-gradient-to-br from-[#081a33] via-[#0b2a52] to-[#103a75] p-4 text-white shadow-[0_24px_60px_rgba(6,20,50,0.45)] sm:p-5">
+        <section className="aac-rec relative overflow-hidden rounded-xl border border-sky-400/25 bg-gradient-to-br from-[#081a33] via-[#0b2a52] to-[#103a75] p-4 text-white shadow-[0_24px_60px_rgba(6,20,50,0.45)] sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="text-base font-semibold text-white">Enregistrer un trajet</h3>
             {tripActive && (
@@ -849,25 +905,27 @@ export default function AacPanel({
         </section>
       )}
 
-      <section className="lesson-glass p-4 sm:p-5">
-        <div className="flex items-baseline justify-between gap-3">
-          <h3 className="text-base font-semibold text-slate-900">Trajets enregistrés</h3>
-          <p className="text-xs tabular-nums text-slate-400">{completedTrips.length}</p>
-        </div>
-        {!completedTrips.length ? (
-          <p className="mt-3 text-sm text-slate-500">Aucun trajet enregistré pour le moment.</p>
-        ) : (
-          <ul className="mt-4 space-y-2">
-            {completedTrips
-              .slice(0, isStaff ? 20 : 10)
-              .map((trip) => (
-                <li key={trip.id} className="lesson-chip px-3 py-3">
-                  <TripRecap trip={trip} />
-                </li>
-              ))}
-          </ul>
-        )}
-      </section>
+      {showTrips && (
+        <section className="lesson-glass p-4 sm:p-5">
+          <div className="flex items-baseline justify-between gap-3">
+            <h3 className="text-base font-semibold text-slate-900">Trajets enregistrés</h3>
+            <p className="text-xs tabular-nums text-slate-400">{completedTrips.length}</p>
+          </div>
+          {!completedTrips.length ? (
+            <p className="mt-3 text-sm text-slate-500">Aucun trajet enregistré pour le moment.</p>
+          ) : (
+            <ul className="mt-4 space-y-2">
+              {completedTrips
+                .slice(0, isStaff ? 20 : 10)
+                .map((trip) => (
+                  <li key={trip.id} className="lesson-chip px-3 py-3">
+                    <TripRecap trip={trip} />
+                  </li>
+                ))}
+            </ul>
+          )}
+        </section>
+      )}
 
       <section className="lesson-glass p-4 sm:p-5">
         <h3 className="text-base font-semibold text-slate-900">Rendez-vous pédagogiques</h3>
@@ -878,15 +936,18 @@ export default function AacPanel({
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {visibleRvp.map((item) => (
             <RvpCard
-              isStaff={isStaff}
+              isStaff={canEdit}
               item={item}
               key={item.sequence}
+              kmAtDate={kmAtDate}
+              lockedTeacher={lockedTeacher}
               onSave={(patch) => saveRvp(item.sequence, patch)}
+              saving={saving}
               teachers={teachers}
             />
           ))}
         </div>
-        {isStaff && (
+        {canEdit && (
           <button
             className="lesson-btn-soft mt-4 px-4 py-2.5 text-sm font-semibold disabled:opacity-40"
             disabled={saving || highestRvpSequence >= AAC_MAX_RVP_COUNT}
@@ -955,74 +1016,141 @@ function isShownExtra(item) {
   return false
 }
 
-function RvpCard({ item, isStaff, teachers, onSave }) {
+/** « Prénom Nom » enregistré en un seul champ : on le redécoupe pour l'édition. */
+function splitCompanionName(value = '') {
+  const parts = String(value || '').trim().split(/\s+/).filter(Boolean)
+  if (parts.length < 2) return { firstName: parts[0] || '', lastName: '' }
+  return { firstName: parts[0], lastName: parts.slice(1).join(' ') }
+}
+
+function todayIso() {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+}
+
+const kmFormatter = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 })
+
+function RvpCard({ item, isStaff, teachers, onSave, kmAtDate, lockedTeacher = null, saving = false }) {
+  const companion = splitCompanionName(item.companionName)
+  // Rendez-vous pas encore fait : on part d'aujourd'hui (sauf date future déjà planifiée),
+  // pour afficher les kilomètres réellement parcourus à ce jour.
+  const [draft, setDraft] = useState(() => ({
+    heldOn: item.completed || (item.heldOn && item.heldOn > todayIso()) ? item.heldOn || '' : todayIso(),
+    teacherId: lockedTeacher?.id || item.teacherId || '',
+    companionLastName: companion.lastName,
+    companionFirstName: companion.firstName,
+    observations: item.observations || '',
+  }))
+  const [formError, setFormError] = useState('')
+  const [savedAt, setSavedAt] = useState(null)
+  const update = (field) => (event) => {
+    setSavedAt(null)
+    setDraft((current) => ({ ...current, [field]: event.target.value }))
+  }
+
+  const lockedTeacherName = lockedTeacher?.name
+  const kmDay = isStaff ? draft.heldOn : item.heldOn
+  const kmValue = kmDay ? kmAtDate?.(kmDay > todayIso() ? todayIso() : kmDay) : null
+  const kmLabel = kmValue == null ? '—' : `${kmFormatter.format(kmValue)} km`
+  const statusLabel = item.completed
+    ? `Effectué le ${formatDateFr(item.heldOn)}`
+    : item.heldOn && item.heldOn > todayIso()
+      ? `Prévu le ${formatDateFr(item.heldOn)}`
+      : 'À faire'
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    if (!draft.heldOn) {
+      setFormError('Indiquez la date du rendez-vous.')
+      return
+    }
+    if (!draft.companionLastName.trim() || !draft.companionFirstName.trim()) {
+      setFormError('Indiquez le nom et le prénom de l’accompagnateur.')
+      return
+    }
+    setFormError('')
+    const ok = await onSave({
+      heldOn: draft.heldOn,
+      teacherId: lockedTeacher?.id || draft.teacherId || null,
+      companionName: `${draft.companionFirstName.trim()} ${draft.companionLastName.trim()}`,
+      observations: draft.observations,
+      // Un rendez-vous daté d'aujourd'hui ou avant est réalisé ; une date future le planifie.
+      completed: draft.heldOn <= todayIso(),
+    })
+    if (ok) setSavedAt(Date.now())
+  }
+
+  const fieldClass = 'mt-1 block h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-[#1769FF] focus:ring-2 focus:ring-[#1769FF]/20'
+  const labelClass = 'block text-xs font-medium text-slate-600'
+
   return (
-    <article
-      className={`lesson-chip p-4 ${item.completed ? 'ring-1 ring-emerald-200/80' : ''}`}
-    >
+    <article className={`rounded-lg border bg-white p-4 ${item.completed ? 'border-emerald-200' : 'border-slate-200'}`}>
       <div className="flex items-start justify-between gap-3">
         <h4 className="text-sm font-semibold text-slate-900">Rendez-vous {item.sequence}</h4>
-        <span className={`w-fit shrink-0 rounded-full border border-white/80 px-3 py-1 text-xs font-medium ${item.completed ? 'bg-emerald-50/80 text-emerald-800' : 'bg-sky-50/70 text-sky-800'}`}>
-          {item.completed ? 'Effectué' : 'À faire'}
+        <span className={`w-fit shrink-0 rounded-md px-2 py-0.5 text-xs font-medium ${item.completed ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'}`}>
+          {statusLabel}
         </span>
       </div>
-      <p className="mt-2 text-xs leading-5 text-slate-500">{rvpRequirementLabel(item.sequence)}</p>
+      <p className="mt-1 text-xs leading-5 text-slate-500">{rvpRequirementLabel(item.sequence)}</p>
       {isStaff ? (
-        <div className="mt-3 space-y-2">
-          <input
-            className="pd-input w-full text-sm"
-            type="date"
-            value={item.heldOn || ''}
-            onChange={(e) => onSave({ heldOn: e.target.value })}
-          />
-          <select
-            className="pd-input w-full text-sm"
-            value={item.teacherId || ''}
-            onChange={(e) => onSave({ teacherId: e.target.value || null })}
-          >
-            <option value="">Enseignant…</option>
-            {teachers.map((teacher) => (
-              <option key={teacher.profile_id || teacher.id} value={teacher.profile_id || teacher.id}>
-                {teacher.first_name} {teacher.last_name}
-              </option>
-            ))}
-          </select>
-          <input
-            className="pd-input w-full text-sm"
-            placeholder="Accompagnateur"
-            defaultValue={item.companionName}
-            onBlur={(e) => {
-              if (e.target.value !== (item.companionName || '')) {
-                void onSave({ companionName: e.target.value })
-              }
-            }}
-          />
-          <textarea
-            className="pd-input w-full text-sm"
-            placeholder="Observations"
-            rows={2}
-            defaultValue={item.observations}
-            onBlur={(e) => {
-              if (e.target.value !== (item.observations || '')) {
-                void onSave({ observations: e.target.value })
-              }
-            }}
-          />
-          <label className="flex items-center gap-2 text-sm text-slate-800">
-            <input
-              checked={Boolean(item.completed)}
-              className="h-4 w-4 accent-sky-500"
-              onChange={(e) => onSave({ completed: e.target.checked })}
-              type="checkbox"
-            />
-            Effectué
+        <form className="mt-3 space-y-3" onSubmit={handleSubmit}>
+          <label className={labelClass}>
+            Date du rendez-vous
+            <input className={fieldClass} onChange={update('heldOn')} required type="date" value={draft.heldOn} />
           </label>
-        </div>
+          <div className={labelClass}>
+            Enseignant
+            {lockedTeacher ? (
+              <p className="mt-1 flex h-10 items-center rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900">
+                {lockedTeacherName}
+              </p>
+            ) : (
+              <select className={fieldClass} onChange={update('teacherId')} value={draft.teacherId}>
+                <option value="">Choisir l’enseignant…</option>
+                {teachers.map((teacher) => (
+                  <option key={teacher.profile_id || teacher.id} value={teacher.profile_id || teacher.id}>
+                    {teacher.first_name} {teacher.last_name}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+          <div className="flex items-center justify-between gap-3 rounded-lg bg-slate-50 px-3 py-2">
+            <span className="text-xs font-medium text-slate-600">Kilomètres parcourus au rendez-vous</span>
+            <span className="whitespace-nowrap text-sm font-semibold tabular-nums text-slate-900">{kmLabel}</span>
+          </div>
+          <fieldset>
+            <legend className={labelClass}>Accompagnateur</legend>
+            <div className="mt-1 grid grid-cols-2 gap-2">
+              <input aria-label="Nom de l’accompagnateur" autoComplete="off" className={`${fieldClass} mt-0`} onChange={update('companionLastName')} placeholder="Nom" value={draft.companionLastName} />
+              <input aria-label="Prénom de l’accompagnateur" autoComplete="off" className={`${fieldClass} mt-0`} onChange={update('companionFirstName')} placeholder="Prénom" value={draft.companionFirstName} />
+            </div>
+          </fieldset>
+          <label className={labelClass}>
+            Observations <span className="font-normal text-slate-400">(facultatif)</span>
+            <textarea className={`${fieldClass} h-auto min-h-16 py-2`} onChange={update('observations')} rows={2} value={draft.observations} />
+          </label>
+          {formError ? <p className="text-xs text-rose-700" role="alert">{formError}</p> : null}
+          <div className="flex items-center gap-3">
+            <button
+              className="inline-flex h-10 items-center justify-center rounded-lg bg-[#1769FF] px-4 text-sm font-medium text-white transition hover:bg-[#145fe8] disabled:opacity-50"
+              disabled={saving}
+              type="submit"
+            >
+              {saving ? 'Enregistrement…' : 'Enregistrer'}
+            </button>
+            {savedAt ? <span className="text-xs text-emerald-700" role="status">Enregistré, visible par l’élève.</span> : null}
+          </div>
+        </form>
       ) : (
         <dl className="mt-3 space-y-1 text-sm text-slate-600">
           <div className="flex justify-between gap-3">
             <dt>Date</dt>
             <dd className="text-slate-900">{formatDateFr(item.heldOn)}</dd>
+          </div>
+          <div className="flex justify-between gap-3">
+            <dt>Kilomètres parcourus</dt>
+            <dd className="text-right tabular-nums text-slate-900">{item.heldOn ? kmLabel : '—'}</dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt>Accompagnateur</dt>

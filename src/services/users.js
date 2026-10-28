@@ -108,7 +108,7 @@ export async function sendStaffPasswordReset(userId) {
 
     return { error: null, message: 'E-mail de réinitialisation envoyé.' }
   } catch (error) {
-    return { error: toUserError(error, 'password'), message: null }
+    return { error: toUserError(error, 'L’e-mail de réinitialisation n’a pas pu être envoyé. Veuillez réessayer.'), message: null }
   }
 }
 

@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
+import { AlertTriangle, BarChart3, CheckCircle2, ClipboardList } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import PageShell from '../../components/ui/PageShell'
-import PageHero from '../../components/ui/PageHero'
+import PageHeader from '../../components/ui/PageHeader'
+import StatCard from '../../components/ui/StatCard'
+import StatusBadge from '../../components/ui/StatusBadge'
+import { ui } from '../../components/ui/styles'
+import { formatDate } from '../../lib/format'
 import { resultLabel } from '../../data/practiceExamGrid'
 import { useAuth } from '../../context/AuthContext'
 import { listPracticeExamsForOrganization } from '../../services/practiceExams'
@@ -32,71 +37,77 @@ export default function TeacherDashboardPage() {
     refresh()
   }, [refresh])
 
+  const show = (value) => (loading ? '…' : value)
+
   return (
     <PageShell>
-      <PageHero
-        eyebrow="Espace enseignant"
-        subtitle="Vue d'ensemble de vos élèves, examens blancs et préparation à l'épreuve pratique."
+      <PageHeader
+        description="Vos élèves et leur préparation à l’épreuve pratique du permis."
         title="Tableau de bord"
       />
 
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {[
-          { label: 'Élèves prêts', value: stats?.readyCount ?? 0 },
-          { label: 'Élèves à risque', value: stats?.riskCount ?? 0 },
-          { label: 'Moyenne examens blancs', value: stats?.average ?? 0 },
-          { label: 'Examens enregistrés', value: stats?.totalExams ?? 0 },
-        ].map((item) => (
-          <article className="card-panel" key={item.label}>
-            <p className="text-sm font-semibold text-slate-500">{item.label}</p>
-            <p className="mt-2 text-3xl font-black text-slate-950">
-              {loading ? '…' : item.value}
-              {item.label.includes('Moyenne') ? '/31' : ''}
-            </p>
-          </article>
-        ))}
+      <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+        <StatCard
+          accent="emerald"
+          detail="Résultat favorable aux examens blancs"
+          icon={CheckCircle2}
+          label="Élèves prêts"
+          value={show(stats?.readyCount ?? 0)}
+        />
+        <StatCard
+          accent="rose"
+          detail="À accompagner en priorité"
+          icon={AlertTriangle}
+          label="Élèves à risque"
+          tone={stats?.riskCount ? 'danger' : 'default'}
+          value={show(stats?.riskCount ?? 0)}
+        />
+        <StatCard
+          accent="sky"
+          detail="Sur l’ensemble des examens blancs"
+          icon={BarChart3}
+          label="Score moyen"
+          value={show(stats?.average ? `${stats.average} / 31` : '—')}
+        />
+        <StatCard
+          accent="violet"
+          icon={ClipboardList}
+          label="Examens blancs passés"
+          value={show(stats?.totalExams ?? 0)}
+        />
       </section>
 
-      <section className="card-panel-lg">
-        <div className="flex flex-wrap items-end justify-between gap-3">
+      <section className={`${ui.card} ${ui.cardBody}`}>
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-extrabold text-slate-900">Derniers examens blancs</h2>
-            <p className="mt-1 text-sm text-slate-500">Suivi rapide des dernières épreuves simulées.</p>
+            <h2 className={ui.sectionTitle}>Derniers examens blancs</h2>
+            <p className={ui.sectionText}>Les dernières épreuves simulées de vos élèves.</p>
           </div>
-          <Link
-            className="rounded-xl bg-navy-950 px-4 py-2 text-sm font-extrabold text-white"
-            to="/teacher/students"
-          >
+          <Link className={ui.btnSecondary} to="/teacher/students">
             Gérer les examens blancs
           </Link>
         </div>
 
         {loading ? (
-          <p className="mt-4 text-sm font-semibold text-slate-500">Chargement…</p>
+          <p className="mt-4 text-sm text-slate-500">Chargement…</p>
         ) : !stats?.recent?.length ? (
-          <p className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm font-semibold text-slate-500">
+          <p className="mt-4 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
             Aucun examen blanc enregistré pour le moment.
           </p>
         ) : (
-          <div className="mt-4 grid gap-3">
+          <ul className="mt-4 divide-y divide-slate-100 rounded-lg border border-slate-200">
             {stats.recent.map((exam) => (
-              <article className="card-muted flex flex-wrap items-center justify-between gap-3" key={exam.id}>
-                <div>
-                  <p className="font-extrabold text-slate-900">
-                    {formatPersonName(exam.student)}
-                  </p>
-                  <p className="text-sm text-slate-600">
-                    {new Date(exam.exam_date).toLocaleDateString('fr-FR')} · {exam.score_total}/31 · {resultLabel(exam.result)}
+              <li className="flex flex-wrap items-center justify-between gap-3 px-4 py-3" key={exam.id}>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-slate-900">{formatPersonName(exam.student)}</p>
+                  <p className="text-sm text-slate-500">
+                    {formatDate(exam.exam_date)} · {exam.score_total} / 31 · {resultLabel(exam.result)}
                   </p>
                 </div>
-                {exam.has_eliminatory_error && (
-                  <span className="rounded-full bg-rose-100 px-3 py-1 text-xs font-black text-rose-800">
-                    Erreur éliminatoire
-                  </span>
-                )}
-              </article>
+                {exam.has_eliminatory_error && <StatusBadge tone="danger">Erreur éliminatoire</StatusBadge>}
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </section>
     </PageShell>

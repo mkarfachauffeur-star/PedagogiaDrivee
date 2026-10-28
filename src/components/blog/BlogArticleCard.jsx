@@ -11,7 +11,7 @@ export default function BlogArticleCard({ article, isDark, skin }) {
   return (
     <article className={skin.cardHover}>
       <Link className="block" to={`/blog/${article.slug}`}>
-        <div className="aspect-[16/10] overflow-hidden rounded-t-[1.15rem] bg-slate-900/40">
+        <div className="aspect-[16/10] overflow-hidden rounded-t-xl bg-slate-900/40">
           <img
             alt={article.coverImageAlt}
             className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.02]"
@@ -24,11 +24,11 @@ export default function BlogArticleCard({ article, isDark, skin }) {
         </div>
         <div className="p-5 sm:p-6">
           <span
-            className={`inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wide ${badgeClass}`}
+            className={`inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${badgeClass}`}
           >
             {getCategoryLabel(article.category)}
           </span>
-          <h2 className={`mt-3 text-lg font-black leading-snug sm:text-xl ${skin.heading}`}>
+          <h2 className={`mt-3 text-lg font-semibold leading-snug sm:text-xl ${skin.heading}`}>
             {article.title}
           </h2>
           <p className={`mt-2 line-clamp-3 text-sm leading-6 ${skin.bodyMuted}`}>{article.excerpt}</p>
@@ -43,7 +43,7 @@ export default function BlogArticleCard({ article, isDark, skin }) {
             </span>
           </div>
           <span
-            className={`mt-5 inline-flex items-center gap-2 text-sm font-black ${isDark ? 'text-blue-300' : 'text-blue-600'}`}
+            className={`mt-5 inline-flex items-center gap-2 text-sm font-semibold ${isDark ? 'text-blue-300' : 'text-blue-600'}`}
           >
             Lire l&apos;article
             <ArrowRight aria-hidden="true" className="h-4 w-4 transition group-hover:translate-x-0.5" />

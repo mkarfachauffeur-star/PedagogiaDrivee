@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useSecretaryDuties } from '../../hooks/useSecretaryDuties'
+import PageHeader from '../../components/ui/PageHeader'
 import EmptyState from '../../components/ui/EmptyState'
 import ListSearchField from '../../components/ui/ListSearchField'
 import PaginationBar from '../../components/ui/PaginationBar'
@@ -24,8 +26,9 @@ function formatDateFr(value) {
   }
 }
 
-export default function PreRegistrationsPage({ roleLabel = 'Administration' }) {
+export default function PreRegistrationsPage() {
   const { profileId } = useAuth()
+  const { canDoSecretaryTasks } = useSecretaryDuties()
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(null)
@@ -102,6 +105,7 @@ export default function PreRegistrationsPage({ roleLabel = 'Administration' }) {
     setActionId(row.id)
     setFeedback(null)
 
+    if (!canDoSecretaryTasks) return
     const { error, message, tempPassword } = await reviewPreRegistration(row.id, action)
     setActionId(null)
 
@@ -121,22 +125,7 @@ export default function PreRegistrationsPage({ roleLabel = 'Administration' }) {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-      <section className="overflow-hidden rounded-[2rem] border-2 border-slate-300 bg-white shadow-[var(--shadow-card)]">
-        <div className="bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white md:p-8">
-          <span className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-            {roleLabel}
-          </span>
-          <h1 className="mt-4 text-3xl font-extrabold">Pré-inscriptions</h1>
-          <p className="mt-3 max-w-3xl text-sm leading-7 text-blue-50">
-            Validez les demandes transmises par les enseignants avant la création du dossier élève.
-          </p>
-          {pendingCount > 0 && (
-            <p className="mt-3 inline-flex rounded-full bg-amber-400/20 px-4 py-1 text-sm font-bold text-amber-100">
-              {pendingCount} en attente
-            </p>
-          )}
-        </div>
-      </section>
+      <PageHeader description={`Validez les demandes des enseignants avant la création du dossier élève.${pendingCount > 0 ? ` · ${pendingCount} en attente` : ''}`} title="Pré-inscriptions" />
 
       <section className="card-panel-lg">
         <div className="flex flex-wrap gap-2">
@@ -147,10 +136,10 @@ export default function PreRegistrationsPage({ roleLabel = 'Administration' }) {
             { id: 'all', label: 'Toutes' },
           ].map((item) => (
             <button
-              className={`rounded-xl px-4 py-2 text-sm font-extrabold transition ${
+              className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${
                 filter === item.id
-                  ? 'bg-navy-950 text-white'
-                  : 'border-2 border-slate-300 bg-white text-slate-600 hover:border-cyan-200'
+                  ? 'bg-[#1769FF] text-white'
+                  : 'border border-slate-300 bg-white text-slate-600 hover:border-blue-200'
               }`}
               key={item.id}
               onClick={() => setFilter(item.id)}
@@ -196,7 +185,7 @@ export default function PreRegistrationsPage({ roleLabel = 'Administration' }) {
           <div className="mt-6 overflow-x-auto">
             <table className="min-w-full text-left text-sm">
               <thead>
-                <tr className="border-b-2 border-slate-300 text-xs font-black uppercase tracking-wide text-slate-500">
+                <tr className="border-b border-slate-300 text-xs font-semibold text-slate-500">
                   <th className="px-3 py-3">Date</th>
                   <th className="px-3 py-3">Élève</th>
                   <th className="px-3 py-3">Téléphone</th>
@@ -209,10 +198,10 @@ export default function PreRegistrationsPage({ roleLabel = 'Administration' }) {
               </thead>
               <tbody>
                 {pageItems.map((row) => (
-                  <tr className="border-b-2 border-slate-200 align-top" key={row.id}>
+                  <tr className="border-b border-slate-200 align-top" key={row.id}>
                     <td className="px-3 py-4 font-semibold text-slate-700">{formatDateFr(row.created_at)}</td>
                     <td className="px-3 py-4">
-                      <p className="font-extrabold text-slate-900">
+                      <p className="font-semibold text-slate-900">
                         {formatPersonName(row)}
                       </p>
                       {row.notes && (
@@ -224,15 +213,17 @@ export default function PreRegistrationsPage({ roleLabel = 'Administration' }) {
                     <td className="px-3 py-4 font-semibold text-slate-700">{row.desired_training}</td>
                     <td className="px-3 py-4 text-slate-600">{row.teacherName}</td>
                     <td className="px-3 py-4">
-                      <span className={`rounded-full px-3 py-1 text-xs font-black ${preRegistrationStatusClass(row.status)}`}>
+                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${preRegistrationStatusClass(row.status)}`}>
                         {PRE_REGISTRATION_STATUS_LABELS[row.status] || row.status}
                       </span>
                     </td>
                     <td className="px-3 py-4">
-                      {row.status === 'pending' ? (
+                      {row.status === 'pending' && !canDoSecretaryTasks ? (
+                        <span className="text-xs text-slate-500">À traiter par le secrétariat</span>
+                      ) : row.status === 'pending' ? (
                         <div className="flex flex-wrap gap-2">
                           <button
-                            className="rounded-xl bg-emerald-600 px-3 py-2 text-xs font-extrabold text-white disabled:opacity-60"
+                            className="inline-flex h-8 items-center rounded-lg bg-emerald-600 px-3 text-xs font-medium text-white transition hover:bg-emerald-700 disabled:opacity-60"
                             disabled={actionId === row.id}
                             onClick={() => handleReview(row, 'approve')}
                             type="button"
@@ -240,7 +231,7 @@ export default function PreRegistrationsPage({ roleLabel = 'Administration' }) {
                             Accepter
                           </button>
                           <button
-                            className="rounded-xl border border-rose-200 px-3 py-2 text-xs font-extrabold text-rose-700 disabled:opacity-60"
+                            className="inline-flex h-8 items-center rounded-lg border border-rose-200 bg-white px-3 text-xs font-medium text-rose-700 transition hover:bg-rose-50 disabled:opacity-60"
                             disabled={actionId === row.id}
                             onClick={() => handleReview(row, 'reject')}
                             type="button"

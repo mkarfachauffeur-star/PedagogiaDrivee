@@ -60,41 +60,41 @@ export default function TeacherDetailModal({ open, teacher, onClose, onEdit }) {
         </AppModalFooter>
       )}
     >
-      <section className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4">
-        <h3 className="text-sm font-extrabold text-slate-900">Compte associé</h3>
+      <section className="rounded-2xl border border-slate-300 bg-slate-50 p-4">
+        <h3 className="text-sm font-semibold text-slate-900">Compte associé</h3>
         <dl className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 text-sm">
           <div>
-            <dt className="font-bold text-slate-500">E-mail compte</dt>
+            <dt className="font-semibold text-slate-500">E-mail compte</dt>
             <dd className="font-semibold text-slate-900">{teacher.email || '—'}</dd>
           </div>
           <div>
-            <dt className="font-bold text-slate-500">Rôle</dt>
+            <dt className="font-semibold text-slate-500">Rôle</dt>
             <dd className="font-semibold text-slate-900">{staffRoleLabel('teacher', teacher.gender)}</dd>
           </div>
           <div>
-            <dt className="font-bold text-slate-500">Statut du compte</dt>
+            <dt className="font-semibold text-slate-500">Statut du compte</dt>
             <dd>
-              <span className={`inline-flex rounded-full px-3 py-1 text-xs font-black ring-1 ${STATUS_BADGE[accountStatus.tone]}`}>
+              <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ring-1 ${STATUS_BADGE[accountStatus.tone]}`}>
                 {accountStatus.label}
               </span>
             </dd>
           </div>
           <div>
-            <dt className="font-bold text-slate-500">Dernière connexion</dt>
+            <dt className="font-semibold text-slate-500">Dernière connexion</dt>
             <dd className="font-semibold text-slate-900">{formatDateTimeFr(teacher.last_sign_in_at)}</dd>
           </div>
         </dl>
       </section>
 
       <dl className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 text-sm">
-        <div><dt className="font-bold text-slate-500">Type</dt><dd className="mt-1 font-semibold">{getResourceTypeLabel(teacher.resource_type)}</dd></div>
-        <div><dt className="font-bold text-slate-500">Téléphone</dt><dd className="mt-1 font-semibold">{teacher.phone || '—'}</dd></div>
+        <div><dt className="font-semibold text-slate-500">Type</dt><dd className="mt-1 font-semibold">{getResourceTypeLabel(teacher.resource_type)}</dd></div>
+        <div><dt className="font-semibold text-slate-500">Téléphone</dt><dd className="mt-1 font-semibold">{teacher.phone || '—'}</dd></div>
         {!isSimulator && (
-          <div><dt className="font-bold text-slate-500">Date de naissance</dt><dd className="mt-1 font-semibold">{formatDateFr(teacher.birth_date)}</dd></div>
+          <div><dt className="font-semibold text-slate-500">Date de naissance</dt><dd className="mt-1 font-semibold">{formatDateFr(teacher.birth_date)}</dd></div>
         )}
         {!isSimulator && (
         <div className="sm:col-span-2">
-          <dt className="font-bold text-slate-500">Adresse</dt>
+          <dt className="font-semibold text-slate-500">Adresse</dt>
           <dd className="mt-1 font-semibold">
             {formatPostalAddress({
               streetNumber: teacher.street_number,
@@ -106,22 +106,22 @@ export default function TeacherDetailModal({ open, teacher, onClose, onEdit }) {
           </dd>
         </div>
         )}
-        <div><dt className="font-bold text-slate-500">{getAuthorizationFieldLabel(teacher.resource_type)}</dt><dd className="mt-1 font-semibold">{teacher.authorization_number || '—'}</dd></div>
-        <div><dt className="font-bold text-slate-500">Validité autorisation</dt><dd className="mt-1 font-semibold">{formatDateFr(teacher.authorization_expires_at)}</dd></div>
+        <div><dt className="font-semibold text-slate-500">{getAuthorizationFieldLabel(teacher.resource_type)}</dt><dd className="mt-1 font-semibold">{teacher.authorization_number || '—'}</dd></div>
+        <div><dt className="font-semibold text-slate-500">Validité autorisation</dt><dd className="mt-1 font-semibold">{formatDateFr(teacher.authorization_expires_at)}</dd></div>
         {!isSimulator && (authorizationUrls.rectoUrl || authorizationUrls.versoUrl) && (
           <div className="sm:col-span-2">
-            <dt className="font-bold text-slate-500">Autorisation d&apos;enseigner</dt>
+            <dt className="font-semibold text-slate-500">Autorisation d&apos;enseigner</dt>
             <dd className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
               {authorizationUrls.rectoUrl && (
-                <a className="block overflow-hidden rounded-2xl border-2 border-slate-300 bg-white" href={authorizationUrls.rectoUrl} rel="noreferrer" target="_blank">
+                <a className="block overflow-hidden rounded-2xl border border-slate-300 bg-white" href={authorizationUrls.rectoUrl} rel="noreferrer" target="_blank">
                   <img alt="Recto autorisation d'enseigner" className="max-h-44 w-full object-contain p-2" src={authorizationUrls.rectoUrl} />
-                  <span className="block border-t-2 border-slate-200 px-3 py-2 text-xs font-bold text-cyan-700">Recto — ouvrir</span>
+                  <span className="block border-t border-slate-200 px-3 py-2 text-xs font-semibold text-blue-700">Recto — ouvrir</span>
                 </a>
               )}
               {authorizationUrls.versoUrl && (
-                <a className="block overflow-hidden rounded-2xl border-2 border-slate-300 bg-white" href={authorizationUrls.versoUrl} rel="noreferrer" target="_blank">
+                <a className="block overflow-hidden rounded-2xl border border-slate-300 bg-white" href={authorizationUrls.versoUrl} rel="noreferrer" target="_blank">
                   <img alt="Verso autorisation d'enseigner" className="max-h-44 w-full object-contain p-2" src={authorizationUrls.versoUrl} />
-                  <span className="block border-t-2 border-slate-200 px-3 py-2 text-xs font-bold text-cyan-700">Verso — ouvrir</span>
+                  <span className="block border-t border-slate-200 px-3 py-2 text-xs font-semibold text-blue-700">Verso — ouvrir</span>
                 </a>
               )}
             </dd>
@@ -129,9 +129,9 @@ export default function TeacherDetailModal({ open, teacher, onClose, onEdit }) {
         )}
         {!isSimulator && (
         <div>
-          <dt className="font-bold text-slate-500">Statut métier</dt>
+          <dt className="font-semibold text-slate-500">Statut métier</dt>
           <dd className="mt-1">
-            <span className={`inline-flex rounded-full px-3 py-1 text-xs font-black ring-1 ${STATUS_BADGE[teacherStatus.tone]}`}>
+            <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ring-1 ${STATUS_BADGE[teacherStatus.tone]}`}>
               {teacherStatus.label}
             </span>
           </dd>
@@ -139,11 +139,11 @@ export default function TeacherDetailModal({ open, teacher, onClose, onEdit }) {
         )}
         {!isSimulator && (
         <div className="sm:col-span-2">
-          <dt className="font-bold text-slate-500">Catégories enseignées</dt>
+          <dt className="font-semibold text-slate-500">Catégories enseignées</dt>
           <dd className="mt-2 flex flex-wrap gap-2">
             {(teacher.authorized_categories || []).length
               ? teacher.authorized_categories.map((c) => (
-                <span key={c} className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-700">{c}</span>
+                <span key={c} className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">{c}</span>
               ))
               : '—'}
           </dd>

@@ -5,14 +5,14 @@ import BlogArticleCta from './BlogArticleCta'
 function renderSection(section, skin) {
   if (section.type === 'h2') {
     return (
-      <h2 className={`mt-10 scroll-mt-24 text-xl font-black sm:text-2xl ${skin.heading}`} id={section.id}>
+      <h2 className={`mt-10 scroll-mt-24 text-xl font-semibold sm:text-2xl ${skin.heading}`} id={section.id}>
         {section.title}
       </h2>
     )
   }
   if (section.type === 'h3') {
     return (
-      <h3 className={`mt-6 scroll-mt-24 text-lg font-black ${skin.heading}`} id={section.id}>
+      <h3 className={`mt-6 scroll-mt-24 text-lg font-semibold ${skin.heading}`} id={section.id}>
         {section.title}
       </h3>
     )
@@ -46,7 +46,7 @@ export default function BlogArticleContent({ article, isDark, skin }) {
         </div>
         <div className="p-6 sm:p-8 lg:p-10">
           <span
-            className={`inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wide ${badgeClass}`}
+            className={`inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${badgeClass}`}
           >
             {getCategoryLabel(article.category)}
           </span>
@@ -56,7 +56,7 @@ export default function BlogArticleContent({ article, isDark, skin }) {
               aria-label="Sommaire de l'article"
               className={`mt-6 rounded-2xl border p-4 sm:p-5 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-slate-300 bg-slate-50'}`}
             >
-              <h2 className={`text-sm font-black uppercase tracking-wide ${skin.heading}`}>Sommaire</h2>
+              <h2 className={`text-sm font-semibold ${skin.heading}`}>Sommaire</h2>
               <ol className="mt-3 list-none space-y-3 p-0">
                 {tocTree.map((item) => (
                   <li key={item.id}>
@@ -65,7 +65,7 @@ export default function BlogArticleContent({ article, isDark, skin }) {
                     </a>
                     {item.children.length > 0 && (
                       <ol
-                        className={`mt-2 list-none space-y-1.5 border-l-2 py-0.5 pl-4 ${isDark ? 'border-blue-400/30' : 'border-blue-300'}`}
+                        className={`mt-2 list-none space-y-1.5 border-l py-0.5 pl-4 ${isDark ? 'border-blue-400/30' : 'border-blue-300'}`}
                       >
                         {item.children.map((child) => (
                           <li key={child.id}>
@@ -86,7 +86,7 @@ export default function BlogArticleContent({ article, isDark, skin }) {
 
           {article.faq?.length > 0 && (
             <section aria-labelledby="article-faq" className="mt-12">
-              <h2 className={`text-xl font-black sm:text-2xl ${skin.heading}`} id="article-faq">
+              <h2 className={`text-xl font-semibold sm:text-2xl ${skin.heading}`} id="article-faq">
                 Questions fréquentes
               </h2>
               <div className="mt-5 space-y-4">
@@ -95,7 +95,7 @@ export default function BlogArticleContent({ article, isDark, skin }) {
                     className={`rounded-2xl border p-4 sm:p-5 ${isDark ? 'border-white/10 bg-white/[0.03]' : 'border-slate-300 bg-white'}`}
                     key={item.question}
                   >
-                    <h3 className={`text-base font-black ${skin.heading}`}>{item.question}</h3>
+                    <h3 className={`text-base font-semibold ${skin.heading}`}>{item.question}</h3>
                     <p className={`mt-2 text-sm leading-7 ${skin.bodyMuted}`}>{item.answer}</p>
                   </div>
                 ))}

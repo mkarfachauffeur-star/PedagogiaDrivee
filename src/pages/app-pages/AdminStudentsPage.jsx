@@ -1,4 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { CallButton, StudentAvatar } from '../../components/teacher/TeacherStudentViews'
+import { useSecretaryDuties } from '../../hooks/useSecretaryDuties'
+import { ui } from '../../components/ui/styles'
+import PageHeader from '../../components/ui/PageHeader'
 import { useSearchParams } from 'react-router-dom'
 import AddStudentModal from '../../components/AddStudentModal'
 import AacPanel from '../../components/aac/AacPanel'
@@ -37,7 +41,10 @@ function referentTeacher(student) {
 }
 
 export default function AdminStudentsPage() {
-  const { profileId, canWrite, organizationId } = useAuth()
+  const { profileId, organizationId } = useAuth()
+  // Inscriptions et dossiers : secrétariat, ou gérant s'il n'y a pas de secrétaire.
+  const { canDoSecretaryTasks: canWrite, managerCovers } = useSecretaryDuties()
+  const [openStudentId, setOpenStudentId] = useState(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const highlightStudentId = searchParams.get('student')
   const [students, setStudents] = useState([])
@@ -176,27 +183,21 @@ export default function AdminStudentsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-      <section className="rounded-[2rem] border-2 border-slate-300 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white shadow-[var(--shadow-card)] md:p-8">
-        <p className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-          Gérant
-        </p>
-        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-extrabold sm:text-4xl">Élèves inscrits</h1>
-            <p className="mt-3 max-w-3xl text-sm leading-7 text-blue-50">
-              Créez les comptes élèves, consultez les dossiers et suivez les inscriptions de votre auto-école.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setModalOpen(true)}
-            className="pd-btn-primary shrink-0 disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={!canWrite}
-          >
-            Ajouter un élève
-          </button>
-        </div>
-      </section>
+      <PageHeader
+        actions={
+          canWrite ? (
+            <button className={ui.btnPrimary} onClick={() => setModalOpen(true)} type="button">
+              Ajouter un élève
+            </button>
+          ) : null
+        }
+        description={
+          managerCovers
+            ? 'Créez les comptes élèves et suivez les dossiers. Sans secrétaire, c’est vous qui inscrivez.'
+            : 'Les dossiers et inscriptions de vos élèves. Les inscriptions se font par le secrétariat.'
+        }
+        title="Élèves"
+      />
 
       {feedback && (
         <p className={`rounded-2xl px-4 py-3 text-sm font-semibold ${
@@ -211,14 +212,14 @@ export default function AdminStudentsPage() {
       )}
 
       {aacStudent && (
-        <section className="rounded-[1.5rem] border-2 border-cyan-200 bg-white p-4 shadow-[var(--shadow-soft)]">
+        <section className="rounded-xl border border-blue-200 bg-white p-4">
           <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
             <div>
-              <p className="text-xs font-black uppercase tracking-wide text-cyan-700">Conduite accompagnée</p>
-              <h2 className="mt-1 text-xl font-extrabold text-slate-950">{formatPersonName(aacStudent)}</h2>
+              <p className="text-xs font-semibold text-blue-700">Conduite accompagnée</p>
+              <h2 className="mt-1 text-xl font-semibold text-slate-950">{formatPersonName(aacStudent)}</h2>
             </div>
             <button
-              className="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100"
+              className="rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
               onClick={clearAacPanel}
               type="button"
             >
@@ -226,16 +227,18 @@ export default function AdminStudentsPage() {
             </button>
           </div>
           <AacPanel
+            key={aacStudent.id}
             birthDate={aacStudent.birth_date}
             mode="staff"
             organizationId={organizationId || aacStudent.organization_id}
+            readOnly={!canWrite}
             studentId={aacStudent.id}
             userId={profileId}
           />
         </section>
       )}
 
-      <section className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
+      <section className="rounded-xl border border-slate-200 bg-white p-5">
         {!profileId ? (
           <EmptyState title="Connexion requise" message="Connectez-vous avec votre compte gérant." icon="🎓" />
         ) : loading ? (
@@ -258,9 +261,9 @@ export default function AdminStudentsPage() {
               <button
                 type="button"
                 onClick={() => setViewTab('active')}
-                className={`rounded-2xl px-4 py-2 text-sm font-bold transition ${
+                className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${
                   viewTab === 'active'
-                    ? 'bg-navy-950 text-white'
+                    ? 'bg-[#1769FF] text-white'
                     : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
                 }`}
               >
@@ -269,7 +272,7 @@ export default function AdminStudentsPage() {
               <button
                 type="button"
                 onClick={() => setViewTab('archived')}
-                className={`rounded-2xl px-4 py-2 text-sm font-bold transition ${
+                className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${
                   viewTab === 'archived'
                     ? 'bg-emerald-700 text-white'
                     : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
@@ -280,7 +283,7 @@ export default function AdminStudentsPage() {
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <ListSearchField onChange={setSearchQuery} value={searchQuery} />
-              <p className="text-xs font-semibold text-slate-500">{totalItems} élève(s)</p>
+              <p className="text-xs text-slate-500">{totalItems} élève{totalItems > 1 ? 's' : ''}</p>
             </div>
             {pageItems.length === 0 ? (
               <EmptyState
@@ -290,7 +293,7 @@ export default function AdminStudentsPage() {
                 title="Aucun résultat"
               />
             ) : (
-          <div className="mt-4 grid gap-3">
+          <div className="mt-4 grid gap-2">
             {pageItems.map((student) => {
               const track = resolveStudentTrack(student)
               const assessment = assessmentsByStudent[student.id]
@@ -298,92 +301,114 @@ export default function AdminStudentsPage() {
               const assessmentStatus = assessment?.status || 'pending'
               const assessmentStyles = getAssessmentStatusStyles(assessmentStatus)
               return (
-              <article key={student.id} className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4">
-                <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-start">
-                  <div className="min-w-0">
-                    <h2 className="text-lg font-extrabold text-slate-900">
-                      {formatPersonName(student)}
-                    </h2>
-                    <p className="mt-1 text-sm font-semibold text-cyan-700">{student.file_number || 'Dossier en cours'}</p>
-                    <p className="mt-2 text-sm text-slate-600">{student.email || '—'}</p>
-                    {student.phone && <p className="text-sm text-slate-500">{student.phone}</p>}
-                    {referentTeacher(student) && (
-                      <p className="mt-1 text-xs font-medium text-slate-500">Référent : {referentTeacher(student)}</p>
-                    )}
-                    <p className="mt-3 text-sm"><span className="font-bold text-slate-500">Formation :</span> {formationLabel}</p>
-                    {track === 'permis_b' && (
-                      <details className={`mt-3 rounded-xl border px-3 py-2 ${assessmentStyles.container}`}>
-                        <summary className={`cursor-pointer text-sm font-bold ${assessmentStyles.summary}`}>
-                          Évaluation de départ · {formatAssessmentStatus(assessmentStatus)}
-                        </summary>
-                        <div className="mt-3 grid grid-cols-1 gap-2 pb-2 text-sm sm:grid-cols-2">
-                          <p><span className="font-bold text-slate-500">Date :</span> {assessment?.completed_at ? formatDateFr(assessment.completed_at) : '—'}</p>
-                          <p><span className="font-bold text-slate-500">Score obtenu :</span> {assessment?.status === 'completed' ? assessment.final_score : '—'}</p>
-                          <p><span className="font-bold text-slate-500">Heures recommandées :</span> {assessment?.recommended_hours_min ? `${assessment.recommended_hours_min}${assessment.recommended_hours_max !== assessment.recommended_hours_min ? ` à ${assessment.recommended_hours_max}` : ''} h` : '—'}</p>
-                          <p className="sm:col-span-2"><span className="font-bold text-slate-500">Enseignant évaluateur :</span> {assessment?.teacher?.full_name || '—'}</p>
-                        </div>
-                      </details>
-                    )}
+              <article key={student.id} className="min-w-0 rounded-lg border border-slate-200 bg-white">
+                <div className="flex items-center gap-3 p-3">
+                  <StudentAvatar student={student} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-slate-900">{formatPersonName(student)}</p>
+                    <p className="truncate text-xs text-slate-500">{formationLabel}</p>
                   </div>
-                  <div className="flex flex-col items-start gap-3 lg:items-end">
-                    <div className="flex flex-wrap gap-2">
-                      <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-black text-indigo-700">
-                        {getTrackLabel(track)}
-                      </span>
-                      <StudentCharterStatusBadge studentId={student.id} />
-                      {student.license_result === LICENSE_RESULT.OBTAINED && (
-                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
-                          ✅ Permis obtenu
-                        </span>
-                      )}
-                      <span className={`rounded-full px-3 py-1 text-xs font-black ${statusBadgeClass(student.status, student.license_result)}`}>
-                        {student.status || 'En attente'}
-                      </span>
-                      {student.license_obtained_at && (
-                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
-                          Obtenu le {formatDateFr(student.license_obtained_at)}
-                        </span>
-                      )}
-                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
-                        Inscrit le {formatDateFr(student.registration_date)}
-                      </span>
-                    </div>
-                    {canWrite && student.profile_id && student.email && !isArchivedStudent(student) && (
-                      <button
-                        type="button"
-                        className="rounded-xl border border-cyan-200 bg-white px-3 py-2 text-xs font-bold text-cyan-800 transition hover:bg-cyan-50 disabled:opacity-50"
-                        disabled={actionBusy === student.id}
-                        onClick={() => runResendAccess(student)}
-                      >
-                        {actionBusy === student.id ? 'Envoi…' : 'Renvoyer l\'accès par e-mail'}
-                      </button>
+                  <CallButton phone={student.phone} />
+                  <button
+                    aria-expanded={openStudentId === student.id}
+                    className={`${ui.btnSmall} shrink-0 whitespace-nowrap`}
+                    onClick={() => setOpenStudentId((current) => (current === student.id ? null : student.id))}
+                    type="button"
+                  >
+                    {openStudentId === student.id ? 'Fermer' : (
+                      <>
+                        <span className="sm:hidden">Fiche</span>
+                        <span className="hidden sm:inline">Ouvrir la fiche</span>
+                      </>
                     )}
-                    {isAacFormation(student) && (
-                      <button
-                        type="button"
-                        className="rounded-xl border border-navy-200 bg-navy-950 px-3 py-2 text-xs font-bold text-white transition hover:bg-cyan-700"
-                        onClick={() => setSelectedAacStudentId(student.id)}
-                      >
-                        Suivi AAC
-                      </button>
-                    )}
-                    {canWrite && isArchivedStudent(student) && student.profile_id && (
-                      <button
-                        type="button"
-                        className="rounded-xl border border-emerald-200 bg-white px-3 py-2 text-xs font-bold text-emerald-800 transition hover:bg-emerald-50 disabled:opacity-50"
-                        disabled={actionBusy === student.id}
-                        onClick={() => runReactivateAccess(student)}
-                      >
-                        {actionBusy === student.id ? 'Réactivation…' : 'Réactiver l\'accès élève (365 j)'}
-                      </button>
-                    )}
-                    {isArchivedStudent(student) && (
-                      <p className="text-xs font-medium text-slate-500">
-                        Dossier en lecture seule — formation terminée
-                      </p>
-                    )}
-                  </div>
+                  </button>
                 </div>
+                {openStudentId === student.id ? (
+                  <div className="border-t border-slate-100 p-4">
+                    <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-start">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-blue-700">{student.file_number || 'Dossier en cours'}</p>
+                        <p className="mt-2 text-sm text-slate-600">{student.email || '—'}</p>
+                        {student.phone && <p className="text-sm text-slate-500">{student.phone}</p>}
+                        {referentTeacher(student) && (
+                          <p className="mt-1 text-xs font-medium text-slate-500">Référent : {referentTeacher(student)}</p>
+                        )}
+                        <p className="mt-3 text-sm"><span className="font-semibold text-slate-500">Formation :</span> {formationLabel}</p>
+                        {track === 'permis_b' && (
+                          <details className={`mt-3 rounded-xl border px-3 py-2 ${assessmentStyles.container}`}>
+                            <summary className={`cursor-pointer text-sm font-semibold ${assessmentStyles.summary}`}>
+                              Évaluation de départ · {formatAssessmentStatus(assessmentStatus)}
+                            </summary>
+                            <div className="mt-3 grid grid-cols-1 gap-2 pb-2 text-sm sm:grid-cols-2">
+                              <p><span className="font-semibold text-slate-500">Date :</span> {assessment?.completed_at ? formatDateFr(assessment.completed_at) : '—'}</p>
+                              <p><span className="font-semibold text-slate-500">Score obtenu :</span> {assessment?.status === 'completed' ? assessment.final_score : '—'}</p>
+                              <p><span className="font-semibold text-slate-500">Heures recommandées :</span> {assessment?.recommended_hours_min ? `${assessment.recommended_hours_min}${assessment.recommended_hours_max !== assessment.recommended_hours_min ? ` à ${assessment.recommended_hours_max}` : ''} h` : '—'}</p>
+                              <p className="sm:col-span-2"><span className="font-semibold text-slate-500">Enseignant évaluateur :</span> {assessment?.teacher?.full_name || '—'}</p>
+                            </div>
+                          </details>
+                        )}
+                      </div>
+                      <div className="flex flex-col items-start gap-3 lg:items-end">
+                        <div className="flex flex-wrap gap-2">
+                          <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+                            {getTrackLabel(track)}
+                          </span>
+                          <StudentCharterStatusBadge studentId={student.id} />
+                          {student.license_result === LICENSE_RESULT.OBTAINED && (
+                            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                              ✅ Permis obtenu
+                            </span>
+                          )}
+                          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusBadgeClass(student.status, student.license_result)}`}>
+                            {student.status || 'En attente'}
+                          </span>
+                          {student.license_obtained_at && (
+                            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                              Obtenu le {formatDateFr(student.license_obtained_at)}
+                            </span>
+                          )}
+                          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                            Inscrit le {formatDateFr(student.registration_date)}
+                          </span>
+                        </div>
+                        {canWrite && student.profile_id && student.email && !isArchivedStudent(student) && (
+                          <button
+                            type="button"
+                            className="rounded-xl border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-800 transition hover:bg-blue-50 disabled:opacity-50"
+                            disabled={actionBusy === student.id}
+                            onClick={() => runResendAccess(student)}
+                          >
+                            {actionBusy === student.id ? 'Envoi…' : 'Renvoyer l\'accès par e-mail'}
+                          </button>
+                        )}
+                        {isAacFormation(student) && (
+                          <button
+                            type="button"
+                            className="rounded-xl border border-navy-200 bg-[#1769FF] px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-700"
+                            onClick={() => setSelectedAacStudentId(student.id)}
+                          >
+                            Suivi AAC
+                          </button>
+                        )}
+                        {canWrite && isArchivedStudent(student) && student.profile_id && (
+                          <button
+                            type="button"
+                            className="rounded-xl border border-emerald-200 bg-white px-3 py-2 text-xs font-semibold text-emerald-800 transition hover:bg-emerald-50 disabled:opacity-50"
+                            disabled={actionBusy === student.id}
+                            onClick={() => runReactivateAccess(student)}
+                          >
+                            {actionBusy === student.id ? 'Réactivation…' : 'Réactiver l\'accès élève (365 j)'}
+                          </button>
+                        )}
+                        {isArchivedStudent(student) && (
+                          <p className="text-xs font-medium text-slate-500">
+                            Dossier en lecture seule — formation terminée
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
               </article>
               )
             })}

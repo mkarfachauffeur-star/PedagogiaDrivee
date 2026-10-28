@@ -131,14 +131,14 @@ export default function StudentDocumentsPage() {
 
       <section className="pd-section-card pd-section-card-body">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 className="text-xl font-extrabold text-slate-950">Mes documents</h2>
+          <h2 className="text-xl font-semibold text-slate-950">Mes documents</h2>
           <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-700">
+            <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
               {uploadedDocuments.length} pièce(s)
             </span>
             {!showAddForm && (
               <button
-                className="rounded-xl bg-navy-950 px-5 py-2.5 text-sm font-extrabold text-white transition hover:bg-cyan-700"
+                className="rounded-xl bg-[#1769FF] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
                 onClick={openAddForm}
                 type="button"
               >
@@ -150,21 +150,21 @@ export default function StudentDocumentsPage() {
 
         {showAddForm && (
           <form
-            className="mt-5 grid scroll-mt-24 gap-4 rounded-2xl border-2 border-slate-300 bg-slate-50/80 p-5"
+            className="mt-5 grid scroll-mt-24 gap-4 rounded-2xl border border-slate-300 bg-slate-50/80 p-5"
             onSubmit={handleSubmit}
             ref={formRef}
           >
             <div>
-              <h3 className="text-lg font-extrabold text-slate-950">Déposer un document</h3>
+              <h3 className="text-lg font-semibold text-slate-950">Déposer un document</h3>
               <p className="mt-1 text-sm text-slate-500">
                 Ce document sera visible par le secrétariat et le gérant.
               </p>
             </div>
 
-            <label className="grid gap-2 text-sm font-bold text-slate-700">
+            <label className="grid gap-2 text-sm font-semibold text-slate-700">
               Type de document
               <select
-                className="rounded-xl border-2 border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold outline-none focus:border-cyan-300 focus:ring-2 focus:ring-cyan-100"
+                className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
                 onChange={(event) => {
                   setDocumentType(event.target.value)
                   if (event.target.value !== 'Autres documents') setDocumentName('')
@@ -181,10 +181,10 @@ export default function StudentDocumentsPage() {
             </label>
 
             {isOtherType && (
-              <label className="grid gap-2 text-sm font-bold text-slate-700">
+              <label className="grid gap-2 text-sm font-semibold text-slate-700">
                 Nom du document
                 <input
-                  className="rounded-xl border-2 border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold outline-none focus:border-cyan-300 focus:ring-2 focus:ring-cyan-100"
+                  className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
                   onChange={(event) => setDocumentName(event.target.value)}
                   placeholder="Ex : Attestation de stage"
                   required
@@ -193,11 +193,11 @@ export default function StudentDocumentsPage() {
               </label>
             )}
 
-            <label className="grid gap-2 text-sm font-bold text-slate-700">
+            <label className="grid gap-2 text-sm font-semibold text-slate-700">
               Insérer le document
               <input
                 accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.doc,.docx"
-                className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-xl file:border-0 file:bg-cyan-50 file:px-4 file:py-2 file:text-sm file:font-extrabold file:text-cyan-800"
+                className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-xl file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-800"
                 key={fileInputKey}
                 onChange={(event) => setFile(event.target.files?.[0] || null)}
                 required
@@ -219,14 +219,14 @@ export default function StudentDocumentsPage() {
 
             <div className="flex flex-wrap gap-3">
               <button
-                className="rounded-xl bg-navy-950 px-5 py-3 text-sm font-extrabold text-white transition hover:bg-cyan-700 disabled:opacity-60"
+                className="rounded-xl bg-[#1769FF] px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
                 disabled={submitting || !file || (isOtherType && !documentName.trim())}
                 type="submit"
               >
                 {submitting ? 'Envoi en cours…' : 'Insérer le document'}
               </button>
               <button
-                className="rounded-xl border-2 border-slate-300 bg-white px-5 py-3 text-sm font-extrabold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+                className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
                 disabled={submitting}
                 onClick={closeForm}
                 type="button"
@@ -247,10 +247,10 @@ export default function StudentDocumentsPage() {
         ) : !showAddForm ? (
           <div className="mt-4 grid gap-3">
             {uploadedDocuments.map((document) => (
-              <article className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4" key={document.id}>
+              <article className="rounded-2xl border border-slate-300 bg-slate-50 p-4" key={document.id}>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <h3 className="font-extrabold text-slate-950">{document.type || document.reference}</h3>
+                    <h3 className="font-semibold text-slate-950">{document.type || document.reference}</h3>
                     {document.reference && document.reference !== document.type && (
                       <p className="mt-1 text-sm text-slate-600">{document.reference}</p>
                     )}
@@ -263,7 +263,7 @@ export default function StudentDocumentsPage() {
                   {document.url && (
                     <div className="flex shrink-0 gap-3 text-sm">
                       <a
-                        className="font-bold text-cyan-700 underline"
+                        className="font-semibold text-blue-700 underline"
                         href={document.url}
                         rel="noreferrer"
                         target="_blank"
@@ -271,7 +271,7 @@ export default function StudentDocumentsPage() {
                         Aperçu
                       </a>
                       <a
-                        className="font-bold text-cyan-700 underline"
+                        className="font-semibold text-blue-700 underline"
                         download={document.file_name || undefined}
                         href={document.url}
                       >

@@ -107,14 +107,14 @@ export default function PracticeExamTeacherPanel({
     : `${formatPersonName(student)} · grille officielle sur 31 points`
 
   return (
-    <section className={embedded ? 'rounded-2xl border-2 border-slate-300 bg-white p-4 sm:p-5' : 'card-panel-lg'}>
+    <section className={embedded ? 'rounded-2xl border border-slate-300 bg-white p-4 sm:p-5' : 'card-panel-lg'}>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className={`font-extrabold text-slate-900 ${embedded ? 'text-lg' : 'text-2xl'}`}>{title}</h2>
+          <h2 className={`font-semibold text-slate-900 ${embedded ? 'text-lg' : 'text-2xl'}`}>{title}</h2>
           <p className="mt-1 text-sm text-slate-500">{description}</p>
         </div>
         <button
-          className="rounded-xl bg-navy-950 px-4 py-2 text-sm font-extrabold text-white transition hover:bg-cyan-700"
+          className="rounded-xl bg-[#1769FF] px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
           onClick={() => setHelpOpen(true)}
           type="button"
         >
@@ -127,7 +127,7 @@ export default function PracticeExamTeacherPanel({
       ) : (
         <div className={`mt-5 grid gap-5 ${embedded ? 'xl:grid-cols-[240px_1fr]' : 'lg:grid-cols-[280px_1fr]'}`}>
           <aside className="space-y-3">
-            <p className="text-sm font-black uppercase tracking-wide text-cyan-700">Historique</p>
+            <p className="text-sm font-semibold text-blue-700">Historique</p>
             {exams.length === 0 && (
               <p className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm font-semibold text-slate-500">
                 Aucun examen blanc enregistré pour cet élève.
@@ -137,8 +137,8 @@ export default function PracticeExamTeacherPanel({
               <button
                 className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
                   selectedExam?.id === exam.id
-                    ? 'border-cyan-300 bg-cyan-50 ring-2 ring-cyan-100'
-                    : 'border-slate-300 bg-white hover:border-cyan-200'
+                    ? 'border-blue-300 bg-blue-50 ring-2 ring-blue-100'
+                    : 'border-slate-300 bg-white hover:border-blue-200'
                 }`}
                 key={exam.id}
                 onClick={() => {
@@ -147,7 +147,7 @@ export default function PracticeExamTeacherPanel({
                 }}
                 type="button"
               >
-                <p className="font-black text-slate-900">
+                <p className="font-semibold text-slate-900">
                   {new Date(exam.exam_date).toLocaleDateString('fr-FR')}
                 </p>
                 <p className="mt-1 text-sm font-semibold text-slate-600">
@@ -165,10 +165,10 @@ export default function PracticeExamTeacherPanel({
                   liveResultLabel={resultLabel(liveResult)}
                   liveScore={liveScore}
                 />
-                <label className="block text-sm font-bold text-slate-700">
+                <label className="block text-sm font-semibold text-slate-700">
                   Date de l&apos;examen
                   <input
-                    className="mt-2 w-full rounded-xl border-2 border-slate-300 px-3 py-2 text-sm"
+                    className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"
                     onChange={(event) => setForm((current) => ({ ...current, examDate: event.target.value }))}
                     type="date"
                     value={form.examDate}
@@ -200,7 +200,7 @@ export default function PracticeExamTeacherPanel({
                     </p>
                   )}
                   <button
-                    className="rounded-xl bg-navy-950 px-5 py-3 text-sm font-extrabold text-white disabled:opacity-60"
+                    className="rounded-xl bg-[#1769FF] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
                     disabled={saving}
                     onClick={handleSave}
                     type="button"
@@ -208,7 +208,7 @@ export default function PracticeExamTeacherPanel({
                     {saving ? 'Enregistrement…' : 'Enregistrer l\'examen blanc'}
                   </button>
                   <button
-                    className="rounded-xl border-2 border-slate-300 px-5 py-3 text-sm font-bold text-slate-600"
+                    className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-600"
                     onClick={() => setFormOpen(false)}
                     type="button"
                   >

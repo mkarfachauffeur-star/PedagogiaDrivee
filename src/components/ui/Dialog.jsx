@@ -27,16 +27,24 @@ export default function Dialog({ open, title, description, onClose, children, fo
   if (!open) return null
 
   return createPortal(
-    <div aria-modal="true" className="fixed inset-0 z-[200] flex items-center justify-center p-4" role="dialog" aria-label={title}>
+    <div
+      aria-label={title}
+      aria-modal="true"
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))]"
+      role="dialog"
+    >
       <div aria-hidden="true" className="absolute inset-0 bg-slate-900/40" onClick={onClose} />
-      <div className={`relative w-full ${size} rounded-xl border border-slate-200 bg-white shadow-xl`} ref={panelRef}>
-        <div className="p-5 sm:p-6">
+      <div
+        className={`relative flex max-h-full w-full ${size} flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl`}
+        ref={panelRef}
+      >
+        <div className="min-h-0 overflow-y-auto overscroll-contain p-5 sm:p-6">
           <h2 className="text-base font-semibold text-slate-900">{title}</h2>
           {description ? <div className="mt-2 text-sm leading-6 text-slate-600">{description}</div> : null}
           {children ? <div className="mt-4">{children}</div> : null}
         </div>
         {footer ? (
-          <div className="flex flex-wrap justify-end gap-2 border-t border-slate-100 bg-slate-50/60 px-5 py-4 sm:px-6">{footer}</div>
+          <div className="flex shrink-0 flex-wrap justify-end gap-2 border-t border-slate-100 bg-slate-50/60 px-5 py-4 sm:px-6">{footer}</div>
         ) : null}
       </div>
     </div>,

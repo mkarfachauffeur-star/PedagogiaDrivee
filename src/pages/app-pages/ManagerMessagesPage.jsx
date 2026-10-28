@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
+import PageHeader from '../../components/ui/PageHeader'
+import { ConversationHeader, ConversationListItem, EmptyThread } from '../../components/messaging/ConversationParts'
 import EmptyState from '../../components/ui/EmptyState'
 import { useAuth } from '../../context/AuthContext'
 import { useConversationFromLocation } from '../../hooks/useConversationFromLocation'
@@ -6,7 +8,7 @@ import { useConversations } from '../../hooks/useConversations'
 import { useConversationMessages } from '../../hooks/useConversationMessages'
 import { findOrCreateDirectConversation, sendMessageWithAttachments } from '../../services/messaging'
 import { listInternalContacts } from '../../services/directory'
-import { AttachmentList, ChatMessageBubble, MessageComposer } from '../../components/messaging/Attachments'
+import { AttachmentList, ChatMessageBubble, MessageComposer, MessageMeta } from '../../components/messaging/Attachments'
 import { contactDisplayName, roleLabel } from '../../utils/messagingLabels'
 
 const formatTime = (iso) => {
@@ -86,24 +88,15 @@ export default function ManagerMessagesPage() {
 
   return (
     <div className="pd-page pd-msg-page">
-      <section className="pd-card overflow-hidden p-0">
-        <div className="pd-hero-banner">
-          <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(107,143,178,0.22),transparent_42%)]" />
-          <p className="relative z-10 pd-eyebrow">Messagerie gérant</p>
-          <h1 className="relative z-10 mt-4 pd-title-page">Échanges internes direction</h1>
-          <p className="relative z-10 mt-3 max-w-4xl pd-subtitle">
-            Messagerie réservée aux échanges avec les enseignants et le secrétariat, en temps réel.
-          </p>
-        </div>
-      </section>
+      <PageHeader description="Vos échanges avec les enseignants et le secrétariat." title="Messages" />
 
       {!profileId ? (
         <EmptyState title="Connexion requise" message="Connectez-vous avec votre compte pour accéder à la messagerie." icon="💬" />
       ) : (
         <div className="pd-msg-panel grid grid-cols-1 gap-0 lg:grid-cols-[320px_1fr]">
-          <aside className="pd-msg-sidebar">
+          <aside className={`pd-msg-sidebar ${activeConversation ? 'hidden lg:block' : ''}`}>
             <div className="flex items-center justify-between gap-2">
-              <h2 className="pd-msg-sidebar-title">Contacts internes</h2>
+              <h2 className="pd-msg-sidebar-title">Conversations</h2>
               <button type="button" onClick={() => setPickerOpen((v) => !v)} className="pd-msg-btn-accent">+ Nouvelle</button>
             </div>
 
@@ -119,45 +112,39 @@ export default function ManagerMessagesPage() {
               </div>
             )}
 
-            <div className="mt-4 grid gap-3">
+            <div className="mt-4 grid gap-2">
               {conversations.length === 0 ? (
-                <p className="rounded-2xl border-2 border-slate-300 bg-slate-50/80 px-4 py-5 text-center text-sm font-medium text-slate-500">
+                <p className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-center text-sm text-slate-500">
                   Aucune conversation enregistrée.
                 </p>
               ) : (
                 conversations.map((item) => (
-                  <button key={item.id} type="button" onClick={() => setActiveId(item.id)} className={`rounded-2xl border p-4 text-left transition-all duration-200 ${activeId === item.id ? 'pd-msg-thread-active' : 'pd-msg-thread hover:-translate-y-0.5'}`}>
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="font-semibold text-slate-900">{item.title}</p>
-                      <span className="pd-msg-chip">Interne</span>
-                    </div>
-                    <p className="pd-msg-meta mt-2">{item.unread ? 'Nouveau message' : formatTime(item.lastMessageAt)}</p>
-                  </button>
+                  <ConversationListItem
+                    active={activeId === item.id}
+                    key={item.id}
+                    kindLabel="Équipe"
+                    onSelect={() => setActiveId(item.id)}
+                    time={formatTime(item.lastMessageAt)}
+                    title={item.title}
+                    unread={item.unread}
+                  />
                 ))
               )}
             </div>
           </aside>
 
-          <section className="flex flex-col bg-slate-50/80 p-5 md:p-6">
+          <section className={`min-h-[28rem] flex-col bg-slate-50/60 p-4 md:p-6 ${activeConversation ? 'flex' : 'hidden lg:flex'}`}>
             {activeConversation ? (
               <>
-                <div className="pd-msg-chat-divider flex items-center justify-between gap-3">
-                  <div>
-                    <h2 className="pd-title-section text-xl">{activeConversation.title}</h2>
-                    <p className="text-sm text-slate-600">Conversation interne</p>
-                  </div>
-                  <button type="button" onClick={() => setActiveId(null)} className="pd-msg-close-btn">Fermer</button>
-                </div>
+                <ConversationHeader onClose={() => setActiveId(null)} subtitle="Équipe de l’auto-école" title={activeConversation.title} />
 
                 <div className="pd-msg-thread-list">
-                  {messages.length === 0 && <p className="text-sm text-slate-500">Aucun message. Démarrez la conversation.</p>}
+                  {messages.length === 0 && <EmptyThread />}
                   {messages.map((message) => (
                     <ChatMessageBubble key={message.id} mine={message.mine}>
                       <p>{message.body}</p>
                       <AttachmentList attachments={message.attachments} />
-                      <p className={`mt-2 text-[11px] font-medium ${message.mine ? 'text-white/75' : 'text-slate-500'}`}>
-                        {formatTime(message.created_at)}{message.mine && message.status ? ` · ${message.status}` : ''}
-                      </p>
+                      <MessageMeta mine={message.mine} status={message.status} time={formatTime(message.created_at)} />
                     </ChatMessageBubble>
                   ))}
                 </div>
@@ -180,7 +167,7 @@ export default function ManagerMessagesPage() {
                 message={
                   conversations.length === 0
                     ? 'Cliquez sur « + Nouvelle » pour contacter un enseignant ou un membre du secrétariat.'
-                    : 'Choisissez une conversation dans la liste de gauche.'
+                    : 'Choisissez une conversation dans la liste.'
                 }
                 title={
                   conversations.length === 0

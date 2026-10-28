@@ -1,4 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import PageHeader from '../../components/ui/PageHeader'
+import StatCard from '../../components/ui/StatCard'
+import { ui } from '../../components/ui/styles'
+import { formatEuros, formatNumber } from '../../lib/format'
 import EmptyState from '../../components/ui/EmptyState'
 import AppModal, { AppModalFooter } from '../../components/ui/AppModal'
 import PanelTabs from '../../components/ui/PanelTabs'
@@ -428,24 +432,24 @@ export default function FleetManagementPage({ role = 'secretary' }) {
         role={role}
       />
 
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <Kpi label="Véhicules suivis" value={vehicles.length} />
-        <Kpi label="Coût carburant mois" value={`${stats.totalFuelCost.toFixed(2)} EUR`} tone="amber" />
-        <Kpi label="Kilomètres mois" value={`${stats.totalKm} km`} tone="emerald" />
-        <Kpi label="Coût moyen/km" value={`${stats.costPerKm.toFixed(2)} EUR`} tone="cyan" />
+        <Kpi label="Coût carburant mois" value={formatEuros(stats.totalFuelCost)} tone="amber" />
+        <Kpi label="Kilomètres mois" value={`${formatNumber(stats.totalKm)} km`} tone="emerald" />
+        <Kpi label="Coût moyen/km" value={formatEuros(stats.costPerKm)} tone="cyan" />
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_420px]">
-        <div className="rounded-[2rem] border-2 border-slate-300 bg-white/85 p-5 shadow-[var(--shadow-card)] backdrop-blur-xl">
+        <div className="rounded-xl border border-slate-300 bg-white/85 p-5 backdrop-blur-xl">
           <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>
-              <h2 className="text-2xl font-extrabold text-slate-950">Flotte auto-école</h2>
+              <h2 className="text-2xl font-semibold text-slate-950">Flotte auto-école</h2>
               <p className="mt-1 text-sm text-slate-500">Cliquez un véhicule pour ouvrir sa fiche complète.</p>
             </div>
             <div className="flex flex-wrap gap-2">
               {canWrite && (
                 <button
-                  className="rounded-2xl bg-cyan-600 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-cyan-700"
+                  className="rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
                   onClick={openAddVehicleModal}
                   type="button"
                 >
@@ -454,7 +458,7 @@ export default function FleetManagementPage({ role = 'secretary' }) {
               )}
               {selectedVehicle && (
                 <button
-                  className="rounded-2xl bg-navy-950 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-cyan-700"
+                  className="rounded-2xl bg-[#1769FF] px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
                   onClick={openVehicleModal}
                   type="button"
                 >
@@ -476,7 +480,7 @@ export default function FleetManagementPage({ role = 'secretary' }) {
               {canWrite && (
                 <div className="mt-4 flex justify-center">
                   <button
-                    className="rounded-2xl bg-cyan-300 px-5 py-3 text-sm font-black text-navy-950 shadow-xl transition hover:bg-white"
+                    className="rounded-2xl bg-blue-300 px-5 py-3 text-sm font-semibold text-navy-950 shadow-xl transition hover:bg-white"
                     onClick={openAddVehicleModal}
                     type="button"
                   >
@@ -489,9 +493,9 @@ export default function FleetManagementPage({ role = 'secretary' }) {
           <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-3">
             {vehicles.map((vehicle) => (
               <button
-                className={`rounded-[1.5rem] border p-4 text-left transition hover:-translate-y-1 hover:shadow-xl ${
+                className={`rounded-xl border p-4 text-left transition hover:-translate-y-1 hover:shadow-xl ${
                   selectedVehicleId === vehicle.id
-                    ? 'border-cyan-300 bg-cyan-50 shadow-lg ring-4 ring-cyan-100'
+                    ? 'border-blue-300 bg-blue-50 shadow-lg ring-4 ring-blue-100'
                     : 'border-slate-300 bg-white'
                 }`}
                 key={vehicle.id}
@@ -500,8 +504,8 @@ export default function FleetManagementPage({ role = 'secretary' }) {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-lg font-black text-slate-950">{vehicle.brand} {vehicle.model}</h3>
-                    <p className="text-sm font-bold text-slate-500">{vehicle.plate}</p>
+                    <h3 className="text-lg font-semibold text-slate-950">{vehicle.brand} {vehicle.model}</h3>
+                    <p className="text-sm font-semibold text-slate-500">{vehicle.plate}</p>
                   </div>
                   <StatusBadge value={vehicle.availability} />
                 </div>
@@ -523,8 +527,8 @@ export default function FleetManagementPage({ role = 'secretary' }) {
           )}
         </div>
 
-        <aside className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
-          <p className="text-xs font-black uppercase tracking-wide text-cyan-700">Fiche véhicule</p>
+        <aside className="rounded-xl border border-slate-200 bg-white p-5">
+          <p className="text-xs font-semibold text-blue-700">Fiche véhicule</p>
           {!selectedVehicle ? (
             <EmptyState
               className="mt-4"
@@ -534,10 +538,10 @@ export default function FleetManagementPage({ role = 'secretary' }) {
             />
           ) : (
           <>
-          <h2 className="mt-2 text-2xl font-extrabold text-slate-950">
+          <h2 className="mt-2 text-2xl font-semibold text-slate-950">
             {selectedVehicle.brand} {selectedVehicle.model}
           </h2>
-          <p className="mt-1 text-sm font-bold text-slate-500">{selectedVehicle.plate}</p>
+          <p className="mt-1 text-sm font-semibold text-slate-500">{selectedVehicle.plate}</p>
 
           <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Info label="État général" value={selectedVehicle.generalState} />
@@ -557,13 +561,13 @@ export default function FleetManagementPage({ role = 'secretary' }) {
                 {selectedVehicle.energy === 'diesel' && <Info label="AdBlue" value={selectedVehicle.adblue} />}
               </>
             )}
-            <Info label="Autonomie" value={`${selectedVehicle.estimatedRange} km`} />
+            <Info label="Autonomie" value={`${formatNumber(selectedVehicle.estimatedRange)} km`} />
             <Info label="Contrôle technique" value={formatDate(selectedVehicle.technicalControl)} />
           </div>
 
           {canWrite && (
           <div className="mt-5 grid gap-2">
-            <button className="rounded-2xl bg-navy-950 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-cyan-700" onClick={() => openFuelModal(selectedVehicle.id)} type="button">
+            <button className="rounded-2xl bg-[#1769FF] px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700" onClick={() => openFuelModal(selectedVehicle.id)} type="button">
             {isElectric(selectedVehicle) ? (
               '+ Ajouter une recharge'
             ) : isHybrid(selectedVehicle) ? (
@@ -572,7 +576,7 @@ export default function FleetManagementPage({ role = 'secretary' }) {
               '+ Ajouter un plein'
             )}
             </button>
-            <button className="rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm font-extrabold text-cyan-700 transition hover:bg-cyan-100" onClick={() => openMaintenanceModal(selectedVehicle.id)} type="button">
+            <button className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700 transition hover:bg-blue-100" onClick={() => openMaintenanceModal(selectedVehicle.id)} type="button">
               + Entretien / dégâts
             </button>
           </div>
@@ -661,7 +665,7 @@ export default function FleetManagementPage({ role = 'secretary' }) {
                   <Select label="Type carburant" onChange={(value) => setFuelForm((current) => ({ ...current, fuelType: value }))} options={fuelFormFuelTypeOptions} value={fuelForm.fuelType} />
                 )}
                 <Field label="Litres ajoutés" onChange={(value) => setFuelForm((current) => ({ ...current, liters: value }))} type="number" value={fuelForm.liters} />
-                <Field label="Prix total payé (EUR)" onChange={(value) => setFuelForm((current) => ({ ...current, price: value }))} type="number" value={fuelForm.price} />
+                <Field label="Prix total payé (€)" onChange={(value) => setFuelForm((current) => ({ ...current, price: value }))} type="number" value={fuelForm.price} />
                 <Field label="Station service" onChange={(value) => setFuelForm((current) => ({ ...current, station: value }))} value={fuelForm.station} />
                 <FileField label="Photo du ticket carburant" onChange={(value) => setFuelForm((current) => ({ ...current, ticketPhoto: value }))} value={fuelForm.ticketPhoto} />
               </>
@@ -750,30 +754,19 @@ export default function FleetManagementPage({ role = 'secretary' }) {
   )
 }
 
-function Hero({ canAddVehicle, onAddVehicle, role }) {
-  const roleLabel = role === 'manager' ? 'Gérant' : role === 'teacher' ? 'Enseignant' : 'Secrétariat'
-
+function Hero({ canAddVehicle, onAddVehicle }) {
   return (
-    <section className="overflow-hidden rounded-[2rem] border-2 border-slate-300 bg-white shadow-[var(--shadow-card)]">
-      <div className="bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white md:p-8">
-        <span className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-          {roleLabel}
-        </span>
-        <div className="mt-5 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
-          <div>
-            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Gestion des véhicules</h1>
-            <p className="mt-3 max-w-3xl text-base leading-7 text-blue-50">
-              Suivi complet de flotte auto-école : état, pleins enregistrés, entretien, alertes et coûts.
-            </p>
-          </div>
-          {canAddVehicle && (
-            <button className="rounded-2xl bg-cyan-300 px-5 py-3 text-sm font-black text-navy-950 shadow-xl transition hover:-translate-y-0.5 hover:bg-white" onClick={onAddVehicle} type="button">
-              + Ajouter un véhicule
-            </button>
-          )}
-        </div>
-      </div>
-    </section>
+    <PageHeader
+      actions={
+        canAddVehicle ? (
+          <button className={ui.btnPrimary} onClick={onAddVehicle} type="button">
+            Ajouter un véhicule
+          </button>
+        ) : null
+      }
+      description="État, pleins, entretiens, alertes et coûts de votre flotte."
+      title="Gestion des véhicules"
+    />
   )
 }
 
@@ -816,9 +809,9 @@ function HistoryPanel({
   } = useClientPagination(maintenanceLogs, { pageSize: 5 })
 
   return (
-    <section className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
+    <section className="rounded-xl border border-slate-200 bg-white p-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h2 className="text-2xl font-extrabold text-slate-950">Historique du véhicule sélectionné</h2>
+        <h2 className="text-2xl font-semibold text-slate-950">Historique du véhicule sélectionné</h2>
         <PanelTabs
           activeId={historyTab}
           onChange={setHistoryTab}
@@ -835,25 +828,25 @@ function HistoryPanel({
             {fuelPageItems.map((log) => {
               const logIsRecharge = isRechargeEntry(selectedVehicle, log.fuelType)
               return (
-              <article className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4" key={log.id}>
+              <article className="rounded-2xl border border-slate-300 bg-slate-50 p-4" key={log.id}>
                 <div className="flex justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="font-extrabold text-slate-950">{formatDate(log.date)} · {log.teacher}</p>
+                    <p className="font-semibold text-slate-950">{formatDate(log.date)} · {log.teacher}</p>
                     <p className="text-sm text-slate-500">{log.station} · {log.fuelType} · {log.ticketPhoto}</p>
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-2">
-                    {!logIsRecharge && <p className="font-black text-cyan-700">{Number(log.price).toFixed(2)} EUR</p>}
+                    {!logIsRecharge && <p className="font-semibold text-blue-700">{formatEuros(log.price)}</p>}
                     {canEdit && (
                       <div className="flex gap-2">
                         <button
-                          className="rounded-xl border-2 border-slate-300 bg-white px-3 py-1.5 text-xs font-extrabold text-slate-700 transition hover:bg-slate-100"
+                          className="rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
                           onClick={() => onEditFuel(log)}
                           type="button"
                         >
                           Modifier
                         </button>
                         <button
-                          className="rounded-xl bg-rose-600 px-3 py-1.5 text-xs font-extrabold text-white transition hover:bg-rose-500"
+                          className="rounded-xl bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-rose-500"
                           onClick={() => onDeleteFuel(log)}
                           type="button"
                         >
@@ -888,25 +881,25 @@ function HistoryPanel({
         <div className="mt-5">
           <div className="space-y-3">
             {maintenancePageItems.map((log) => (
-              <article className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4" key={log.id}>
+              <article className="rounded-2xl border border-slate-300 bg-slate-50 p-4" key={log.id}>
                 <div className="flex justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="font-extrabold text-slate-950">{log.type}</p>
+                    <p className="font-semibold text-slate-950">{log.type}</p>
                     <p className="text-sm text-slate-500">{formatDate(log.date)} · {log.reporter}</p>
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-2">
-                    {log.photo && <span className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-700">photo</span>}
+                    {log.photo && <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">photo</span>}
                     {canEdit && (
                       <div className="flex gap-2">
                         <button
-                          className="rounded-xl border-2 border-slate-300 bg-white px-3 py-1.5 text-xs font-extrabold text-slate-700 transition hover:bg-slate-100"
+                          className="rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
                           onClick={() => onEditMaintenance(log)}
                           type="button"
                         >
                           Modifier
                         </button>
                         <button
-                          className="rounded-xl bg-rose-600 px-3 py-1.5 text-xs font-extrabold text-white transition hover:bg-rose-500"
+                          className="rounded-xl bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-rose-500"
                           onClick={() => onDeleteMaintenance(log)}
                           type="button"
                         >
@@ -941,26 +934,26 @@ function HistoryPanel({
 
 function ManagerStats({ fuelLogs, stats, vehicles }) {
   return (
-    <section className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
+    <section className="rounded-xl border border-slate-200 bg-white p-5">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <h2 className="text-2xl font-extrabold text-slate-950">Statistiques Gérant</h2>
+          <h2 className="text-2xl font-semibold text-slate-950">Statistiques Gérant</h2>
           <p className="mt-1 text-sm text-slate-500">Coûts, kilométrage, utilisation et historique enseignant/véhicule.</p>
         </div>
-        <span className="rounded-full border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-black text-cyan-700">
+        <span className="rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700">
           {fuelLogs.length} opérations carburant
         </span>
       </div>
 
       <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <Info label="Véhicule le plus utilisé" value={stats.mostUsed ? `${stats.mostUsed.brand} ${stats.mostUsed.model} · ${stats.mostUsed.monthlyKm} km` : '—'} />
+        <Info label="Véhicule le plus utilisé" value={stats.mostUsed ? `${stats.mostUsed.brand} ${stats.mostUsed.model} · ${formatNumber(stats.mostUsed.monthlyKm)} km` : '—'} />
         <Info label="Consomme le plus" value={stats.highestConsumption ? `${stats.highestConsumption.brand} ${stats.highestConsumption.model} · ${stats.highestConsumption.averageConsumption} L/100` : '—'} />
         <Info label="Historique flotte" value={`${vehicles.reduce((sum, vehicle) => sum + vehicle.mileage, 0).toLocaleString('fr-FR')} km cumulés`} />
       </div>
 
       <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
-        <BarChart title="Coût par véhicule" items={stats.vehicleCosts} suffix="EUR" />
-        <BarChart title="Coût par enseignant" items={stats.teacherCosts} suffix="EUR" />
+        <BarChart title="Coût par véhicule" items={stats.vehicleCosts} suffix="€" />
+        <BarChart title="Coût par enseignant" items={stats.teacherCosts} suffix="€" />
       </div>
     </section>
   )
@@ -969,17 +962,17 @@ function ManagerStats({ fuelLogs, stats, vehicles }) {
 function BarChart({ items, suffix, title }) {
   const max = Math.max(...items.map((item) => item.value), 1)
   return (
-    <div className="rounded-[1.5rem] border-2 border-slate-300 bg-slate-50 p-4">
-      <h3 className="font-black text-slate-950">{title}</h3>
+    <div className="rounded-xl border border-slate-300 bg-slate-50 p-4">
+      <h3 className="font-semibold text-slate-950">{title}</h3>
       <div className="mt-4 space-y-3">
         {items.map((item) => (
           <div key={item.label}>
             <div className="flex justify-between gap-3 text-sm">
-              <span className="font-bold text-slate-600">{item.label}</span>
-              <span className="font-black text-slate-900">{item.value.toFixed(2)} {suffix}</span>
+              <span className="font-semibold text-slate-600">{item.label}</span>
+              <span className="font-semibold text-slate-900">{suffix === '€' ? formatEuros(item.value) : `${formatNumber(item.value)} ${suffix}`}</span>
             </div>
             <div className="mt-1 h-2 overflow-hidden rounded-full bg-white">
-              <div className="h-full rounded-full bg-gradient-to-r from-cyan-600 to-cyan-300" style={{ width: `${(item.value / max) * 100}%` }} />
+              <div className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-300" style={{ width: `${(item.value / max) * 100}%` }} />
             </div>
           </div>
         ))}
@@ -988,21 +981,17 @@ function BarChart({ items, suffix, title }) {
   )
 }
 
+const KPI_TONES = { cyan: 'blue', emerald: 'emerald', amber: 'amber' }
+
 function Kpi({ label, tone = 'cyan', value }) {
-  const color = tone === 'emerald' ? 'text-emerald-600' : tone === 'amber' ? 'text-amber-600' : 'text-cyan-600'
-  return (
-    <article className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
-      <p className="text-sm font-bold text-slate-500">{label}</p>
-      <p className={`mt-2 text-3xl font-black ${color}`}>{value}</p>
-    </article>
-  )
+  return <StatCard accent={KPI_TONES[tone] || 'blue'} label={label} value={value} />
 }
 
 function MiniInfo({ label, value }) {
   return (
-    <div className="rounded-2xl border-2 border-slate-300 bg-white px-3 py-2">
-      <p className="text-[10px] font-black uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="text-sm font-extrabold text-slate-900">{value}</p>
+    <div className="rounded-2xl border border-slate-300 bg-white px-3 py-2">
+      <p className="text-[10px] font-semibold text-slate-400">{label}</p>
+      <p className="text-sm font-semibold text-slate-900">{value}</p>
     </div>
   )
 }
@@ -1015,12 +1004,12 @@ function RechargeSlider({ currentLevel = 0, onChange, value }) {
 
   return (
     <div className="md:col-span-2">
-      <span className="text-sm font-bold text-slate-700">Barre de recharge</span>
+      <span className="text-sm font-semibold text-slate-700">Barre de recharge</span>
       <p className="mt-1 text-xs font-medium text-slate-500">Glissez vers la droite pour indiquer le niveau atteint après recharge.</p>
-      <div className="mt-3 rounded-2xl border border-cyan-100 bg-gradient-to-br from-cyan-50 to-emerald-50/60 p-4">
+      <div className="mt-3 rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-emerald-50/60 p-4">
         <div className="flex items-center justify-between gap-3 text-sm">
-          <span className="font-bold text-slate-600">{start}% en fiche</span>
-          <span className={`rounded-full px-3 py-1 text-xs font-black ${full ? 'bg-emerald-100 text-emerald-700' : 'bg-cyan-100 text-cyan-700'}`}>
+          <span className="font-semibold text-slate-600">{start}% en fiche</span>
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${full ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
             {full ? 'Plein — 100%' : `Après recharge : ${target}%`}
           </span>
         </div>
@@ -1032,13 +1021,13 @@ function RechargeSlider({ currentLevel = 0, onChange, value }) {
           />
           <div
             aria-hidden
-            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-cyan-600 via-cyan-400 to-emerald-400 transition-all duration-200"
+            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-blue-600 via-blue-400 to-emerald-400 transition-all duration-200"
             style={{ width: `${target}%` }}
           />
         </div>
         <input
           aria-label="Niveau de recharge"
-          className="mt-4 h-2 w-full cursor-pointer appearance-none rounded-full bg-cyan-100 accent-cyan-600 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:bg-cyan-600 [&::-webkit-slider-thumb]:shadow-md"
+          className="mt-4 h-2 w-full cursor-pointer appearance-none rounded-full bg-blue-100 accent-blue-600 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:bg-blue-600 [&::-webkit-slider-thumb]:shadow-md"
           max={100}
           min={0}
           onChange={(event) => onChange(event.target.value)}
@@ -1049,7 +1038,7 @@ function RechargeSlider({ currentLevel = 0, onChange, value }) {
         {start >= 100 && target < 100 ? (
           <p className="mt-2 text-xs font-medium text-amber-700">Batterie pleine en fiche — ajustez le curseur au niveau réel après recharge.</p>
         ) : added > 0 ? (
-          <p className="mt-2 text-xs font-bold text-cyan-700">+{added}% · niveau final {target}%</p>
+          <p className="mt-2 text-xs font-semibold text-blue-700">+{added}% · niveau final {target}%</p>
         ) : (
           <p className="mt-2 text-xs font-medium text-slate-500">Déplacez le curseur vers la droite pour enregistrer une recharge.</p>
         )}
@@ -1060,23 +1049,23 @@ function RechargeSlider({ currentLevel = 0, onChange, value }) {
 
 function Info({ label, value }) {
   return (
-    <div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-3">
-      <p className="text-xs font-bold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="mt-1 font-extrabold text-slate-900">{value}</p>
+    <div className="rounded-2xl border border-slate-300 bg-slate-50 p-3">
+      <p className="text-xs font-semibold text-slate-400">{label}</p>
+      <p className="mt-1 font-semibold text-slate-900">{value}</p>
     </div>
   )
 }
 
 function StatusBadge({ value }) {
   const style = value === 'Disponible' ? 'bg-emerald-50 text-emerald-700' : value === 'Maintenance' || value === 'Indisponible' ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700'
-  return <span className={`rounded-full px-3 py-1 text-xs font-black ${style}`}>{value}</span>
+  return <span className={`rounded-full px-3 py-1 text-xs font-semibold ${style}`}>{value}</span>
 }
 
 function Field({ className = '', label, onChange, type = 'text', value }) {
   return (
     <label className={`block ${className}`}>
-      <span className="text-sm font-bold text-slate-700">{label}</span>
-      <input className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100" onChange={(event) => onChange(event.target.value)} type={type} value={value} />
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
+      <input className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-300 focus:ring-4 focus:ring-blue-100" onChange={(event) => onChange(event.target.value)} type={type} value={value} />
     </label>
   )
 }
@@ -1084,9 +1073,9 @@ function Field({ className = '', label, onChange, type = 'text', value }) {
 function FileField({ label, onChange, value }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
-      <input className="mt-2 min-h-12 w-full rounded-2xl border border-dashed border-cyan-200 bg-cyan-50 px-4 py-3 text-sm font-bold text-cyan-800 outline-none transition file:mr-4 file:rounded-xl file:border-0 file:bg-navy-950 file:px-3 file:py-2 file:text-sm file:font-bold file:text-white focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100" onChange={(event) => onChange(event.target.files?.[0]?.name || '')} type="file" />
-      {value && <span className="mt-2 block text-xs font-bold text-cyan-700">Fichier sélectionné : {value}</span>}
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
+      <input className="mt-2 min-h-12 w-full rounded-2xl border border-dashed border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-800 outline-none transition file:mr-4 file:rounded-xl file:border-0 file:bg-[#1769FF] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-white focus:border-blue-300 focus:ring-4 focus:ring-blue-100" onChange={(event) => onChange(event.target.files?.[0]?.name || '')} type="file" />
+      {value && <span className="mt-2 block text-xs font-semibold text-blue-700">Fichier sélectionné : {value}</span>}
     </label>
   )
 }
@@ -1098,8 +1087,8 @@ function Select({ label, onChange, options, value }) {
 
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
-      <select className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100" onChange={(event) => onChange(event.target.value)} value={value}>
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
+      <select className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-300 focus:ring-4 focus:ring-blue-100" onChange={(event) => onChange(event.target.value)} value={value}>
         {normalizedOptions.map((option) => (
           <option key={option.value} value={option.value}>{option.label}</option>
         ))}
@@ -1111,10 +1100,10 @@ function Select({ label, onChange, options, value }) {
 function ReadOnlyField({ label, value }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
       <input
         readOnly
-        className="mt-2 min-h-12 w-full cursor-default rounded-2xl border-2 border-slate-300 bg-slate-50 px-4 text-sm font-medium text-slate-600 outline-none"
+        className="mt-2 min-h-12 w-full cursor-default rounded-2xl border border-slate-300 bg-slate-50 px-4 text-sm font-medium text-slate-600 outline-none"
         type="text"
         value={value}
       />
@@ -1123,7 +1112,7 @@ function ReadOnlyField({ label, value }) {
 }
 
 function InlineNotice({ label }) {
-  return <p className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm font-bold text-slate-500">{label}</p>
+  return <p className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm font-semibold text-slate-500">{label}</p>
 }
 
 function formatDate(value) {

@@ -45,14 +45,14 @@ export function ImagePreviewModal({ attachment, onClose }) {
           <button
             type="button"
             onClick={() => downloadAttachment(attachment)}
-            className="rounded-xl border-2 border-slate-300 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-100"
+            className="rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
           >
             Télécharger
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white shadow-md transition hover:bg-red-700"
+            className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-red-700"
             aria-label="Fermer l'aperçu"
           >
             <X className="h-4 w-4" aria-hidden />

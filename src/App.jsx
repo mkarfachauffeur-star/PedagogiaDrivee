@@ -54,7 +54,6 @@ import PlatformPaymentsPage from './pages/platform/PlatformPaymentsPage'
 import StudentDashboardPage from './pages/app-pages/StudentDashboardPage'
 const StudentLessonsPage = lazy(() => import('./pages/app-pages/StudentLessonsPage'))
 import StudentLexiconPage from './pages/app-pages/StudentLexiconPage'
-import StudentProgressPage from './pages/app-pages/StudentProgressPage'
 import StudentExamsPage from './pages/app-pages/StudentExamsPage'
 import StudentPracticeExamsPage from './pages/app-pages/StudentPracticeExamsPage'
 import StudentAccompaniedDrivingPage from './pages/app-pages/StudentAccompaniedDrivingPage'
@@ -80,7 +79,6 @@ import TeacherLessonsPage from './pages/app-pages/TeacherLessonsPage'
 import TeacherVehiclesPage from './pages/app-pages/TeacherVehiclesPage'
 import TeacherMessagesPage from './pages/app-pages/TeacherMessagesPage'
 import TeacherFinancePage from './pages/app-pages/TeacherFinancePage'
-import TeacherProfilePage from './pages/app-pages/TeacherProfilePage'
 
 import SecretaryDashboardPage from './pages/app-pages/SecretaryDashboardPage'
 import SecretaryInscriptionsPage from './pages/app-pages/SecretaryInscriptionsPage'
@@ -224,7 +222,7 @@ function App() {
         <Route path="/student/payments" element={<Navigate replace to="/student/contract" />} />
         <Route path="/student/next-lesson" element={withStudentLayout(StudentNextLessonPage)} />
         <Route path="/student/lexicon" element={withStudentLayout(StudentLexiconPage)} />
-        <Route path="/student/progress" element={withStudentLayout(StudentProgressPage)} />
+        <Route path="/student/progress" element={<Navigate replace to="/student/competency-reports" />} />
         <Route path="/student/exams" element={withStudentLayout(StudentExamsPage)} />
         <Route path="/student/practice-exams" element={withStudentLayout(StudentPracticeExamsPage)} />
         <Route
@@ -248,7 +246,7 @@ function App() {
         <Route path="/teacher/vehicles" element={withProtectedLayout('teacher', TeacherVehiclesPage)} />
         <Route path="/teacher/messages" element={withProtectedLayout('teacher', TeacherMessagesPage)} />
         <Route path="/teacher/finance" element={withProtectedLayout('teacher', TeacherFinancePage)} />
-        <Route path="/teacher/profile" element={withProtectedLayout('teacher', TeacherProfilePage)} />
+        <Route path="/teacher/profile" element={<Navigate replace to="/teacher/dashboard" />} />
 
         <Route path="/secretary" element={<Navigate replace to="/secretary/dashboard" />} />
         <Route

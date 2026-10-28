@@ -43,12 +43,12 @@ export default function LessonModuleQcuProgressPanel({ studentId }) {
 
   return (
     <div className="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 sm:p-5">
-      <p className="text-xs font-black uppercase tracking-wide text-emerald-700">
+      <p className="text-xs font-semibold text-emerald-700">
         Dernier QCU travaillé et réussi
       </p>
       <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-lg font-extrabold text-slate-900">
+          <p className="text-lg font-semibold text-slate-900">
             {latest.moduleTitle || latest.moduleId || 'Module'}
           </p>
           {latest.moduleTitle && latest.moduleId && (
@@ -57,14 +57,14 @@ export default function LessonModuleQcuProgressPanel({ studentId }) {
         </div>
         <div className="flex flex-wrap gap-4 text-sm">
           <div>
-            <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Score</p>
-            <p className="mt-1 font-extrabold text-slate-900">
+            <p className="text-xs font-semibold text-slate-400">Score</p>
+            <p className="mt-1 font-semibold text-slate-900">
               {latest.score}/{latest.total ?? '—'} ({latest.percentage ?? '—'} %)
             </p>
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Validé le</p>
-            <p className="mt-1 font-extrabold text-emerald-800">
+            <p className="text-xs font-semibold text-slate-400">Validé le</p>
+            <p className="mt-1 font-semibold text-emerald-800">
               {formatQcuValidatedAt(latest.qcuValidatedAt)}
             </p>
           </div>

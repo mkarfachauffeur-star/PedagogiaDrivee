@@ -9,7 +9,7 @@ export default function LegalContactBlock({
     <address className="not-italic">
       <p className="font-semibold text-slate-800">{label}</p>
       <p>
-        <a className="font-semibold text-cyan-700 hover:text-cyan-800" href={legalMailto(email)}>
+        <a className="font-semibold text-blue-700 hover:text-blue-800" href={legalMailto(email)}>
           {email}
         </a>
       </p>

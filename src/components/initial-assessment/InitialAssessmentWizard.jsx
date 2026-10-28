@@ -23,16 +23,16 @@ function ModuleProgress({ modules, currentIndex }) {
         const done = index < currentIndex
         return (
           <li
-            className={`rounded-2xl border px-3 py-2 text-xs font-bold ${
+            className={`rounded-2xl border px-3 py-2 text-xs font-semibold ${
               active
-                ? 'border-cyan-300 bg-cyan-50 text-cyan-900'
+                ? 'border-blue-300 bg-blue-50 text-blue-900'
                 : done
                   ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
                   : 'border-slate-300 bg-white text-slate-500'
             }`}
             key={step.id}
           >
-            <span className="block text-[10px] uppercase tracking-wide opacity-70">
+            <span className="block text-[10px] opacity-70">
               Module {step.moduleNumber}
             </span>
             {step.title}
@@ -48,7 +48,7 @@ function SelectFields({ fields, answers, onChange, readOnly }) {
   return (
     <div className="grid gap-3">
       {fields.map((field) => (
-        <label className="block text-sm font-bold text-slate-700" key={field.id}>
+        <label className="block text-sm font-semibold text-slate-700" key={field.id}>
           {field.label}
           <select
             className="pd-input mt-1 w-full"
@@ -72,21 +72,21 @@ function RatingFields({ ratings, answers, onChange, readOnly, teacherOnly }) {
   return (
     <div className="mt-5 space-y-3">
       {teacherOnly && (
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+        <p className="text-xs font-semibold text-slate-400">
           Appréciation enseignant
         </p>
       )}
       <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-xs text-slate-600">
-        <p className="font-bold text-slate-700">Notation F / S / B</p>
+        <p className="font-semibold text-slate-700">Notation F / S / B</p>
         <ul className="mt-1 space-y-0.5">
           {Object.entries(FSB_LEGEND).map(([key, text]) => (
-            <li key={key}><span className="font-black">{key}</span> — {text}</li>
+            <li key={key}><span className="font-semibold">{key}</span> — {text}</li>
           ))}
         </ul>
       </div>
       {ratings.map((rating) => (
-        <div className="rounded-2xl border-2 border-slate-300 bg-white px-4 py-3" key={rating.id}>
-          <p className="text-sm font-bold text-slate-800">{rating.label}</p>
+        <div className="rounded-2xl border border-slate-300 bg-white px-4 py-3" key={rating.id}>
+          <p className="text-sm font-semibold text-slate-800">{rating.label}</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {FSB_OPTIONS.map((opt) => {
               const selected = answers[rating.id] === opt.value
@@ -96,10 +96,10 @@ function RatingFields({ ratings, answers, onChange, readOnly, teacherOnly }) {
                   type="button"
                   disabled={readOnly}
                   onClick={() => onChange(rating.id, opt.value)}
-                  className={`rounded-xl border px-4 py-2 text-sm font-bold transition ${
+                  className={`rounded-xl border px-4 py-2 text-sm font-semibold transition ${
                     selected
-                      ? 'border-cyan-500 bg-cyan-50 text-cyan-900'
-                      : 'border-slate-300 bg-white text-slate-600 hover:border-cyan-200'
+                      ? 'border-blue-500 bg-blue-50 text-blue-900'
+                      : 'border-slate-300 bg-white text-slate-600 hover:border-blue-200'
                   } ${readOnly ? 'cursor-default opacity-90' : ''}`}
                 >
                   {opt.value}
@@ -123,7 +123,7 @@ function ModulePlaceholder() {
 
 function TeacherCommentField({ answers, editable, onChange }) {
   return (
-    <label className="block text-sm font-bold text-slate-700">
+    <label className="block text-sm font-semibold text-slate-700">
       Commentaire enseignant (visible par l&apos;élève)
       <textarea
         className="pd-input mt-2 min-h-28 w-full"
@@ -150,18 +150,18 @@ function ResultsPanel({ answers, student, assessment, onExportPdf, exportingPdf,
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <article className="rounded-2xl border border-cyan-200 bg-cyan-50 p-4">
-          <p className="text-sm font-semibold text-cyan-700">Score total</p>
-          <p className="mt-1 text-4xl font-black text-cyan-950">{scores.finalScore} %</p>
+        <article className="rounded-2xl border border-blue-200 bg-blue-50 p-4">
+          <p className="text-sm font-semibold text-blue-700">Score total</p>
+          <p className="mt-1 text-4xl font-semibold text-blue-950">{scores.finalScore} %</p>
         </article>
         <article className="rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
           <p className="text-sm font-semibold text-indigo-700">Profil élève</p>
-          <p className="mt-1 text-2xl font-black text-indigo-950">{recommendation.profileLabel}</p>
+          <p className="mt-1 text-2xl font-semibold text-indigo-950">{recommendation.profileLabel}</p>
         </article>
-        <article className="rounded-2xl border-2 border-slate-300 bg-white p-4">
+        <article className="rounded-2xl border border-slate-300 bg-white p-4">
           <p className="text-sm font-semibold text-slate-500">Volume horaire estimé</p>
           <div className="mt-1 flex flex-wrap items-center gap-2">
-            <p className="text-2xl font-black text-slate-950">{recommendation.label}</p>
+            <p className="text-2xl font-semibold text-slate-950">{recommendation.label}</p>
             {assessment?.status === 'completed' && (
               <HoursProposalStatusBadge assessment={assessment} />
             )}
@@ -169,9 +169,9 @@ function ResultsPanel({ answers, student, assessment, onExportPdf, exportingPdf,
         </article>
       </div>
       {moduleRows.length > 0 && (
-        <div className="overflow-x-auto rounded-2xl border-2 border-slate-300">
+        <div className="overflow-x-auto rounded-2xl border border-slate-300">
           <table className="min-w-full text-sm">
-            <thead className="bg-slate-50 text-left text-xs font-bold uppercase text-slate-500">
+            <thead className="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
               <tr>
                 <th className="px-4 py-3">Module</th>
                 <th className="px-4 py-3">Score</th>
@@ -180,7 +180,7 @@ function ResultsPanel({ answers, student, assessment, onExportPdf, exportingPdf,
             </thead>
             <tbody>
               {moduleRows.map((row) => (
-                <tr className="border-t-2 border-slate-200" key={row.moduleNumber}>
+                <tr className="border-t border-slate-200" key={row.moduleNumber}>
                   <td className="px-4 py-3 font-semibold">{row.moduleNumber}. {row.title}</td>
                   <td className="px-4 py-3">{row.score}</td>
                   <td className="px-4 py-3 text-slate-500">{row.max}</td>
@@ -330,11 +330,11 @@ export default function InitialAssessmentWizard({
         modules={navigableModules}
       />
 
-      <section className="rounded-[1.75rem] border-2 border-slate-300 bg-white p-5 shadow-sm">
-        <p className="text-xs font-black uppercase tracking-wide text-cyan-700">
+      <section className="rounded-xl border border-slate-300 bg-white p-5 shadow-sm">
+        <p className="text-xs font-semibold text-blue-700">
           {currentModule.readOnly ? 'Synthèse' : `Module ${currentModule.moduleNumber} / ${navigableModules.length}`}
         </p>
-        <h2 className="mt-1 text-2xl font-black text-slate-950">{currentModule.title}</h2>
+        <h2 className="mt-1 text-2xl font-semibold text-slate-950">{currentModule.title}</h2>
         {currentModule.objective && (
           <p className="mt-2 text-sm font-semibold text-slate-700">{currentModule.objective}</p>
         )}

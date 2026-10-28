@@ -37,6 +37,7 @@ export function getStudentNavItems(track, student = null) {
 
 export const NAVIGATION = {
   manager: {
+    spaceLabel: 'Espace gérant',
     user: { avatar: '\u{1F4BC}', name: 'Gérant', role: 'Gérant' },
     items: [
       { href: '/manager/dashboard', icon: '\u{1F4CA}', label: 'Tableau de bord' },
@@ -62,6 +63,7 @@ export const NAVIGATION = {
     items: PERMIS_B_ITEMS,
   },
   teacher: {
+    spaceLabel: 'Espace enseignant',
     user: { avatar: '\u{1F468}\u200D\u{1F3EB}', name: 'Enseignant', role: 'Enseignant' },
     items: [
       { href: '/teacher/dashboard', icon: '\u{1F4CA}', label: 'Tableau de bord' },

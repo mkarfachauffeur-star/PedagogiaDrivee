@@ -35,9 +35,8 @@ export default function AdminStatisticsPage() {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
       <PageHero
-        eyebrow="Évolution du CA"
-        title="Tableau de bord financier"
-        subtitle="Indicateurs de performance de votre auto-école : chiffre d'affaires, élèves actifs, heures réalisées et reste à encaisser."
+        title="Évolution du CA"
+        subtitle="Chiffre d'affaires, élèves actifs, heures réalisées et reste à encaisser de votre auto-école."
       />
 
       {!profileId ? (
@@ -57,8 +56,8 @@ export default function AdminStatisticsPage() {
             <Kpi label="Restant à encaisser" value={formatEur(dashboard.remainingToCollect)} tone="amber" />
           </section>
 
-          <section className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
-            <h2 className="text-xl font-extrabold text-slate-950">Évolution du chiffre d'affaires</h2>
+          <section className="rounded-xl border border-slate-200 bg-white p-5">
+            <h2 className="text-xl font-semibold text-slate-950">Évolution du chiffre d'affaires</h2>
             <p className="mt-1 text-sm text-slate-500">Encaissements des 12 derniers mois.</p>
             {dashboard.monthlyTrend.length === 0 ? (
               <p className="mt-4 text-sm text-slate-500">Aucun encaissement enregistré.</p>
@@ -67,12 +66,12 @@ export default function AdminStatisticsPage() {
                 {dashboard.monthlyTrend.map((row) => (
                   <div key={row.month}>
                     <div className="mb-2 flex items-center justify-between gap-2 text-sm">
-                      <span className="font-black text-slate-800">{row.label}</span>
-                      <span className="font-black text-cyan-700">{formatEur(row.revenue)}</span>
+                      <span className="font-semibold text-slate-800">{row.label}</span>
+                      <span className="font-semibold text-blue-700">{formatEur(row.revenue)}</span>
                     </div>
                     <div className="h-3 overflow-hidden rounded-full bg-slate-100">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-cyan-600 to-cyan-300"
+                        className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-300"
                         style={{ width: `${Math.round((row.revenue / dashboard.maxMonthly) * 100)}%` }}
                       />
                     </div>
@@ -82,8 +81,8 @@ export default function AdminStatisticsPage() {
             )}
           </section>
 
-          <section className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
-            <h2 className="text-xl font-extrabold text-slate-950">Répartition des revenus</h2>
+          <section className="rounded-xl border border-slate-200 bg-white p-5">
+            <h2 className="text-xl font-semibold text-slate-950">Répartition des revenus</h2>
             <p className="mt-1 text-sm text-slate-500">Par nature d'encaissement enregistrée.</p>
             <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {PAYMENT_NATURES.map((nature) => {
@@ -91,8 +90,8 @@ export default function AdminStatisticsPage() {
                 const pct = revenueTotal > 0 ? Math.round((amount / revenueTotal) * 100) : 0
                 return (
                   <div key={nature} className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-                    <p className="text-xs font-bold text-slate-500">{nature}</p>
-                    <p className={`mt-1 text-lg font-black ${amount > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    <p className="text-xs font-semibold text-slate-500">{nature}</p>
+                    <p className={`mt-1 text-lg font-semibold ${amount > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
                       {formatEur(amount)}
                     </p>
                     {amount > 0 && <p className="text-xs text-slate-400">{pct} % du total</p>}
@@ -103,13 +102,13 @@ export default function AdminStatisticsPage() {
           </section>
 
           <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <article className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
-              <p className="text-sm font-bold text-slate-500">Total encaissé</p>
-              <p className="mt-2 text-3xl font-black text-emerald-600">{formatEur(dashboard.totalCollected)}</p>
+            <article className="rounded-xl border border-slate-200 bg-white p-5">
+              <p className="text-sm font-semibold text-slate-500">Total encaissé</p>
+              <p className="mt-2 text-3xl font-semibold text-emerald-600">{formatEur(dashboard.totalCollected)}</p>
             </article>
-            <article className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
-              <p className="text-sm font-bold text-slate-500">Montant contractuel total</p>
-              <p className="mt-2 text-3xl font-black text-slate-900">{formatEur(dashboard.contractTotal)}</p>
+            <article className="rounded-xl border border-slate-200 bg-white p-5">
+              <p className="text-sm font-semibold text-slate-500">Montant contractuel total</p>
+              <p className="mt-2 text-3xl font-semibold text-slate-900">{formatEur(dashboard.contractTotal)}</p>
             </article>
           </section>
         </>
@@ -120,16 +119,16 @@ export default function AdminStatisticsPage() {
 
 function Kpi({ label, value, tone = 'cyan' }) {
   const colors = {
-    cyan: 'text-cyan-600',
+    cyan: 'text-blue-600',
     indigo: 'text-indigo-600',
     violet: 'text-violet-600',
     emerald: 'text-emerald-600',
     amber: 'text-amber-600',
   }
   return (
-    <article className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
-      <p className="text-sm font-bold text-slate-500">{label}</p>
-      <p className={`mt-2 text-3xl font-black ${colors[tone] || colors.cyan}`}>{value}</p>
+    <article className="rounded-xl border border-slate-200 bg-white p-5">
+      <p className="text-sm font-semibold text-slate-500">{label}</p>
+      <p className={`mt-2 text-3xl font-semibold ${colors[tone] || colors.cyan}`}>{value}</p>
     </article>
   )
 }

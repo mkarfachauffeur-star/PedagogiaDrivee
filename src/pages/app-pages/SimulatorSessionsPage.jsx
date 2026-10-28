@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSecretaryDuties } from '../../hooks/useSecretaryDuties'
+import PageHeader from '../../components/ui/PageHeader'
+import { ui } from '../../components/ui/styles'
 import AppModal from '../../components/ui/AppModal'
 import EmptyState from '../../components/ui/EmptyState'
 import { useAuth } from '../../context/AuthContext'
@@ -26,7 +29,7 @@ import {
 
 const FORM_ID = 'simulator-session-form'
 const inputClass =
-  'mt-2 min-h-11 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100'
+  'mt-2 min-h-11 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-100'
 
 function emptyForm(profileId = '') {
   return {
@@ -63,9 +66,11 @@ function studentLabel(session) {
 }
 
 export default function SimulatorSessionsPage({ readOnly = false }) {
-  const { profileId, organizationId, canWrite, role } = useAuth()
-  const canManage = canWrite && !readOnly && ['manager', 'secretary'].includes(role)
-  const canDelete = canManage && role === 'manager'
+  const { profileId, organizationId, role } = useAuth()
+  const { canDoSecretaryTasks } = useSecretaryDuties()
+  // Planifier les séances relève du secrétariat (ou du gérant s'il n'y a pas de secrétaire).
+  const canManage = canDoSecretaryTasks && !readOnly
+  const canDelete = canManage
 
   const [sessions, setSessions] = useState([])
   const [options, setOptions] = useState({
@@ -247,26 +252,21 @@ export default function SimulatorSessionsPage({ readOnly = false }) {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-      <section className="rounded-[2rem] border-2 border-slate-300 bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white shadow-[var(--shadow-card)] md:p-8">
-        <p className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-          Simulateur
-        </p>
-        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-extrabold sm:text-4xl">Séances simulateur</h1>
-            <p className="mt-3 max-w-3xl text-sm leading-7 text-blue-50">
-              {readOnly
-                ? 'Consultation des séances : élève, ressource simulateur, encadrant, horaires et durée.'
-                : `Planification et suivi des séances — mode ${getSupervisorModeLabel(options.supervisorMode).toLowerCase()}.`}
-            </p>
-          </div>
-          {canManage && (
-            <button type="button" onClick={openCreate} className="pd-btn-primary shrink-0">
+      <PageHeader
+        actions={
+          canManage ? (
+            <button className={ui.btnPrimary} onClick={openCreate} type="button">
               Nouvelle séance
             </button>
-          )}
-        </div>
-      </section>
+          ) : null
+        }
+        description={
+          readOnly
+            ? 'Les séances sur simulateur : élève, poste, encadrant, horaires et durée.'
+            : `Planification et suivi des séances — mode ${getSupervisorModeLabel(options.supervisorMode).toLowerCase()}.`
+        }
+        title="Séances simulateur"
+      />
 
       {feedback && (
         <p className={`rounded-2xl px-4 py-3 text-sm font-semibold ${feedback.type === 'ok' ? 'border border-emerald-200 bg-emerald-50 text-emerald-700' : 'border border-rose-200 bg-rose-50 text-rose-700'}`}>
@@ -274,27 +274,27 @@ export default function SimulatorSessionsPage({ readOnly = false }) {
         </p>
       )}
 
-      <section className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
+      <section className="rounded-xl border border-slate-200 bg-white p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="block text-sm font-bold text-slate-700">
+            <label className="block text-sm font-semibold text-slate-700">
               Du
               <input className={inputClass} type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
             </label>
-            <label className="block text-sm font-bold text-slate-700">
+            <label className="block text-sm font-semibold text-slate-700">
               Au
               <input className={inputClass} type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
             </label>
           </div>
           {!readOnly && (
             <p className="text-sm font-medium text-slate-500">
-              Encadrement : <span className="font-bold text-slate-800">{getSupervisorModeLabel(options.supervisorMode)}</span>
+              Encadrement : <span className="font-semibold text-slate-800">{getSupervisorModeLabel(options.supervisorMode)}</span>
             </p>
           )}
         </div>
       </section>
 
-      <section className="overflow-hidden rounded-[1.5rem] border-2 border-slate-300 bg-white shadow-[var(--shadow-soft)]">
+      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
         {!profileId ? (
           <div className="p-5"><EmptyState title="Connexion requise" message="Connectez-vous pour accéder aux séances simulateur." icon="🖥️" /></div>
         ) : loading ? (
@@ -306,7 +306,7 @@ export default function SimulatorSessionsPage({ readOnly = false }) {
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full text-left text-sm">
-              <thead className="border-b-2 border-slate-300 bg-slate-50 text-xs font-bold uppercase tracking-wide text-slate-500">
+              <thead className="border-b border-slate-300 bg-slate-50 text-xs font-semibold text-slate-500">
                 <tr>
                   <th className="px-4 py-3">Date</th>
                   <th className="px-4 py-3">Horaires</th>
@@ -329,18 +329,18 @@ export default function SimulatorSessionsPage({ readOnly = false }) {
                     && session.status !== SIMULATOR_SESSION_STATUSES.CANCELLED
 
                   return (
-                    <tr key={session.id} className="border-b-2 border-slate-200 last:border-0">
+                    <tr key={session.id} className="border-b border-slate-200 last:border-0">
                       <td className="px-4 py-3 font-semibold text-slate-900">{formatDateFr(session.sessionDate)}</td>
                       <td className="px-4 py-3 text-slate-600">
                         {formatTimeFr(session.startTime)} – {formatTimeFr(session.endTime)}
                       </td>
                       <td className="px-4 py-3 text-slate-600">{formatDurationLabel(session.durationMinutes)}</td>
-                      <td className="px-4 py-3 font-extrabold text-slate-900">{studentLabel(session)}</td>
+                      <td className="px-4 py-3 font-semibold text-slate-900">{studentLabel(session)}</td>
                       <td className="px-4 py-3 text-slate-600">{session.simulatorName || '—'}</td>
                       <td className="px-4 py-3 font-mono text-xs text-slate-600">{session.simulatorAuthorizationNumber || '—'}</td>
                       <td className="px-4 py-3 text-slate-600">{session.supervisorName || '—'}</td>
                       <td className="px-4 py-3">
-                        <span className={`rounded-full px-2.5 py-1 text-xs font-black ring-1 ${SIMULATOR_SESSION_STATUS_BADGE[session.status] || SIMULATOR_SESSION_STATUS_BADGE.planned}`}>
+                        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${SIMULATOR_SESSION_STATUS_BADGE[session.status] || SIMULATOR_SESSION_STATUS_BADGE.planned}`}>
                           {getSessionStatusLabel(session.status)}
                         </span>
                       </td>
@@ -377,7 +377,7 @@ export default function SimulatorSessionsPage({ readOnly = false }) {
         <form id={FORM_ID} className="space-y-5" onSubmit={saveSession}>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Élève</span>
+              <span className="text-sm font-semibold text-slate-700">Élève</span>
               <select className={inputClass} value={form.studentId} onChange={(e) => updateField('studentId', e.target.value)}>
                 <option value="">Sélectionner…</option>
                 {options.students.map((student) => (
@@ -394,7 +394,7 @@ export default function SimulatorSessionsPage({ readOnly = false }) {
               )}
             </label>
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Simulateur</span>
+              <span className="text-sm font-semibold text-slate-700">Simulateur</span>
               <select className={inputClass} value={form.simulatorId} onChange={(e) => updateField('simulatorId', e.target.value)}>
                 <option value="">Sélectionner…</option>
                 {options.simulators.map((simulator) => (
@@ -408,7 +408,7 @@ export default function SimulatorSessionsPage({ readOnly = false }) {
           </div>
 
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">Encadrant</span>
+            <span className="text-sm font-semibold text-slate-700">Encadrant</span>
             <select className={inputClass} value={form.supervisorId} onChange={(e) => updateField('supervisorId', e.target.value)}>
               <option value="">Sélectionner…</option>
               {options.supervisors.map((supervisor) => (
@@ -420,28 +420,28 @@ export default function SimulatorSessionsPage({ readOnly = false }) {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Date</span>
+              <span className="text-sm font-semibold text-slate-700">Date</span>
               <input className={inputClass} type="date" value={form.sessionDate} onChange={(e) => updateField('sessionDate', e.target.value)} />
               {errors.sessionDate && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.sessionDate}</p>}
             </label>
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Heure début</span>
+              <span className="text-sm font-semibold text-slate-700">Heure début</span>
               <input className={inputClass} type="time" value={form.startTime} onChange={(e) => updateField('startTime', e.target.value)} />
               {errors.startTime && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.startTime}</p>}
             </label>
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Heure fin</span>
+              <span className="text-sm font-semibold text-slate-700">Heure fin</span>
               <input className={inputClass} type="time" value={form.endTime} onChange={(e) => updateField('endTime', e.target.value)} />
               {errors.endTime && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.endTime}</p>}
             </label>
           </div>
 
-          <p className="rounded-2xl border border-cyan-100 bg-cyan-50 px-4 py-3 text-sm font-semibold text-cyan-900">
+          <p className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-900">
             Durée calculée : {formatDurationLabel(durationPreview) || '—'}
           </p>
 
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">Notes (optionnel)</span>
+            <span className="text-sm font-semibold text-slate-700">Notes (optionnel)</span>
             <textarea
               className={`${inputClass} min-h-24 resize-y`}
               value={form.notes}
@@ -459,7 +459,7 @@ export default function SimulatorSessionsPage({ readOnly = false }) {
             </p>
           )}
 
-          <div className="flex flex-col-reverse gap-3 border-t-2 border-slate-200 pt-4 sm:flex-row sm:justify-end">
+          <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:justify-end">
             <button
               type="button"
               disabled={saving}
@@ -494,7 +494,7 @@ function ActionBtn({ label, onClick, disabled, tone = 'slate' }) {
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`rounded-xl border px-2.5 py-1.5 text-xs font-bold transition disabled:opacity-50 ${tones[tone]}`}
+      className={`rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition disabled:opacity-50 ${tones[tone]}`}
     >
       {label}
     </button>

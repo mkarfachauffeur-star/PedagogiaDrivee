@@ -5,7 +5,7 @@ export default function BlogPagination({ page, totalPages, onPageChange, isDark 
 
   const btnClass = (disabled) =>
     [
-      'inline-flex h-10 items-center justify-center gap-1 rounded-xl border px-3 text-sm font-bold transition',
+      'inline-flex h-10 items-center justify-center gap-1 rounded-xl border px-3 text-sm font-semibold transition',
       disabled
         ? 'cursor-not-allowed opacity-40'
         : isDark
@@ -15,7 +15,7 @@ export default function BlogPagination({ page, totalPages, onPageChange, isDark 
 
   const pageBtnClass = (active) =>
     [
-      'inline-flex h-10 min-w-10 items-center justify-center rounded-xl border px-3 text-sm font-bold transition',
+      'inline-flex h-10 min-w-10 items-center justify-center rounded-xl border px-3 text-sm font-semibold transition',
       active
         ? isDark
           ? 'border-blue-400/40 bg-blue-500/15 text-blue-200'

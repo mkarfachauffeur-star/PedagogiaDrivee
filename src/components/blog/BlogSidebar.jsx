@@ -14,11 +14,11 @@ export default function BlogSidebar({
 }) {
   const inputClass = isDark
     ? 'w-full rounded-xl border border-white/10 bg-[#070d18] py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-slate-500'
-    : 'w-full rounded-xl border-2 border-slate-300 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm'
+    : 'w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm'
 
   const chipClass = (active) =>
     [
-      'rounded-full border px-3 py-1 text-xs font-bold transition',
+      'rounded-full border px-3 py-1 text-xs font-semibold transition',
       active
         ? isDark
           ? 'border-blue-400/40 bg-blue-500/15 text-blue-200'
@@ -31,7 +31,7 @@ export default function BlogSidebar({
   return (
     <aside aria-label="Barre latérale du blog" className="space-y-6">
       <section className={`${skin.card} p-5`}>
-        <h2 className={`text-sm font-black uppercase tracking-wide ${skin.heading}`}>Rechercher</h2>
+        <h2 className={`text-sm font-semibold ${skin.heading}`}>Rechercher</h2>
         <label className="relative mt-3 block">
           <span className="sr-only">Rechercher un article</span>
           <Search
@@ -49,7 +49,7 @@ export default function BlogSidebar({
       </section>
 
       <section className={`${skin.card} p-5`}>
-        <h2 className={`text-sm font-black uppercase tracking-wide ${skin.heading}`}>Catégories</h2>
+        <h2 className={`text-sm font-semibold ${skin.heading}`}>Catégories</h2>
         <div className="mt-3 flex flex-wrap gap-2">
           <button
             aria-label="Afficher toutes les catégories"
@@ -75,7 +75,7 @@ export default function BlogSidebar({
 
       {popularPosts.length > 0 && (
         <section className={`${skin.card} p-5`}>
-          <h2 className={`text-sm font-black uppercase tracking-wide ${skin.heading}`}>Articles populaires</h2>
+          <h2 className={`text-sm font-semibold ${skin.heading}`}>Articles populaires</h2>
           <ul className="mt-3 space-y-3">
             {popularPosts.map((post) => (
               <li key={post.slug}>
@@ -93,7 +93,7 @@ export default function BlogSidebar({
       )}
 
       <section className={`${skin.card} p-5`}>
-        <h2 className={`text-sm font-black uppercase tracking-wide ${skin.heading}`}>Derniers articles</h2>
+        <h2 className={`text-sm font-semibold ${skin.heading}`}>Derniers articles</h2>
         <ul className="mt-3 space-y-3">
           {latestPosts.map((post) => (
             <li key={post.slug}>

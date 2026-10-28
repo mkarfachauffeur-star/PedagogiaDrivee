@@ -60,14 +60,14 @@ export default function CharterContentView({ content, className = '' }) {
       {blocks.map((block, index) => {
         if (block.type === 'h1') {
           return (
-            <h2 key={`${block.type}-${index}`} className="text-2xl font-black text-slate-950">
+            <h2 key={`${block.type}-${index}`} className="text-2xl font-semibold text-slate-950">
               {block.text}
             </h2>
           )
         }
         if (block.type === 'h2') {
           return (
-            <h3 key={`${block.type}-${index}`} className="pt-2 text-lg font-extrabold text-slate-900">
+            <h3 key={`${block.type}-${index}`} className="pt-2 text-lg font-semibold text-slate-900">
               {block.text}
             </h3>
           )

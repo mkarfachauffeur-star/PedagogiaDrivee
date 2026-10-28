@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Building2 } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 import EmptyState from '../../components/ui/EmptyState'
 import PageHeader from '../../components/ui/PageHeader'
@@ -8,7 +9,7 @@ import { useConversations } from '../../hooks/useConversations'
 import { useConversationMessages } from '../../hooks/useConversationMessages'
 import { ensureStudentSecretaryConversation, sendMessageWithAttachments } from '../../services/messaging'
 import { listStudentSecretaryContacts } from '../../services/directory'
-import { AttachmentList, ChatMessageBubble, MessageComposer } from '../../components/messaging/Attachments'
+import { AttachmentList, ChatMessageBubble, MessageComposer, MessageMeta } from '../../components/messaging/Attachments'
 
 const formatTime = (iso) => {
   if (!iso) return ''
@@ -77,6 +78,8 @@ export default function StudentMessagesPage() {
     }
 
     if (secretaryConversations.length > 0) {
+      // La conversation existe (ou vient d'être créée) : l'ouverture est terminée.
+      setOpening(false)
       setActiveId((current) => {
         if (current && secretaryConversations.some((c) => c.id === current)) return current
         return secretaryConversations[0].id
@@ -120,69 +123,35 @@ export default function StudentMessagesPage() {
       {!profileId ? (
         <EmptyState title="Connexion requise" message="Connectez-vous avec votre compte pour accéder à la messagerie." icon="💬" />
       ) : (
-        <section className="pd-msg-panel grid grid-cols-1 min-h-[20rem] min-w-0 lg:min-h-[680px] lg:grid-cols-[320px_1fr]">
-          <aside className="pd-msg-sidebar">
-            <h2 className="pd-msg-sidebar-title">Secrétariat</h2>
-            <p className="pd-msg-sidebar-muted mt-1">Votre interlocuteur administratif</p>
-
-            <div className="mt-4 grid gap-3">
-              {opening && (
-                <p className="text-xs font-medium text-slate-300">Ouverture de la conversation…</p>
-              )}
-              {openError && (
-                <p className="rounded-xl border border-rose-400/30 bg-rose-500/10 px-3 py-2 text-xs text-rose-100">{openError}</p>
-              )}
-              {secretaryConversations.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setActiveId(item.id)}
-                  className={`rounded-2xl border p-4 text-left transition-all duration-200 ${activeId === item.id ? 'pd-msg-thread-active' : 'pd-msg-thread hover:-translate-y-0.5'}`}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="font-semibold text-slate-900">{item.title || 'Secrétariat'}</p>
-                    <span className="pd-msg-chip">{item.unread ? 'Nouveau' : 'Actif'}</span>
-                  </div>
-                  <p className="pd-msg-meta mt-2">{formatTime(item.lastMessageAt)}</p>
-                </button>
-              ))}
-            </div>
-
-            <div className="mt-5 grid grid-cols-2 gap-3">
-              <div className="pd-stat-pill p-3">
-                <p className="text-2xl font-semibold text-slate-900">{messages.length}</p>
-                <p className="text-xs font-medium text-slate-500">Messages</p>
-              </div>
-              <div className="pd-stat-pill p-3">
-                <p className="text-2xl font-semibold text-blue-600">{secretaryConversations.length}</p>
-                <p className="text-xs font-medium text-slate-500">Conversation</p>
-              </div>
-            </div>
-          </aside>
-
+        <section className="pd-msg-panel flex min-h-[28rem] flex-col lg:min-h-[620px]">
           <div className="pd-msg-chat-body">
-            <header className="pd-msg-chat-header">
-              <div className="flex items-center justify-between gap-2">
-                <h2 className="text-xl font-semibold text-slate-900">{activeConversation?.title || 'Secrétariat'}</h2>
-                <span className="pd-msg-chip">Suivi administratif</span>
+            <header className="pd-msg-chat-header flex items-center gap-3">
+              <span aria-hidden="true" className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-blue-50 text-[#1769FF]">
+                <Building2 className="h-5 w-5" />
+              </span>
+              <div className="min-w-0">
+                <h2 className="text-base font-semibold text-slate-900">Secrétariat</h2>
+                <p className="text-xs text-slate-500">
+                  {opening && !activeConversation ? 'Ouverture de la conversation…' : 'Documents, inscriptions et questions administratives'}
+                </p>
               </div>
-              <p className="text-sm text-slate-600">Documents, inscriptions et questions administratives</p>
             </header>
 
             <div className="flex-1 space-y-3 overflow-y-auto p-4 md:p-6">
+              {openError && activeConversation ? (
+                <p className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">{openError}</p>
+              ) : null}
               {!activeConversation && !opening && (
                 <EmptyState title="Conversation indisponible" message={openError || 'Le secrétariat n\'est pas joignable pour le moment.'} icon="💬" />
               )}
               {activeConversation && messages.length === 0 && (
-                <EmptyState title="Aucun message" message="Envoyez votre premier message au secrétariat." icon="💬" />
+                <p className="py-10 text-center text-sm text-slate-500">Aucun message pour l’instant. Écrivez au secrétariat ci-dessous.</p>
               )}
               {messages.map((message) => (
                 <ChatMessageBubble key={message.id} mine={message.mine} className="animate-slide-up">
-                  <p className="leading-7">{message.body}</p>
+                  <p className="leading-6">{message.body}</p>
                   <AttachmentList attachments={message.attachments} />
-                  <p className={`mt-2 text-[11px] font-medium ${message.mine ? 'text-white/75' : 'text-slate-500'}`}>
-                    {formatTime(message.created_at)}{message.mine && message.status ? ` · ${message.status}` : ''}
-                  </p>
+                  <MessageMeta mine={message.mine} status={message.status} time={formatTime(message.created_at)} />
                 </ChatMessageBubble>
               ))}
             </div>

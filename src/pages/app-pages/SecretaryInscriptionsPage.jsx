@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ui } from '../../components/ui/styles'
+import PageHeader from '../../components/ui/PageHeader'
 import { useSearchParams } from 'react-router-dom'
 import AddStudentModal from '../../components/AddStudentModal'
 import EmptyState from '../../components/ui/EmptyState'
@@ -149,44 +151,31 @@ export default function SecretaryInscriptionsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-      <section className="overflow-hidden rounded-[2rem] border-2 border-slate-300 bg-white shadow-[var(--shadow-card)]">
-        <div className="bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white md:p-8">
-          <span className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-            Secrétariat
-          </span>
-          <div className="mt-5 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
-            <div>
-              <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-                Inscriptions auto-école
-              </h1>
-              <p className="mt-3 max-w-3xl text-base leading-7 text-blue-50">
-                Créez un dossier élève avec le même formulaire que le gérant. Les inscriptions sont synchronisées en temps réel.
-              </p>
-            </div>
-            <button
-              className="pd-btn-primary shrink-0 disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={!canWrite}
-              onClick={() => setShowForm(true)}
+      <PageHeader
+        actions={
+          <button className={ui.btnPrimary} disabled={!canWrite} onClick={() =>
+            setShowForm(true)}
               type="button"
             >
               + Nouvelle inscription
-            </button>
-          </div>
-        </div>
-      </section>
+          </button>
+        }
+        description="Créez les dossiers élèves. Les inscriptions sont synchronisées en temps réel."
+        title="Inscriptions"
+      />
 
       {highlightedStudent && (
-        <section className="rounded-[1.5rem] border-2 border-red-200 bg-red-50 p-4 shadow-[var(--shadow-soft)]">
+        <section className="rounded-xl border border-red-200 bg-red-50 p-4">
           <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
             <div>
-              <p className="text-xs font-black uppercase tracking-wide text-red-700">Rappel — dossier à suivre</p>
-              <h2 className="mt-1 text-xl font-extrabold text-slate-950">{formatPersonName(highlightedStudent)}</h2>
+              <p className="text-xs font-semibold text-red-700">Rappel — dossier à suivre</p>
+              <h2 className="mt-1 text-xl font-semibold text-slate-950">{formatPersonName(highlightedStudent)}</h2>
               <p className="mt-1 text-sm text-slate-600">
                 Code de la route : {highlightedStudent.code_status === 'Obtenu' ? 'obtenu' : 'non obtenu'}
               </p>
             </div>
             <button
-              className="rounded-2xl border border-red-200 bg-white px-4 py-2 text-sm font-bold text-red-700 transition hover:bg-red-100"
+              className="rounded-2xl border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100"
               onClick={clearHighlightedStudent}
               type="button"
             >
@@ -194,8 +183,9 @@ export default function SecretaryInscriptionsPage() {
             </button>
           </div>
           {isAacFormation(highlightedStudent) && (
-            <div className="mt-4 rounded-[1.25rem] border border-white bg-white p-4">
+            <div className="mt-4 rounded-xl border border-white bg-white p-4">
               <AacPanel
+                key={highlightedStudent.id}
                 birthDate={highlightedStudent.birth_date}
                 mode="staff"
                 organizationId={organizationId || highlightedStudent.organization_id}
@@ -207,10 +197,10 @@ export default function SecretaryInscriptionsPage() {
         </section>
       )}
 
-      <section className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
+      <section className="rounded-xl border border-slate-200 bg-white p-5">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
           <div>
-            <h2 className="text-2xl font-extrabold text-slate-950">Dossiers enregistrés</h2>
+            <h2 className="text-2xl font-semibold text-slate-950">Dossiers enregistrés</h2>
             <p className="mt-1 text-sm text-slate-500">
               Chaque inscription enregistrée apparaît immédiatement ici.
             </p>
@@ -220,9 +210,9 @@ export default function SecretaryInscriptionsPage() {
           <button
             type="button"
             onClick={() => setViewTab('active')}
-            className={`rounded-2xl px-4 py-2 text-sm font-bold transition ${
+            className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${
               viewTab === 'active'
-                ? 'bg-navy-950 text-white'
+                ? 'bg-[#1769FF] text-white'
                 : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
             }`}
           >
@@ -231,7 +221,7 @@ export default function SecretaryInscriptionsPage() {
           <button
             type="button"
             onClick={() => setViewTab('archived')}
-            className={`rounded-2xl px-4 py-2 text-sm font-bold transition ${
+            className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${
               viewTab === 'archived'
                 ? 'bg-emerald-700 text-white'
                 : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
@@ -271,7 +261,7 @@ export default function SecretaryInscriptionsPage() {
               const isHighlighted = student.id === highlightStudentId
               return (
                 <article
-                  className={`rounded-2xl border-2 p-4 ${
+                  className={`rounded-2xl border p-4 ${
                     isHighlighted
                       ? 'border-red-300 bg-red-50/70 shadow-md ring-2 ring-red-200'
                       : 'border-slate-300 bg-slate-50'
@@ -281,7 +271,7 @@ export default function SecretaryInscriptionsPage() {
                 >
                   <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                     <div>
-                      <h3 className="font-extrabold text-slate-950">
+                      <h3 className="font-semibold text-slate-950">
                         {formatPersonName(student)}
                       </h3>
                       <p className="text-sm text-slate-500">
@@ -290,11 +280,11 @@ export default function SecretaryInscriptionsPage() {
                       {student.email && <p className="mt-1 text-xs text-slate-500">{student.email}</p>}
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-black text-indigo-700">
+                      <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
                         {student.package_name || student.formation_type || 'Formule non renseignée'}
                       </span>
                       <span
-                        className={`rounded-full px-3 py-1 text-xs font-black ${
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
                           student.code_status === 'Obtenu'
                             ? 'bg-emerald-50 text-emerald-700'
                             : 'bg-slate-100 text-slate-500'
@@ -303,23 +293,23 @@ export default function SecretaryInscriptionsPage() {
                         Code {student.code_status === 'Obtenu' ? 'obtenu' : 'non obtenu'}
                       </span>
                       {student.license_result === LICENSE_RESULT.OBTAINED && (
-                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
+                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
                           ✅ Permis obtenu
                         </span>
                       )}
-                      <span className={`rounded-full px-3 py-1 text-xs font-black ${statusBadgeClass(student.status, student.license_result)}`}>
+                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusBadgeClass(student.status, student.license_result)}`}>
                         {student.status || 'En attente'}
                       </span>
                       {student.license_obtained_at && (
-                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
+                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
                           Obtenu le {formatDateFr(student.license_obtained_at)}
                         </span>
                       )}
-                      <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-black text-amber-700">
+                      <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
                         Reste {summary.remaining.toFixed(0)} €
                       </span>
                       {student.registration_date && (
-                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
+                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
                           Inscrit le {formatDateFr(student.registration_date)}
                         </span>
                       )}

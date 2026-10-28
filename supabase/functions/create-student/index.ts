@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { loginUrl } from '../_shared/app-url.ts'
 import { emailLog, escapeHtml } from '../_shared/email-utils.ts'
 import { checkStudentQuota, loadSubscription, notifyQuotaThreshold } from '../_shared/student-quota.ts'
+import { canActAsSecretary, SECRETARY_ONLY_MESSAGE } from '../_shared/secretary-duties.ts'
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -152,6 +153,9 @@ Deno.serve(async (req) => {
 
     if (!callerProfile || !['manager', 'secretary'].includes(callerProfile.role)) {
       return json({ error: 'Action réservée au gérant ou au secrétariat' }, 403)
+    }
+    if (!(await canActAsSecretary(admin, callerProfile.role, callerProfile.organization_id))) {
+      return json({ error: SECRETARY_ONLY_MESSAGE }, 403)
     }
 
     const orgId = callerProfile.organization_id

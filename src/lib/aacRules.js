@@ -17,13 +17,30 @@ export const AAC_STATUS_LABELS = {
   terminee: 'Terminée',
 }
 
-export function addOneYear(dateInput) {
+export function addYears(dateInput, years) {
   if (!dateInput) return null
   const d = dateInput instanceof Date ? new Date(dateInput) : parseLocalDate(dateInput)
   if (!d || Number.isNaN(d.getTime())) return null
   const next = new Date(d)
-  next.setFullYear(next.getFullYear() + 1)
+  next.setFullYear(next.getFullYear() + years)
   return formatIsoDate(next)
+}
+
+export function addOneYear(dateInput) {
+  return addYears(dateInput, 1)
+}
+
+/**
+ * Date à partir de laquelle l'examen est possible : la plus tardive entre la fin de
+ * l'année de conduite accompagnée et les 17 ans de l'élève.
+ * `reason` vaut 'age' quand c'est l'âge qui repousse la date.
+ */
+export function examEligibleDate({ startedAt, birthDate }) {
+  const yearDate = addOneYear(startedAt)
+  const ageDate = addYears(birthDate, AAC_MIN_AGE)
+  if (!yearDate) return { date: null, reason: null, ageDate }
+  if (ageDate && ageDate > yearDate) return { date: ageDate, reason: 'age', ageDate }
+  return { date: yearDate, reason: 'year', ageDate }
 }
 
 export function parseLocalDate(value) {
@@ -110,7 +127,7 @@ export function evaluateAacConditions({
     rvpOk,
     allMet,
     age,
-    eligibleAt: addOneYear(startedAt),
+    eligibleAt: examEligibleDate({ startedAt, birthDate }).date,
   }
 }
 

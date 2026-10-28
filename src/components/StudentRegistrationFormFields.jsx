@@ -14,12 +14,12 @@ import {
 } from '../services/pricing'
 
 export const inputClass =
-  'mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100'
+  'mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-300 focus:ring-4 focus:ring-blue-100'
 
 function Field({ label, required, children, error, hint, className = '' }) {
   return (
     <label className={`block ${className}`}>
-      <span className="text-sm font-bold text-slate-700">
+      <span className="text-sm font-semibold text-slate-700">
         {label}
         {required && <span className="text-rose-600"> *</span>}
       </span>
@@ -32,8 +32,8 @@ function Field({ label, required, children, error, hint, className = '' }) {
 
 function FormSection({ title, children }) {
   return (
-    <section className="rounded-[1.75rem] border-2 border-slate-300 bg-white/80 p-5">
-      <h3 className="mb-4 text-lg font-extrabold text-slate-950">{title}</h3>
+    <section className="rounded-xl border border-slate-300 bg-white/80 p-5">
+      <h3 className="mb-4 text-lg font-semibold text-slate-950">{title}</h3>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">{children}</div>
     </section>
   )
@@ -77,14 +77,14 @@ export default function StudentRegistrationFormFields({
 
   return (
     <div className="space-y-5">
-      <div className="rounded-[1.5rem] border border-cyan-100 bg-cyan-50 p-4">
+      <div className="rounded-xl border border-blue-100 bg-blue-50 p-4">
         <div className="flex items-center justify-between gap-4">
-          <p className="text-sm font-black text-cyan-800">Complétion dossier</p>
-          <p className="text-xl font-black text-cyan-700">{completion}%</p>
+          <p className="text-sm font-semibold text-blue-800">Complétion dossier</p>
+          <p className="text-xl font-semibold text-blue-700">{completion}%</p>
         </div>
         <div className="mt-3 h-2 overflow-hidden rounded-full bg-white">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-cyan-600 to-cyan-300 transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-300 transition-all duration-500"
             style={{ width: `${completion}%` }}
           />
         </div>
@@ -102,16 +102,16 @@ export default function StudentRegistrationFormFields({
             {GENDER_OPTIONS.map((option) => (
               <label
                 key={option.value}
-                className={`inline-flex min-h-12 cursor-pointer items-center gap-2 rounded-2xl border-2 px-4 text-sm font-semibold transition ${
+                className={`inline-flex min-h-12 cursor-pointer items-center gap-2 rounded-2xl border px-4 text-sm font-semibold transition ${
                   form.gender === option.value
-                    ? 'border-cyan-400 bg-cyan-50 text-cyan-900'
+                    ? 'border-blue-400 bg-blue-50 text-blue-900'
                     : 'border-slate-300 bg-white text-slate-700'
                 }`}
               >
                 <input
                   type="radio"
                   name="student-gender"
-                  className="accent-cyan-600"
+                  className="accent-blue-600"
                   checked={form.gender === option.value}
                   onChange={() => onChange('gender', option.value)}
                 />
@@ -219,17 +219,17 @@ export default function StudentRegistrationFormFields({
           </select>
         </Field>
         <div className="md:col-span-2 xl:col-span-4">
-          <p className="mb-3 text-sm font-bold text-slate-700">Documents fournis</p>
+          <p className="mb-3 text-sm font-semibold text-slate-700">Documents fournis</p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {DOCUMENT_OPTIONS.map((documentName) => (
               <button
                 key={documentName}
                 type="button"
                 onClick={() => onToggleDocument(documentName)}
-                className={`rounded-2xl border px-4 py-3 text-left text-sm font-bold transition ${
+                className={`rounded-2xl border px-4 py-3 text-left text-sm font-semibold transition ${
                   form.documents.includes(documentName)
-                    ? 'border-cyan-300 bg-cyan-50 text-cyan-800'
-                    : 'border-slate-300 bg-white text-slate-600 hover:bg-cyan-50'
+                    ? 'border-blue-300 bg-blue-50 text-blue-800'
+                    : 'border-slate-300 bg-white text-slate-600 hover:bg-blue-50'
                 }`}
               >
                 {form.documents.includes(documentName) ? '✓ ' : '+ '}
@@ -240,15 +240,15 @@ export default function StudentRegistrationFormFields({
         </div>
       </FormSection>
 
-      <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-slate-300 bg-slate-50 p-4">
+      <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-300 bg-slate-50 p-4">
         <input
           type="checkbox"
-          className="mt-1 h-4 w-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500"
+          className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
           checked={form.sendAccessEmail !== false}
           onChange={(e) => onChange('sendAccessEmail', e.target.checked)}
         />
         <span>
-          <span className="block text-sm font-bold text-slate-800">
+          <span className="block text-sm font-semibold text-slate-800">
             Envoyer un e-mail d’accès avec mot de passe provisoire
           </span>
           <span className="mt-1 block text-xs text-slate-500">

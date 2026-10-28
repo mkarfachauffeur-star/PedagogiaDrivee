@@ -8,7 +8,7 @@ import AppModal, { AppModalFooter } from '../ui/AppModal'
 
 const FORM_ID = 'create-user-form'
 const inputClass =
-  'mt-2 min-h-11 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100'
+  'mt-2 min-h-11 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none focus:border-blue-300 focus:ring-4 focus:ring-blue-100'
 
 const ROLE_OPTIONS = [
   { value: 'manager', label: USER_ROLE_LABELS.manager },
@@ -101,48 +101,48 @@ export default function CreateUserModal({ open, onClose, onCreated }) {
         <form id={FORM_ID} className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Nom</span>
+              <span className="text-sm font-semibold text-slate-700">Nom</span>
               <input className={inputClass} value={form.lastName} onChange={(e) => update('lastName', e.target.value)} disabled={!canWrite || busy} />
               {errors.lastName && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.lastName}</p>}
             </label>
             <label className="block">
-              <span className="text-sm font-bold text-slate-700">Prénom</span>
+              <span className="text-sm font-semibold text-slate-700">Prénom</span>
               <input className={inputClass} value={form.firstName} onChange={(e) => update('firstName', e.target.value)} disabled={!canWrite || busy} />
               {errors.firstName && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.firstName}</p>}
             </label>
           </div>
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">E-mail</span>
+            <span className="text-sm font-semibold text-slate-700">E-mail</span>
             <input className={inputClass} type="email" value={form.email} onChange={(e) => update('email', e.target.value)} disabled={!canWrite || busy} />
             {errors.email && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.email}</p>}
           </label>
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">Téléphone</span>
+            <span className="text-sm font-semibold text-slate-700">Téléphone</span>
             <input className={inputClass} type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} disabled={!canWrite || busy} />
           </label>
           <label className="block">
-            <span className="text-sm font-bold text-slate-700">Rôle</span>
+            <span className="text-sm font-semibold text-slate-700">Rôle</span>
             <select className={inputClass} value={form.role} onChange={(e) => update('role', e.target.value)} disabled={!canWrite || busy}>
               {ROLE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
           </label>
           {form.role !== 'secretary' && (
             <fieldset className="block">
-              <legend className="text-sm font-bold text-slate-700">Genre *</legend>
+              <legend className="text-sm font-semibold text-slate-700">Genre *</legend>
               <div className="mt-2 flex flex-wrap gap-3">
                 {GENDER_OPTIONS.map((option) => (
                   <label
                     key={option.value}
-                    className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-2xl border-2 px-4 text-sm font-semibold transition ${
+                    className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-2xl border px-4 text-sm font-semibold transition ${
                       form.gender === option.value
-                        ? 'border-cyan-400 bg-cyan-50 text-cyan-900'
+                        ? 'border-blue-400 bg-blue-50 text-blue-900'
                         : 'border-slate-300 bg-white text-slate-700'
                     }`}
                   >
                     <input
                       type="radio"
                       name="create-user-gender"
-                      className="accent-cyan-600"
+                      className="accent-blue-600"
                       checked={form.gender === option.value}
                       disabled={!canWrite || busy}
                       onChange={() => update('gender', option.value)}

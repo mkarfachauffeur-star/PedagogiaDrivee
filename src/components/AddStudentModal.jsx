@@ -134,7 +134,7 @@ export default function AddStudentModal({ open, onClose, onCreated }) {
     >
       {success ? (
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-          <p className="text-sm font-bold text-emerald-800">Élève créé avec succès</p>
+          <p className="text-sm font-semibold text-emerald-800">Élève créé avec succès</p>
           <ul className="mt-3 space-y-2 text-sm text-emerald-900">
             <li><span className="font-semibold">Nom :</span> {success.fullName}</li>
             <li><span className="font-semibold">E-mail (identifiant) :</span> {success.email}</li>
@@ -145,7 +145,7 @@ export default function AddStudentModal({ open, onClose, onCreated }) {
               <li className="flex flex-wrap items-center gap-2">
                 <span className="font-semibold">Mot de passe provisoire :</span>
                 <code className="rounded-lg bg-white px-2 py-1 font-mono text-sm">{success.tempPassword}</code>
-                <button type="button" onClick={copyPassword} className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-white px-2 py-1 text-xs font-bold text-emerald-800">
+                <button type="button" onClick={copyPassword} className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-white px-2 py-1 text-xs font-semibold text-emerald-800">
                   <Copy className="h-3.5 w-3.5" />
                   {copied ? 'Copié' : 'Copier'}
                 </button>

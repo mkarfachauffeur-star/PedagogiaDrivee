@@ -11,7 +11,7 @@ export default function HoursProposalStatusBadge({ assessment, compact = false }
 
   return (
     <span
-      className={`inline-flex items-center rounded-full border font-black ${
+      className={`inline-flex items-center rounded-full border font-semibold ${
         compact ? 'px-2.5 py-1 text-[11px]' : 'px-3 py-1 text-xs'
       } ${TONE_CLASSES[status.tone]}`}
     >

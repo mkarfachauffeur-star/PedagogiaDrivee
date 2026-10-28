@@ -58,12 +58,12 @@ export default function WeekdayDatePicker({ label, value, onChange, disableSunda
 
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
       <div className="relative mt-2">
         <button
           type="button"
           onClick={() => setOpen((current) => !current)}
-          className="flex min-h-12 w-full items-center justify-between rounded-2xl border-2 border-slate-300 bg-white px-4 text-left text-sm font-medium text-slate-800 outline-none transition focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100"
+          className="flex min-h-12 w-full items-center justify-between rounded-2xl border border-slate-300 bg-white px-4 text-left text-sm font-medium text-slate-800 outline-none transition focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
         >
           <span className={selected ? '' : 'text-slate-400'}>{displayValue}</span>
           <svg aria-hidden="true" className="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -75,22 +75,22 @@ export default function WeekdayDatePicker({ label, value, onChange, disableSunda
         {open && (
           <>
             <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-            <div className="absolute left-0 z-20 mt-2 w-72 rounded-2xl border-2 border-slate-300 bg-white p-4 shadow-2xl">
+            <div className="absolute left-0 z-20 mt-2 w-72 rounded-2xl border border-slate-300 bg-white p-4 shadow-2xl">
               <div className="flex items-center justify-between">
                 <button
                   type="button"
-                  className="grid h-8 w-8 place-items-center rounded-xl text-lg font-black text-slate-500 transition hover:bg-slate-100"
+                  className="grid h-8 w-8 place-items-center rounded-xl text-lg font-semibold text-slate-500 transition hover:bg-slate-100"
                   onClick={() => changeMonth(-1)}
                   aria-label="Mois précédent"
                 >
                   ‹
                 </button>
-                <p className="text-sm font-extrabold text-slate-900">
+                <p className="text-sm font-semibold text-slate-900">
                   {MONTHS[view.getMonth()]} {view.getFullYear()}
                 </p>
                 <button
                   type="button"
-                  className="grid h-8 w-8 place-items-center rounded-xl text-lg font-black text-slate-500 transition hover:bg-slate-100"
+                  className="grid h-8 w-8 place-items-center rounded-xl text-lg font-semibold text-slate-500 transition hover:bg-slate-100"
                   onClick={() => changeMonth(1)}
                   aria-label="Mois suivant"
                 >
@@ -98,7 +98,7 @@ export default function WeekdayDatePicker({ label, value, onChange, disableSunda
                 </button>
               </div>
 
-              <div className="mt-3 grid grid-cols-7 gap-1 text-center text-[11px] font-bold uppercase text-slate-400">
+              <div className="mt-3 grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase text-slate-400">
                 {WEEKDAYS.map((day, index) => (
                   <span key={day} className={index === 6 ? 'text-slate-300' : ''}>{day}</span>
                 ))}
@@ -115,12 +115,12 @@ export default function WeekdayDatePicker({ label, value, onChange, disableSunda
                       type="button"
                       disabled={sunday}
                       onClick={() => pick(date)}
-                      className={`grid h-9 place-items-center rounded-xl text-sm font-bold transition ${
+                      className={`grid h-9 place-items-center rounded-xl text-sm font-semibold transition ${
                         sunday
                           ? 'cursor-not-allowed text-slate-300'
                           : isSelected
-                            ? 'bg-navy-950 text-white'
-                            : 'text-slate-700 hover:bg-cyan-50'
+                            ? 'bg-[#1769FF] text-white'
+                            : 'text-slate-700 hover:bg-blue-50'
                       }`}
                     >
                       {date.getDate()}

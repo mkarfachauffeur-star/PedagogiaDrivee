@@ -7,7 +7,7 @@ export default function LoadingSpinner({ label = 'Chargement…', className = ''
     >
       <div
         aria-hidden="true"
-        className="h-11 w-11 animate-spin rounded-full border-[3px] border-cyan-200 border-t-cyan-600"
+        className="h-11 w-11 animate-spin rounded-full border-[3px] border-blue-200 border-t-blue-600"
       />
       <p className="text-sm font-semibold text-slate-500">{label}</p>
     </div>

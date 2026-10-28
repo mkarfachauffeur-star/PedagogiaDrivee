@@ -1,94 +1,52 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import {
-  Award,
-  CalendarClock,
-  CheckCircle2,
-  Flag,
-  Hourglass,
-  IdCard,
-  Play,
-} from 'lucide-react'
+import { CalendarClock, Car, CheckCircle2, Flag, Hourglass } from 'lucide-react'
+import StatusBadge from '../ui/StatusBadge'
 import { AAC_KM_TARGET, daysBetween, formatDateFr } from '../../lib/aacRules'
 import { buildRvpMilestones, journeyProgress, orderedRvpMilestones } from '../../lib/aacJourney'
-import { formatKm } from '../../lib/geolocation'
 
-const KM_TICKS = [500, 1000, 1500, 2000, 2500]
+const KM_TICKS = [1000, 2000]
 
-const STATE_LABELS = {
-  realise: 'Réalisé',
-  en_retard: 'En retard',
-  a_effectuer: 'À effectuer',
-}
+const wholeKm = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 })
+const preciseKm = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 })
+/** 3 000 pour les repères, 35,5 pour les kilomètres parcourus. */
+const formatKm = (value, precise = false) => (precise ? preciseKm : wholeKm).format(Number(value) || 0)
 
-function stateChipClass(state) {
-  if (state === 'realise') return 'border-emerald-300/40 bg-emerald-400/15 text-emerald-200'
-  if (state === 'en_retard') return 'border-rose-300/40 bg-rose-400/15 text-rose-200'
-  return 'border-sky-300/40 bg-sky-400/15 text-sky-200'
-}
-
-function StateChip({ state, pulse = false }) {
-  return (
-    <span
-      className={`inline-flex w-fit items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${stateChipClass(state)} ${pulse ? 'aac-journey-chip-pulse' : ''}`}
-    >
-      {state === 'realise' && <CheckCircle2 className="h-3 w-3" aria-hidden="true" />}
-      {state === 'en_retard' && <Hourglass className="h-3 w-3" aria-hidden="true" />}
-      {STATE_LABELS[state]}
-    </span>
-  )
-}
-
-function CheckeredFlag({ className = '' }) {
-  return (
-    <span className={`inline-flex items-end ${className}`} aria-hidden="true">
-      <span className="h-8 w-[3px] rounded-full bg-slate-200/90 shadow-[0_0_6px_rgba(255,255,255,0.35)]" />
-      <span className="aac-flag-checker mb-1 ml-px h-5 w-7 rounded-r-[3px] rounded-tl-[2px] shadow-[0_2px_10px_rgba(2,6,23,0.45)]" />
-    </span>
-  )
-}
-
-function LicenseCard() {
-  return (
-    <div
-      aria-hidden="true"
-      className="aac-license relative w-20 shrink-0 rotate-3 rounded-xl border border-sky-200/50 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 p-2 shadow-[0_10px_30px_rgba(56,132,244,0.45)]"
-    >
-      <div className="flex items-center gap-1.5">
-        <span className="flex h-5 w-5 items-center justify-center rounded-md bg-white/20">
-          <IdCard className="h-3.5 w-3.5 text-white" />
-        </span>
-        <span className="text-[9px] font-black tracking-[0.18em] text-white">PERMIS</span>
-      </div>
-      <div className="mt-2 space-y-1">
-        <span className="block h-1 w-4/5 rounded-full bg-white/70" />
-        <span className="block h-1 w-3/5 rounded-full bg-white/45" />
-        <span className="block h-1 w-2/3 rounded-full bg-white/30" />
-      </div>
-      <span className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-tr from-transparent via-white/25 to-transparent opacity-60" />
-    </div>
-  )
+const STATES = {
+  realise: { label: 'Réalisé', tone: 'success', icon: CheckCircle2 },
+  en_retard: { label: 'En retard', tone: 'danger', icon: Hourglass },
+  a_effectuer: { label: 'À effectuer', tone: 'info', icon: null },
 }
 
 function RvpMilestone({ icon: Icon, title, detail, state, due = false }) {
+  const meta = STATES[state] || STATES.a_effectuer
   return (
-    <li
-      className={`flex min-w-[13rem] flex-1 items-start gap-3 rounded-2xl border p-3 backdrop-blur-sm ${
-        due
-          ? 'border-amber-300/50 bg-amber-400/10 shadow-[0_0_24px_rgba(251,191,36,0.18)]'
-          : 'border-white/12 bg-white/[0.06]'
-      }`}
-    >
-      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-sky-300/30 bg-sky-400/15 text-sky-200">
-        <Icon className="h-4 w-4" aria-hidden="true" />
+    <li className={`flex items-start gap-3 px-4 py-3 ${due ? 'bg-amber-50/70' : ''}`}>
+      <span
+        aria-hidden="true"
+        className={`mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg ${
+          state === 'realise' ? 'bg-emerald-50 text-emerald-600' : due ? 'bg-amber-100 text-amber-700' : 'bg-blue-50 text-[#1769FF]'
+        }`}
+      >
+        <Icon className="h-4 w-4" />
       </span>
-      <div className="min-w-0">
-        <p className="text-sm font-semibold text-white">{title}</p>
-        <p className="mt-0.5 text-xs leading-5 text-sky-100/70">{detail}</p>
-        <div className="mt-2">
-          <StateChip pulse={due} state={state} />
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+          <p className="text-sm font-medium text-slate-900">{title}</p>
+          <StatusBadge tone={due && state !== 'realise' ? 'warning' : meta.tone}>{due && state !== 'realise' ? 'À planifier' : meta.label}</StatusBadge>
         </div>
+        <p className="mt-0.5 text-xs leading-5 text-slate-500">{detail}</p>
       </div>
     </li>
+  )
+}
+
+function KeyFact({ label, value, hint }) {
+  return (
+    <div className="rounded-lg bg-slate-50 px-3 py-2.5">
+      <dt className="text-xs text-slate-500">{label}</dt>
+      <dd className="mt-0.5 text-sm font-medium tabular-nums text-slate-900">{value}</dd>
+      {hint ? <dd className="text-xs text-slate-500">{hint}</dd> : null}
+    </div>
   )
 }
 
@@ -100,6 +58,8 @@ export default function AacJourneyCard({
   progress,
   startedAt,
   examEligibleAt,
+  examEligibleReason = null,
+  seventeenAt = null,
   statusText,
   tripCount = 0,
   rvpCompleted = 0,
@@ -107,6 +67,7 @@ export default function AacJourneyCard({
   rvp = [],
   ffiAt = null,
   tripActive = false,
+  showRvp = true,
 }) {
   const km = Math.max(0, Number(progress?.km) || 0)
   const target = Number(progress?.target) || AAC_KM_TARGET
@@ -161,167 +122,123 @@ export default function AacJourneyCard({
     : rvp1.requirement
   const orderedMilestones = useMemo(() => orderedRvpMilestones(milestones), [milestones])
 
+  const eligibleHint = [
+    daysToEligible == null ? null : daysToEligible > 0 ? `Dans ${daysToEligible} jour${daysToEligible > 1 ? 's' : ''}` : 'Date atteinte',
+    examEligibleReason === 'age'
+      ? `Date fixée par ses 17 ans`
+      : seventeenAt
+        ? `17 ans atteints le ${formatDateFr(seventeenAt)}`
+        : null,
+  ]
+    .filter(Boolean)
+    .join(' · ')
+
   return (
-    <section
-      aria-label="Mon parcours AAC"
-      className="relative overflow-hidden rounded-3xl border border-sky-400/25 bg-gradient-to-br from-[#081a33] via-[#0b2a52] to-[#103a75] p-5 text-white shadow-[0_24px_60px_rgba(6,20,50,0.45)] sm:p-6"
-    >
-      <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-sky-400/15 blur-3xl" />
-      <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 -left-10 h-56 w-56 rounded-full bg-indigo-500/15 blur-3xl" />
-
-      <div className="relative">
-        <div className="flex items-start justify-between gap-3">
-          <p className="pt-2 text-xs font-bold uppercase tracking-[0.22em] text-sky-300">Mon parcours AAC</p>
-          <div className="flex items-center gap-3">
-            <LicenseCard />
-            <div className="flex flex-col items-end gap-2">
-              {statusText && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold text-sky-100">
-                  {statusText}
-                </span>
-              )}
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/40 bg-amber-400/15 px-3 py-1 text-[11px] font-bold text-amber-200">
-                <Award className="h-3.5 w-3.5" aria-hidden="true" />
-                Objectif permis
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-          <div>
-            <p className="flex items-baseline gap-2">
-              <span className={`text-5xl font-black tabular-nums tracking-tight text-white sm:text-6xl ${pulse ? 'aac-journey-number-pulse' : ''}`}>
-                {formatKm(Math.round(displayKm * 10) / 10)}
-              </span>
-              <span className="text-lg font-semibold text-sky-200">km</span>
-            </p>
-            <p className="mt-1 text-sm text-sky-100/70">
-              {tripCount} trajet{tripCount > 1 ? 's' : ''} validé{tripCount > 1 ? 's' : ''} · RVP {rvpCompleted}/{rvpRequired}
-              {tripActive ? ' · trajet en cours (s’ajoutera à l’arrivée)' : ''}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-4xl font-black tabular-nums text-sky-300 sm:text-5xl">{percentDisplay}%</p>
-            <p className="mt-1 text-sm text-sky-100/70">
-              {finished ? 'Objectif des 3 000 km atteint' : `Encore ${formatKm(remaining)} km avant l’objectif`}
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-8 flex items-start gap-2.5">
-          <span
-            aria-hidden="true"
-            className="mt-[-3px] flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-emerald-300/50 bg-emerald-400/20 text-emerald-200 shadow-[0_0_16px_rgba(52,211,153,0.35)]"
-          >
-            <Play className="ml-0.5 h-3.5 w-3.5" aria-hidden="true" />
+    <section aria-label="Parcours de conduite accompagnée" className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span aria-hidden="true" className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-blue-50 text-[#1769FF]">
+            <Car className="h-5 w-5" />
           </span>
-
-          <div className="relative mt-[10px] flex-1">
-            <div className="relative h-2.5 rounded-full bg-white/10">
-              <div
-                className={`absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-400 shadow-[0_0_18px_rgba(56,189,248,0.65)] transition-[width] duration-700 ease-out ${pulse ? 'aac-journey-fill-pulse' : ''}`}
-                style={{ width: `${fillPercent}%` }}
-              />
-              {KM_TICKS.map((tick) => (
-                <span
-                  aria-hidden="true"
-                  className="absolute top-1/2 h-4 w-px -translate-y-1/2 bg-white/25"
-                  key={tick}
-                  style={{ left: `${(tick / target) * 100}%` }}
-                />
-              ))}
-              {km > 0 && !finished && (
-                <span
-                  aria-hidden="true"
-                  className={`absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-sky-400 shadow-[0_0_14px_rgba(125,211,252,0.9)] transition-[left] duration-700 ease-out ${pulse ? 'aac-journey-tip-pulse' : ''}`}
-                  style={{ left: `${fillPercent}%` }}
-                />
-              )}
-            </div>
-
-            <div className="relative mt-2 h-8 text-[11px] tabular-nums">
-              <span className="absolute left-0 top-0 flex flex-col">
-                <span className="font-bold uppercase tracking-wider text-emerald-200">Départ</span>
-                <span className="text-sky-100/60">{formatDateFr(startedAt)}</span>
-              </span>
-              {KM_TICKS.map((tick) => (
-                <span
-                  aria-hidden={tick % 1000 !== 0}
-                  className={`absolute top-0 -translate-x-1/2 text-sky-100/55 ${tick % 1000 !== 0 ? 'hidden sm:block' : ''}`}
-                  key={tick}
-                  style={{ left: `${(tick / target) * 100}%` }}
-                >
-                  {formatKm(tick)}
-                </span>
-              ))}
-              <span className="absolute right-0 top-0 flex flex-col items-end text-right">
-                <span className="font-bold uppercase tracking-wider text-amber-200">Arrivée</span>
-                <span className="text-sky-100/60">{formatKm(target)} km</span>
-              </span>
-            </div>
+          <div>
+            <h2 className="text-base font-semibold text-slate-900">Objectif {formatKm(target)} km</h2>
+            <p className="mt-0.5 hidden text-sm text-slate-500 sm:block">Kilomètres des trajets validés de la conduite accompagnée.</p>
           </div>
-
-          <CheckeredFlag className="mt-[1px] shrink-0" />
         </div>
-
-        <ul className="mt-6 flex flex-wrap gap-3 border-t border-white/10 pt-4">
-          {orderedMilestones.map((item) => {
-            if (item.sequence === 1) {
-              return (
-                <RvpMilestone
-                  detail={rvp1Detail}
-                  icon={CalendarClock}
-                  key="rvp-1"
-                  state={item.state}
-                  title="RVP 1 · Obligatoire"
-                />
-              )
-            }
-            if (item.sequence === 2) {
-              return (
-                <RvpMilestone
-                  detail={item.requirement}
-                  due={item.due}
-                  icon={Flag}
-                  key="rvp-2"
-                  state={item.state}
-                  title="RVP 2 · Obligatoire · 3 000 km"
-                />
-              )
-            }
-            const { row } = item
-            return (
-              <RvpMilestone
-                detail={row.heldOn ? `Prévu le ${formatDateFr(row.heldOn)}` : 'Date à définir avec l’enseignant'}
-                icon={Flag}
-                key={row.id || row.sequence}
-                state={item.state}
-                title={`${row.label || `Rendez-vous ${row.sequence}`} · Facultatif`}
-              />
-            )
-          })}
-        </ul>
-
-        <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-white/10 pt-4 text-sm lg:grid-cols-4">
-          <div>
-            <dt className="text-[11px] uppercase tracking-wider text-sky-300/70">Début</dt>
-            <dd className="mt-0.5 text-sky-50">{formatDateFr(startedAt)}</dd>
-          </div>
-          <div>
-            <dt className="text-[11px] uppercase tracking-wider text-sky-300/70">Jours écoulés</dt>
-            <dd className="mt-0.5 tabular-nums text-sky-50">{daysElapsed ?? '—'}</dd>
-          </div>
-          <div>
-            <dt className="text-[11px] uppercase tracking-wider text-sky-300/70">Jours avant un an</dt>
-            <dd className="mt-0.5 tabular-nums text-sky-50">{daysToEligible == null ? '—' : Math.max(0, daysToEligible)}</dd>
-          </div>
-          <div>
-            <dt className="text-[11px] uppercase tracking-wider text-sky-300/70">Examen possible le</dt>
-            <dd className="mt-0.5 text-sky-50">{formatDateFr(examEligibleAt)}</dd>
-          </div>
-        </dl>
+        {statusText ? <StatusBadge tone="info">{statusText}</StatusBadge> : null}
       </div>
+
+      <div className="mt-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+        <p className="flex items-baseline gap-1.5">
+          <span className={`text-4xl font-semibold tabular-nums tracking-[-0.03em] text-slate-900 sm:text-5xl ${pulse ? 'aac-journey-number-pulse' : ''}`}>
+            {formatKm(displayKm, true)}
+          </span>
+          <span className="text-base text-slate-400">/ {formatKm(target)} km</span>
+        </p>
+        <p className="text-2xl font-semibold tabular-nums text-[#1769FF]">{percentDisplay} %</p>
+      </div>
+      <p className="mt-1 text-sm text-slate-500">
+        {tripCount} trajet{tripCount > 1 ? 's' : ''} validé{tripCount > 1 ? 's' : ''}
+        {' · '}
+        {finished ? 'objectif atteint' : `encore ${formatKm(remaining, true)} km`}
+        {tripActive ? ' · trajet en cours, ajouté à l’arrivée' : ''}
+      </p>
+
+      <div className="mt-5">
+        <div className="relative h-2.5 rounded-full bg-slate-100">
+          <div
+            className={`absolute inset-y-0 left-0 rounded-full bg-[#1769FF] transition-[width] duration-700 ease-out ${pulse ? 'aac-journey-fill-pulse' : ''}`}
+            style={{ width: `${Math.max(fillPercent, km > 0 ? 1.5 : 0)}%` }}
+          />
+          {KM_TICKS.map((tick) => (
+            <span
+              aria-hidden="true"
+              className="absolute inset-y-0 w-0.5 bg-white"
+              key={tick}
+              style={{ left: `${(tick / target) * 100}%` }}
+            />
+          ))}
+        </div>
+        <div className="relative mt-1.5 h-4 text-xs tabular-nums text-slate-500">
+          <span className="absolute left-0">0 km</span>
+          {KM_TICKS.map((tick) => (
+            <span className="absolute -translate-x-1/2" key={tick} style={{ left: `${(tick / target) * 100}%` }}>
+              {formatKm(tick)}
+            </span>
+          ))}
+          <span className="absolute right-0 font-medium text-slate-700">{formatKm(target)} km</span>
+        </div>
+      </div>
+
+      <dl className="mt-6 grid grid-cols-2 gap-2 lg:grid-cols-4">
+        <KeyFact label="Début" value={formatDateFr(startedAt)} />
+        <KeyFact label="Jours écoulés" value={daysElapsed ?? '—'} />
+        <KeyFact label="RVP obligatoires" value={`${rvpCompleted} / ${rvpRequired} réalisés`} />
+        <KeyFact hint={eligibleHint} label="Examen possible le" value={formatDateFr(examEligibleAt)} />
+      </dl>
+
+      {showRvp ? (
+        <>
+          <h3 className="mt-6 text-sm font-semibold text-slate-900">Rendez-vous pédagogiques</h3>
+          <ul className="mt-2 divide-y divide-slate-100 overflow-hidden rounded-lg border border-slate-200">
+            {orderedMilestones.map((item) => {
+              if (item.sequence === 1) {
+                return (
+                  <RvpMilestone
+                    detail={rvp1Detail}
+                    icon={CalendarClock}
+                    key="rvp-1"
+                    state={item.state}
+                    title="RVP 1 · obligatoire"
+                  />
+                )
+              }
+              if (item.sequence === 2) {
+                return (
+                  <RvpMilestone
+                    detail={item.requirement}
+                    due={item.due}
+                    icon={Flag}
+                    key="rvp-2"
+                    state={item.state}
+                    title={`RVP 2 · obligatoire · ${formatKm(target)} km`}
+                  />
+                )
+              }
+              const { row } = item
+              return (
+                <RvpMilestone
+                  detail={row.heldOn ? `Prévu le ${formatDateFr(row.heldOn)}` : 'Date à définir avec l’enseignant'}
+                  icon={Flag}
+                  key={row.id || row.sequence}
+                  state={item.state}
+                  title={`${row.label || `Rendez-vous ${row.sequence}`} · facultatif`}
+                />
+              )
+            })}
+          </ul>
+        </>
+      ) : null}
     </section>
   )
 }

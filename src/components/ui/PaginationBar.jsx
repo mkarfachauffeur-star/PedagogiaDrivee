@@ -18,18 +18,18 @@ export default function PaginationBar({
       </p>
       <div className="flex items-center gap-2">
         <button
-          className="rounded-xl border-2 border-slate-300 bg-white px-3 py-1.5 text-xs font-extrabold text-slate-600 transition hover:border-cyan-200 disabled:opacity-40"
+          className="rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 disabled:opacity-40"
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
           type="button"
         >
           Précédent
         </button>
-        <span className="text-xs font-bold text-slate-600">
+        <span className="text-xs font-semibold text-slate-600">
           Page {page} / {totalPages}
         </span>
         <button
-          className="rounded-xl border-2 border-slate-300 bg-white px-3 py-1.5 text-xs font-extrabold text-slate-600 transition hover:border-cyan-200 disabled:opacity-40"
+          className="rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-blue-200 disabled:opacity-40"
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
           type="button"

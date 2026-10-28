@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react'
+import { ui } from '../../components/ui/styles'
+import PageHeader from '../../components/ui/PageHeader'
 import EmptyState from '../../components/ui/EmptyState'
 import AppModal, { AppModalFooter } from '../../components/ui/AppModal'
 
@@ -136,30 +138,15 @@ export default function SecretaryPlanningPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-      <section className="overflow-hidden rounded-[2rem] border-2 border-slate-300 bg-white shadow-[var(--shadow-card)]">
-        <div className="bg-gradient-to-br from-navy-950 via-navy-900 to-cyan-900 p-6 text-white md:p-8">
-          <span className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-1 text-sm font-semibold text-cyan-100">
-            Planning secrétariat
-          </span>
-          <div className="mt-5 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
-            <div>
-              <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-                Calendrier global auto-école
-              </h1>
-              <p className="mt-3 max-w-3xl text-base leading-7 text-blue-50">
-                Vue centralisée des élèves, enseignants, véhicules, créneaux et disponibilités.
-              </p>
-            </div>
-            <button
-              className="rounded-2xl bg-cyan-300 px-5 py-3 text-sm font-black text-navy-950 shadow-xl transition hover:-translate-y-0.5 hover:bg-white"
-              onClick={openCreateForm}
-              type="button"
-            >
-              + Nouveau créneau
-            </button>
-          </div>
-        </div>
-      </section>
+      <PageHeader
+        actions={
+          <button className={ui.btnPrimary} onClick={openCreateForm} type="button">
+            Nouveau créneau
+          </button>
+        }
+        description="Les créneaux des élèves, enseignants et véhicules, et leurs disponibilités."
+        title="Planning global"
+      />
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Kpi label="Créneaux visibles" value={filteredSlots.length} />
@@ -168,26 +155,26 @@ export default function SecretaryPlanningPage() {
         <Kpi label="Disponibilité globale" value={`${availabilityRate}%`} tone="cyan" />
       </section>
 
-      <section className="rounded-[2rem] border-2 border-slate-300 bg-white/85 p-5 shadow-[var(--shadow-card)] backdrop-blur-xl">
+      <section className="rounded-xl border border-slate-300 bg-white/85 p-5 backdrop-blur-xl">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               <button
-                className="rounded-2xl border-2 border-slate-300 bg-white px-4 py-2 text-sm font-extrabold text-slate-700 transition hover:bg-cyan-50"
+                className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-blue-50"
                 onClick={() => changePeriod(-1)}
                 type="button"
               >
                 ← Précédent
               </button>
               <button
-                className="rounded-2xl border-2 border-slate-300 bg-white px-4 py-2 text-sm font-extrabold text-slate-700 transition hover:bg-cyan-50"
+                className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-blue-50"
                 onClick={() => setCurrentDate(new Date('2026-05-18T12:00:00'))}
                 type="button"
               >
                 Aujourd’hui
               </button>
               <button
-                className="rounded-2xl border-2 border-slate-300 bg-white px-4 py-2 text-sm font-extrabold text-slate-700 transition hover:bg-cyan-50"
+                className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-blue-50"
                 onClick={() => changePeriod(1)}
                 type="button"
               >
@@ -195,7 +182,7 @@ export default function SecretaryPlanningPage() {
               </button>
             </div>
             <div>
-              <h2 className="text-2xl font-black text-slate-950">{periodLabel}</h2>
+              <h2 className="text-2xl font-semibold text-slate-950">{periodLabel}</h2>
               <p className="text-sm font-semibold text-slate-500">
                 Calendrier global avec changement de période et créneaux cliquables.
               </p>
@@ -203,10 +190,10 @@ export default function SecretaryPlanningPage() {
             <div className="flex flex-wrap gap-2">
               {['jour', 'semaine', 'mois', 'année'].map((mode) => (
                 <button
-                  className={`rounded-2xl px-4 py-2 text-sm font-extrabold capitalize transition ${
+                  className={`rounded-2xl px-4 py-2 text-sm font-semibold capitalize transition ${
                     view === mode
-                      ? 'bg-navy-950 text-white shadow-lg'
-                      : 'border-2 border-slate-300 bg-white text-slate-600 hover:bg-cyan-50'
+                      ? 'bg-[#1769FF] text-white shadow-lg'
+                      : 'border border-slate-300 bg-white text-slate-600 hover:bg-blue-50'
                   }`}
                   key={mode}
                   onClick={() => setView(mode)}
@@ -224,7 +211,7 @@ export default function SecretaryPlanningPage() {
           </div>
         </div>
 
-        <div className="mt-6 overflow-hidden rounded-[1.5rem] border-2 border-slate-300 bg-slate-50">
+        <div className="mt-6 overflow-hidden rounded-xl border border-slate-300 bg-slate-50">
           <div className={`grid ${view === 'jour' ? 'grid-cols-1' : view === 'année' ? 'grid-cols-2 lg:grid-cols-4' : view === 'mois' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-7' : 'grid-cols-1 md:grid-cols-7'}`}>
             {visibleDays.map((day) => {
               const daySlots =
@@ -233,20 +220,20 @@ export default function SecretaryPlanningPage() {
                   : filteredSlots.filter((slot) => slot.date === day)
 
               return (
-                <div className="min-h-56 border-b border-r-2 border-slate-300 bg-white/70 p-3" key={view === 'année' ? day.key : day}>
+                <div className="min-h-56 border-b border-r border-slate-300 bg-white/70 p-3" key={view === 'année' ? day.key : day}>
                   <div className="mb-3 flex items-center justify-between gap-2">
-                    <h2 className="text-sm font-black text-slate-900">
+                    <h2 className="text-sm font-semibold text-slate-900">
                       {view === 'année' ? day.label : formatDay(day)}
                     </h2>
-                    <span className="rounded-full bg-cyan-50 px-2 py-1 text-xs font-black text-cyan-700">
+                    <span className="rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700">
                       {daySlots.length}
                     </span>
                   </div>
                   <div className="space-y-3">
                     {daySlots.map((slot) => (
                       <button
-                        className={`w-full rounded-2xl border p-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg ${statusStyles[slot.status]} ${
-                          selectedSlot?.id === slot.id ? 'ring-4 ring-cyan-100' : ''
+                        className={`w-full rounded-2xl border p-3 text-left shadow-sm transition hover:shadow-lg ${statusStyles[slot.status]} ${
+                          selectedSlot?.id === slot.id ? 'ring-4 ring-blue-100' : ''
                         }`}
                         key={slot.id}
                         onClick={() => {
@@ -255,10 +242,10 @@ export default function SecretaryPlanningPage() {
                         }}
                         type="button"
                       >
-                        <span className="block text-xs font-black uppercase tracking-wide">
+                        <span className="block text-xs font-semibold">
                           {slot.start} - {slot.end} · {slot.status}
                         </span>
-                        <span className="mt-1 block font-extrabold">{slot.student}</span>
+                        <span className="mt-1 block font-semibold">{slot.student}</span>
                         <span className="mt-1 block text-xs opacity-80">
                           {slot.teacher} · {slot.vehicle}
                         </span>
@@ -266,7 +253,7 @@ export default function SecretaryPlanningPage() {
                     ))}
                     {!daySlots.length && (
                       <button
-                        className="w-full rounded-2xl border border-dashed border-cyan-200 bg-cyan-50/50 p-4 text-sm font-bold text-cyan-700 transition hover:bg-cyan-50"
+                        className="w-full rounded-2xl border border-dashed border-blue-200 bg-blue-50/50 p-4 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
                         onClick={() => {
                           setForm({ ...emptyForm, date: view === 'année' ? `${day.key}-01` : day, student: students[0] || '' })
                           setEditingId(null)
@@ -286,8 +273,8 @@ export default function SecretaryPlanningPage() {
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_420px]">
-        <div className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
-          <h2 className="text-2xl font-extrabold text-slate-950">Tous les enseignants, véhicules et élèves</h2>
+        <div className="rounded-xl border border-slate-200 bg-white p-5">
+          <h2 className="text-2xl font-semibold text-slate-950">Tous les enseignants, véhicules et élèves</h2>
           <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
             <ResourceList title="Enseignants" items={teachers.slice(1)} />
             <ResourceList title="Véhicules" items={vehicles.slice(1)} />
@@ -296,9 +283,9 @@ export default function SecretaryPlanningPage() {
         </div>
 
         {selectedSlot && (
-          <aside className="rounded-[2rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-card)]">
-            <p className="text-xs font-black uppercase tracking-wide text-cyan-700">Fiche rendez-vous</p>
-            <h2 className="mt-2 text-2xl font-extrabold text-slate-950">{selectedSlot.student}</h2>
+          <aside className="rounded-xl border border-slate-200 bg-white p-5">
+            <p className="text-xs font-semibold text-blue-700">Fiche rendez-vous</p>
+            <h2 className="mt-2 text-2xl font-semibold text-slate-950">{selectedSlot.student}</h2>
             <p className="mt-2 text-sm text-slate-500">
               {selectedSlot.date} · {selectedSlot.start}-{selectedSlot.end}
             </p>
@@ -309,23 +296,23 @@ export default function SecretaryPlanningPage() {
                 ['Catégorie', selectedSlot.category],
                 ['État', selectedSlot.status],
               ].map(([label, value]) => (
-                <div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-3" key={label}>
-                  <p className="text-xs font-bold uppercase tracking-wide text-slate-400">{label}</p>
-                  <p className="font-extrabold text-slate-900">{value}</p>
+                <div className="rounded-2xl border border-slate-300 bg-slate-50 p-3" key={label}>
+                  <p className="text-xs font-semibold text-slate-400">{label}</p>
+                  <p className="font-semibold text-slate-900">{value}</p>
                 </div>
               ))}
             </div>
             <div className="mt-5 grid grid-cols-2 gap-2">
-              <button className="rounded-2xl border-2 border-slate-300 px-4 py-3 text-sm font-extrabold text-slate-700 transition hover:bg-slate-50" onClick={() => moveSlot(selectedSlot.id, -1)} type="button">
+              <button className="rounded-2xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" onClick={() => moveSlot(selectedSlot.id, -1)} type="button">
                 ← Déplacer
               </button>
-              <button className="rounded-2xl border-2 border-slate-300 px-4 py-3 text-sm font-extrabold text-slate-700 transition hover:bg-slate-50" onClick={() => moveSlot(selectedSlot.id, 1)} type="button">
+              <button className="rounded-2xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" onClick={() => moveSlot(selectedSlot.id, 1)} type="button">
                 Déplacer →
               </button>
-              <button className="rounded-2xl bg-navy-950 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-cyan-700" onClick={() => openEditForm(selectedSlot)} type="button">
+              <button className="rounded-2xl bg-[#1769FF] px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700" onClick={() => openEditForm(selectedSlot)} type="button">
                 Modifier
               </button>
-              <button className="rounded-2xl bg-rose-600 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-rose-500" onClick={() => deleteSlot(selectedSlot.id)} type="button">
+              <button className="rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-500" onClick={() => deleteSlot(selectedSlot.id)} type="button">
                 Supprimer
               </button>
             </div>
@@ -365,11 +352,11 @@ export default function SecretaryPlanningPage() {
 }
 
 function Kpi({ label, tone = 'cyan', value }) {
-  const color = tone === 'emerald' ? 'text-emerald-600' : tone === 'amber' ? 'text-amber-600' : 'text-cyan-600'
+  const color = tone === 'emerald' ? 'text-emerald-600' : tone === 'amber' ? 'text-amber-600' : 'text-blue-600'
   return (
-    <article className="rounded-[1.5rem] border-2 border-slate-300 bg-white p-5 shadow-[var(--shadow-soft)]">
-      <p className="text-sm font-bold text-slate-500">{label}</p>
-      <p className={`mt-2 text-3xl font-black ${color}`}>{value}</p>
+    <article className="rounded-xl border border-slate-200 bg-white p-5">
+      <p className="text-sm font-semibold text-slate-500">{label}</p>
+      <p className={`mt-2 text-3xl font-semibold ${color}`}>{value}</p>
     </article>
   )
 }
@@ -377,8 +364,8 @@ function Kpi({ label, tone = 'cyan', value }) {
 function Filter({ label, onChange, options, value }) {
   return (
     <label className="block">
-      <span className="text-xs font-black uppercase tracking-wide text-slate-400">{label}</span>
-      <select className="mt-1 min-h-11 w-full rounded-2xl border-2 border-slate-300 bg-white px-3 text-sm font-bold text-slate-700 outline-none focus:ring-4 focus:ring-cyan-100" onChange={(event) => onChange(event.target.value)} value={value}>
+      <span className="text-xs font-semibold text-slate-400">{label}</span>
+      <select className="mt-1 min-h-11 w-full rounded-2xl border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 outline-none focus:ring-4 focus:ring-blue-100" onChange={(event) => onChange(event.target.value)} value={value}>
         {options.map((option) => (
           <option key={option}>{option}</option>
         ))}
@@ -389,8 +376,8 @@ function Filter({ label, onChange, options, value }) {
 
 function ResourceList({ items, title }) {
   return (
-    <div className="rounded-[1.5rem] border-2 border-slate-300 bg-slate-50 p-4">
-      <h3 className="font-extrabold text-slate-950">{title}</h3>
+    <div className="rounded-xl border border-slate-300 bg-slate-50 p-4">
+      <h3 className="font-semibold text-slate-950">{title}</h3>
       <div className="mt-3 space-y-2">
         {items.length === 0 ? (
           <EmptyState
@@ -401,7 +388,7 @@ function ResourceList({ items, title }) {
           />
         ) : (
           items.map((item) => (
-            <button className="w-full rounded-2xl bg-white px-3 py-2 text-left text-sm font-bold text-slate-700 shadow-sm transition hover:bg-cyan-50" key={item} type="button">
+            <button className="w-full rounded-2xl bg-white px-3 py-2 text-left text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-blue-50" key={item} type="button">
               {item}
             </button>
           ))
@@ -414,8 +401,8 @@ function ResourceList({ items, title }) {
 function Field({ label, onChange, type = 'text', value }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
-      <input className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100" onChange={(event) => onChange(event.target.value)} type={type} value={value} />
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
+      <input className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-300 focus:ring-4 focus:ring-blue-100" onChange={(event) => onChange(event.target.value)} type={type} value={value} />
     </label>
   )
 }
@@ -423,8 +410,8 @@ function Field({ label, onChange, type = 'text', value }) {
 function Select({ label, onChange, options, value }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold text-slate-700">{label}</span>
-      <select className="mt-2 min-h-12 w-full rounded-2xl border-2 border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100" onChange={(event) => onChange(event.target.value)} value={value}>
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
+      <select className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 outline-none transition focus:border-blue-300 focus:ring-4 focus:ring-blue-100" onChange={(event) => onChange(event.target.value)} value={value}>
         {options.map((option) => (
           <option key={option}>{option}</option>
         ))}

@@ -30,14 +30,14 @@ export default function StudentCharterStatusBadge({ studentId }) {
 
   if (acceptance.accepted) {
     return (
-      <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 ring-1 ring-emerald-200">
+      <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
         Charte acceptée · {formatCharterAcceptedAt(acceptance.acceptedAt)}
       </span>
     )
   }
 
   return (
-    <span className="inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-800 ring-1 ring-amber-200">
+    <span className="inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-amber-200">
       Charte en attente (v{acceptance.charterVersionNumber || '?'})
     </span>
   )
