@@ -1176,7 +1176,7 @@ const accelerationBrakingModule = {
       items: [
         'Choisir le bon démarrage selon la situation : parking, circulation, feu, stop ou côte.',
         'Chercher le point de patinage en douceur pour éviter les à-coups et le calage.',
-        'En côte, bien tenir le véhicule pour qu’il ne recule pas.',
+        'En côte, bien tenir le point de patinage pour que le véhicule ne recule pas.',
         'En freinage d’urgence, freiner et débrayer à fond en gardant le volant bien en main.',
       ],
     },
