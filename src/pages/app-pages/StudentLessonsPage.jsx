@@ -1,5 +1,6 @@
 import { Car, CheckCircle2, Lock, XCircle } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useRemcUnlock } from '../../hooks/useRemcUnlock'
 import { useClientPagination } from '../../hooks/useClientPagination'
@@ -2367,10 +2368,11 @@ export default function StudentLessonsPage() {
         </section>
 
 
-      {openedModule && activeCompetencyUnlocked && (
+      {/* Rendue dans <body> : un parent animé ne doit pas la placer sous la barre du haut. */}
+      {openedModule && activeCompetencyUnlocked && createPortal(
         <div className="fixed inset-0 z-[120] flex items-center justify-center overflow-hidden bg-slate-900/20 backdrop-blur-md sm:p-5 lg:p-8">
-          <div className="lesson-glass flex h-full min-h-0 w-full max-w-[1200px] flex-col overflow-hidden rounded-none sm:h-[90vh] sm:max-h-[90vh] sm:rounded-xl">
-            <div className="shrink-0 border-b border-white/70 bg-white/40 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))] backdrop-blur-xl sm:p-5">
+          <div className="lesson-glass lesson-modal-panel flex h-full min-h-0 w-full max-w-[1200px] flex-col overflow-hidden rounded-none sm:h-[90vh] sm:max-h-[90vh] sm:rounded-xl">
+            <div className="shrink-0 border-b border-slate-100 bg-white px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))] sm:border-white/70 sm:bg-white/40 sm:p-5 sm:backdrop-blur-xl">
               <div className="flex flex-col justify-between gap-2.5 lg:flex-row lg:items-start">
                 <div className="min-w-0">
                   <p className="text-[11px] font-semibold text-sky-700/80">
@@ -2628,14 +2630,14 @@ export default function StudentLessonsPage() {
                 </aside>
               </div>
             ) : (
-              <div className="p-4 sm:p-5 lg:p-6">
+              <div className="px-4 py-4 sm:p-5 lg:p-6">
                 {openedLesson ? (
-                  <div className="rounded-xl border border-slate-300 bg-slate-50 p-4 md:p-5">
+                  <div className="sm:rounded-xl sm:border sm:border-slate-200 sm:bg-slate-50 sm:p-5">
                     <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                       <div>
                         <p className="text-sm font-semibold text-blue-700">QCU interactif</p>
-                        <h3 className="mt-2 text-2xl font-semibold text-slate-950">{openedLesson.title}</h3>
-                        <p className="mt-2 text-sm font-semibold text-slate-500">
+                        <h3 className="mt-1 text-xl font-semibold text-slate-950 sm:mt-2 sm:text-2xl">{openedLesson.title}</h3>
+                        <p className="mt-1 text-sm text-slate-500 sm:mt-2">
                           {getQuizIntro(openedLesson, quizDisplayTotal)}
                         </p>
                       </div>
@@ -2674,7 +2676,7 @@ export default function StudentLessonsPage() {
                           </p>
                         </article>
                       ) : currentQuizQuestion ? (
-                        <article className="mt-5 scroll-mt-4 rounded-xl border border-white bg-white p-5 shadow-sm" ref={quizQuestionRef}>
+                        <article className="mt-4 scroll-mt-4 sm:mt-5 sm:rounded-xl sm:border sm:border-white sm:bg-white sm:p-5 sm:shadow-sm" ref={quizQuestionRef}>
                           <div className="flex flex-wrap items-center justify-between gap-3">
                             <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-100">
                               {currentQuizQuestion.iconType ? 'Témoin tableau de bord' : 'Question organes'}{' '}
@@ -2770,7 +2772,7 @@ export default function StudentLessonsPage() {
             )}
             </div>
             {moduleMode === 'quiz' && openedLesson && (
-              <div className="shrink-0 border-t border-white/60 bg-white/95 px-4 pt-4 shadow-[0_-18px_40px_rgba(15,23,42,0.08)] backdrop-blur-xl pb-[max(1rem,env(safe-area-inset-bottom,0px))] sm:p-5">
+              <div className="shrink-0 border-t border-slate-100 bg-white px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:border-white/60 sm:bg-white/95 sm:p-5 sm:shadow-[0_-18px_40px_rgba(15,23,42,0.08)] sm:backdrop-blur-xl">
                 {currentValidated ? (
                   <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
                     <div>
@@ -2800,11 +2802,12 @@ export default function StudentLessonsPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
-                    <p className="text-sm font-semibold text-slate-500">
-                      Répondez question par question. La question suivante apparaît uniquement après correction.
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-xs text-slate-500 sm:text-sm">
+                      <span className="sm:hidden">Une question à la fois · validation à la fin</span>
+                      <span className="hidden sm:inline">Répondez question par question. La question suivante apparaît uniquement après correction.</span>
                     </p>
-                    <span className="lesson-chip px-4 py-2 text-sm font-medium text-sky-800">
+                    <span className="hidden rounded-md bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 sm:inline-flex">
                       Validation automatique en fin de QCU
                     </span>
                   </div>
@@ -2818,7 +2821,8 @@ export default function StudentLessonsPage() {
               onClose={() => setOpenedGalleryImage(null)}
             />
           )}
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   )
