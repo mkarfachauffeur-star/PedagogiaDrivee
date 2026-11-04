@@ -535,13 +535,13 @@ const vehicleOrgansModule = {
 const vehicleOrgansDashboardQuestions = [
   createRandomizedQuestion(
     'Que signifie ce voyant ?',
-    'Il signale un manque d’huile moteur (danger pour le moteur).',
+    'Il signale une pression d’huile insuffisante : il faut s’arrêter dès que possible.',
     [
-      'Il signale que le niveau d’huile est normal',
-      'Il signale que le moteur surchauffe.',
+      'Il signale que le réservoir de carburant est presque vide.',
       'Il indique un manque de liquide lave-glace.',
+      'Il signale que les feux de position sont allumés.',
     ],
-    'Un manque d’huile peut endommager gravement le moteur : arrêt sécurisé dès que possible.',
+    'Ce voyant rouge (burette d’huile) signale un défaut de pression d’huile : arrêtez-vous en sécurité et coupez le moteur pour ne pas l’endommager.',
     'oil-pressure',
   ),
   createRandomizedQuestion(
@@ -712,7 +712,7 @@ const vehicleOrgansQuestions = [
     question: 'Quel élément du véhicule permet de voir derrière soi ?',
     choices: [
       'Les rétroviseurs',
-      'La caméra de recul',
+      'Le pare-soleil',
       'Le GPS du véhicule',
     ],
     answer: 0,
@@ -860,7 +860,7 @@ const drivingPositionQuestions = [
   {
     question: 'Pourquoi faut-il éviter de poser la main sur la vitre lors du réglage du rétroviseur intérieur ?',
     choices: [
-      'Cela peut salir la vitre',
+      'Cela allume le dégivrage arrière',
       'Cela dérègle automatiquement le siège',
       'Cela réduit la précision du réglage',
       'Cela incline le rétroviseur vers le bas',
@@ -1274,7 +1274,7 @@ const accelerationBrakingQuestions = [
   },
   {
     question: 'Quelle vitesse possède le plus de puissance moteur ?',
-    choices: ['La 5ème vitesse', 'La marche arrière uniquement', 'La vitesse la plus élevée', 'La 1ère vitesse'],
+    choices: ['La 5ème vitesse', 'La 3ème vitesse', 'La 4ème vitesse', 'La 1ère vitesse'],
     answer: 3,
     explanation: 'Plus la vitesse est petite, plus elle possède de puissance moteur : la 1ère est donc la plus puissante.',
   },
@@ -1401,9 +1401,9 @@ const gearboxQuestions = [
   ),
   createRandomizedQuestion(
     'Quel est le bon ordre pour monter une vitesse ?',
-    'Embrayer → changer le rapport → relâcher progressivement l’embrayage → accélérer',
-    ['Relâcher l’embrayage → changer la vitesse → accélérer', 'Accélérer fortement → changer la vitesse sans embrayer', 'Freiner → accélérer → changer le rapport'],
-    'Pour monter une vitesse, il faut embrayer à fond, changer le rapport, relâcher progressivement l’embrayage puis accélérer progressivement.',
+    'Lever le pied de l’accélérateur → débrayer à fond → changer le rapport → embrayer progressivement en accélérant',
+    ['Changer le rapport sans débrayer → accélérer fortement', 'Accélérer fortement → débrayer → changer le rapport', 'Freiner → accélérer → changer le rapport'],
+    'Pour monter une vitesse : lever le pied de l’accélérateur, débrayer à fond (pédale enfoncée), changer le rapport, puis embrayer progressivement en reprenant l’accélérateur.',
   ),
   createRandomizedQuestion(
     'Pourquoi faut-il relâcher progressivement l’embrayage après un changement de vitesse ?',
