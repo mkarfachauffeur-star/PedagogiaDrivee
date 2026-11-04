@@ -20,10 +20,10 @@ const VOYANT_QCU = {
   question: 'Que signifie ce voyant ?',
   iconType: 'oil-pressure',
   choices: [
-    'Il signale un manque d’huile moteur (danger pour le moteur).',
-    'Il signale que le niveau d’huile est normal.',
-    'Il signale que le moteur surchauffe.',
+    'Il signale une pression d’huile insuffisante : il faut s’arrêter dès que possible.',
+    'Il signale que le réservoir de carburant est presque vide.',
     'Il indique un manque de liquide lave-glace.',
+    'Il signale que les feux de position sont allumés.',
   ],
 }
 

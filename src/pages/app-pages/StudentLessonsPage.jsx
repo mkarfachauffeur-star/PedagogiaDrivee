@@ -1,5 +1,6 @@
-import { Car, CheckCircle2, Lock, XCircle } from 'lucide-react'
+import { Car, CarFront, CheckCircle2, Hand, Lock, MapPin, Settings2, TrendingUp, TriangleAlert, XCircle } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useRemcUnlock } from '../../hooks/useRemcUnlock'
 import { useClientPagination } from '../../hooks/useClientPagination'
@@ -7,6 +8,7 @@ import RemcLockedBanner from '../../components/remc/RemcLockedBanner'
 import PaginationBar from '../../components/ui/PaginationBar'
 import PageHeader from '../../components/ui/PageHeader'
 import { REMC_COMPETENCY_ORDER } from '../../data/remcCompetencies'
+import { COMPETENCY_2_LESSON_MODULES } from '../../data/lessonsCompetency2'
 import {
   fetchLessonModuleProgressMap,
   isQcuPassed,
@@ -19,16 +21,16 @@ import DashboardWarningIcon, { dashboardWarningLights } from '../../components/D
 import LessonImage from '../../components/ui/LessonImage'
 import ImageLightbox from '../../components/ui/ImageLightbox'
 import CollapsibleSection from '../../components/lessons/CollapsibleSection'
-import installationPosteConduiteImage from '../../assets/lessons/installation-poste-conduite.png'
-import vehicleOrgansDiagramImage from '../../assets/lessons/elements-essentiels-vehicule.png'
-import dashboardWarningLightsImage from '../../assets/lessons/voyants-tableau-de-bord.png'
-import steeringWheelGuideImage from '../../assets/lessons/tenir-tourner-volant.png'
-import startStopGuideImage from '../../assets/lessons/demarrer-arreter.png'
-import brakingTypesGuideImage from '../../assets/lessons/types-freinage.png'
-import doseAccelerationFreinageImage from '../../assets/lessons/doser-acceleration-freinage.png'
-import gearboxGuideImage from '../../assets/lessons/utiliser-boite-vitesses.png'
-import forwardReverseGuideImage from '../../assets/lessons/marche-avant-arriere.png'
-import observationWarningGuideImage from '../../assets/lessons/regarder-autour-avertir.png'
+import LessonInfographic from '../../components/lessons/LessonInfographic'
+import {
+  DRIVING_POSITION_INFOGRAPHIC,
+  FORWARD_REVERSE_INFOGRAPHIC,
+  GEARBOX_INFOGRAPHIC,
+  OBSERVATION_INFOGRAPHIC,
+  START_STOP_INFOGRAPHIC,
+  STEERING_WHEEL_INFOGRAPHIC,
+  VEHICLE_ORGANS_INFOGRAPHIC,
+} from '../../data/lessonInfographics'
 
 const competencies = [
   {
@@ -49,7 +51,7 @@ const competencies = [
     description: 'Observer, anticiper et adapter son allure',
     progress: 0,
     modulesStarted: 0,
-    remaining: 6,
+    remaining: 7,
     summary:
       'Travaillez l’observation, l’anticipation et l’adaptation de votre allure en environnement réel.',
   },
@@ -153,60 +155,13 @@ const subcompetenciesByCompetency = {
     },
   ],
   C2: [
-    {
-      id: 'SC2.1',
-      title: 'Rechercher la signalisation et les indices utiles',
-      description:
-        'Repérer panneaux, marquages, feux, comportements des usagers et indices annonçant un danger.',
-      accent: 'cyan',
-      video: 'Leçon',
-      qcm: 'À faire',
-    },
-    {
-      id: 'SC2.2',
-      title: 'Positionner le véhicule sur la chaussée',
-      description:
-        'Choisir sa voie, respecter les marquages et maintenir un placement adapté à la situation.',
-      accent: 'emerald',
-      video: '13 min',
-      qcm: 'À faire',
-    },
-    {
-      id: 'SC2.3',
-      title: 'Adapter son allure aux situations',
-      description:
-        'Ajuster sa vitesse selon visibilité, trafic, météo, signalisation et configuration des lieux.',
-      accent: 'amber',
-      video: '16 min',
-      qcm: 'À faire',
-    },
-    {
-      id: 'SC2.4',
-      title: 'Détecter et franchir les intersections',
-      description:
-        'Identifier les régimes de priorité et franchir une intersection avec observation et décision sûre.',
-      accent: 'violet',
-      video: '10 min',
-      qcm: 'À faire',
-    },
-    {
-      id: 'SC2.5',
-      title: 'Changer de direction',
-      description:
-        'Préparer, signaler et réaliser un changement de direction en conservant sécurité et placement.',
-      accent: 'rose',
-      video: '12 min',
-      qcm: 'À faire',
-    },
-    {
-      id: 'SC2.6',
-      title: 'Stationner et repartir',
-      description:
-        'Choisir un emplacement, stationner sans gêner et repartir après contrôles complets.',
-      accent: 'teal',
-      video: '18 min',
-      qcm: 'À faire',
-    },
+    { id: 'SC2.1', title: 'Rechercher la signalisation et les indices utiles', description: 'Repérer panneaux, marquages, feux et indices annonçant un danger.', accent: 'cyan', video: 'Leçon', qcm: 'À faire' },
+    { id: 'SC2.2', title: 'Positionner le véhicule et choisir sa voie', description: 'Circuler à droite, choisir sa voie et garder ses marges.', accent: 'emerald', video: 'Leçon', qcm: 'À faire' },
+    { id: 'SC2.3', title: 'Adapter son allure aux situations', description: 'Vitesses maximales, distance de sécurité et distance d’arrêt.', accent: 'amber', video: 'Leçon', qcm: 'À faire' },
+    { id: 'SC2.4', title: 'Détecter et franchir les intersections', description: 'Priorité à droite, STOP, cédez-le-passage et route prioritaire.', accent: 'violet', video: 'Leçon', qcm: 'À faire' },
+    { id: 'SC2.5', title: 'Tourner à droite et à gauche en agglomération', description: 'Observer, signaler, se placer et céder le passage.', accent: 'rose', video: 'Leçon', qcm: 'À faire' },
+    { id: 'SC2.6', title: 'Franchir les ronds-points et carrefours giratoires', description: 'Céder aux véhicules engagés, choisir sa voie et signaler sa sortie.', accent: 'teal', video: 'Leçon', qcm: 'À faire' },
+    { id: 'SC2.7', title: 'S’arrêter et stationner', description: 'Créneau, bataille, épi : se garer sans gêner et repartir en sécurité.', accent: 'cyan', video: 'Leçon', qcm: 'À faire' },
   ],
   C3: [
     {
@@ -449,15 +404,8 @@ const vehicleOrgansModule = {
   },
   summaryIntro:
     'Chaque point du schéma vous aide à repérer les commandes, les organes de sécurité et les vérifications indispensables avant de prendre la route.',
-  images: [
-    {
-      src: vehicleOrgansDiagramImage,
-      alt: 'Schéma pédagogique : les éléments essentiels du véhicule',
-      title: 'Les éléments essentiels du véhicule',
-      caption:
-        'Commandes, éléments extérieurs, témoins du tableau de bord, vérifications avant départ et visibilité : repères visuels avant de prendre la route.',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: VEHICLE_ORGANS_INFOGRAPHIC,
   summary: [
     {
       title: 'Le volant',
@@ -521,12 +469,6 @@ const vehicleOrgansModule = {
     title: 'Voyants importants du tableau de bord',
     intro:
       'Les couleurs orientent la conduite : rouge = danger immédiat, orange = contrôle à prévoir, bleu/vert = information. Retenez la signification de chaque témoin avant l’examen pratique.',
-    image: {
-      src: dashboardWarningLightsImage,
-      alt: 'Infographie : 10 voyants importants du tableau de bord',
-      caption:
-        'Dix témoins essentiels à reconnaître : pression d’huile, batterie, moteur, freinage, pneus, ceinture, feux, ABS et température.',
-    },
     lights: dashboardWarningLights,
   },
 }
@@ -534,21 +476,21 @@ const vehicleOrgansModule = {
 const vehicleOrgansDashboardQuestions = [
   createRandomizedQuestion(
     'Que signifie ce voyant ?',
-    'Il signale un manque d’huile moteur (danger pour le moteur).',
+    'Il signale une pression d’huile insuffisante : il faut s’arrêter dès que possible.',
     [
-      'Il signale que le niveau d’huile est normal',
-      'Il signale que le moteur surchauffe.',
+      'Il signale que le réservoir de carburant est presque vide.',
       'Il indique un manque de liquide lave-glace.',
+      'Il signale que les feux de position sont allumés.',
     ],
-    'Un manque d’huile peut endommager gravement le moteur : arrêt sécurisé dès que possible.',
+    'Ce voyant rouge (burette d’huile) signale un défaut de pression d’huile : arrêtez-vous en sécurité et coupez le moteur pour ne pas l’endommager.',
     'oil-pressure',
   ),
   createRandomizedQuestion(
     'Que signifie ce voyant ?',
     'Il signale un problème de batterie ou de charge.',
     [
-      'Signale l’activation du mode économie d’énergie du véhicule.',
-      'Indique que les bougies de préchauffage sont en fonctionnement.',
+      'Il signale que le coffre est ouvert.',
+      'Il signale que la radio est allumée.',
       'Signale que les feux de croisement sont allumés.',
     ],
     'Ce témoin concerne l’alternateur, la batterie ou le circuit de charge.',
@@ -556,7 +498,7 @@ const vehicleOrgansDashboardQuestions = [
   ),
   createRandomizedQuestion(
     'Que signifie ce voyant ?',
-    'Il signale un problème au moteur (injection, allumage ou antipollution).',
+    'Il signale un problème au moteur : il faut le faire contrôler.',
     [
       'Indique que le niveau de carburant est passé en réserve.',
       'Signale une panne au système de freinage.',
@@ -570,8 +512,8 @@ const vehicleOrgansDashboardQuestions = [
     'Indique que le frein de stationnement est activé ou qu’un problème de freinage est détecté.',
     [
       'Signale que les plaquettes de frein viennent d’être remplacées.',
-      'Indique l’activation de l’aide au démarrage en côte.',
-      'Signale une usure excessive des pneus arrière uniquement.',
+      'Il signale que les essuie-glaces sont usés.',
+      'Il signale que le réservoir est plein.',
     ],
     'Vérifiez le frein à main et l’état du circuit de freinage si le témoin reste allumé en roulant.',
     'parking-brake',
@@ -581,8 +523,8 @@ const vehicleOrgansDashboardQuestions = [
     'Indique une pression insuffisante dans un ou plusieurs pneus.',
     [
       'Signale qu’il faut équiper le véhicule de pneus hiver.',
-      'Indique un risque de verglas sur la chaussée.',
-      'Signale que les roues ne sont pas correctement alignées.',
+      'Il signale que le réservoir de carburant est vide.',
+      'Il signale que la portière est mal fermée.',
     ],
     'Une pression insuffisante réduit l’adhérence et allonge les distances de freinage.',
     'tire-pressure',
@@ -604,7 +546,7 @@ const vehicleOrgansDashboardQuestions = [
     [
       'Indique l’activation des feux de brouillard arrière.',
       'Signale que seuls les feux de position sont en service.',
-      'Indique que les feux de croisement sont en mode automatique.',
+      'Il signale que le moteur chauffe.',
     ],
     'Les feux de route améliorent la visibilité loin, mais peuvent éblouir : à couper face aux usagers.',
     'high-beam',
@@ -613,9 +555,9 @@ const vehicleOrgansDashboardQuestions = [
     'Que signifie ce voyant ?',
     'Indique l’activation des feux de croisement.',
     [
-      'Indique l’activation des feux de jour uniquement.',
-      'Signale que les feux de route sont en mode automatique permanent.',
-      'Indique que les feux de stationnement sont seuls allumés.',
+      'Il signale que la ceinture n’est pas bouclée.',
+      'Il signale une panne de batterie.',
+      'Il signale que les feux de détresse sont allumés.',
     ],
     'Les feux de croisement éclairent la route sans éblouir les autres usagers.',
     'low-beam',
@@ -625,7 +567,7 @@ const vehicleOrgansDashboardQuestions = [
     'Il signale un problème avec l’ABS (freinage antiblocage).',
     [
       'Il signale que le frein à main est serré.',
-      'Signale une usure avancée des disques de frein avant.',
+      'Il signale que le réservoir de carburant est presque vide.',
       'Il signale que les feux de route sont allumés.',
     ],
     'Sans ABS, le freinage reste possible mais le blocage des roues n’est plus évité.',
@@ -636,7 +578,7 @@ const vehicleOrgansDashboardQuestions = [
     'Indique une surchauffe du moteur.',
     [
       'Signale que le chauffage de l’habitacle est réglé au maximum.',
-      'Indique que le liquide lave-glace a atteint une température élevée.',
+      'Il signale que la vitre arrière est dégivrée.',
       'Signale que le niveau de carburant est bas.',
     ],
     'Une surchauffe impose un arrêt sécurisé pour protéger le moteur.',
@@ -650,7 +592,7 @@ const vehicleOrgansQuestions = [
     choices: [
       'Le frein',
       'La boîte de vitesses',
-      'Le système de refroidissement du moteur',
+      'Le klaxon',
     ],
     answer: 0,
     explanation: 'Le frein permet de ralentir et d’immobiliser le véhicule en sécurité.',
@@ -669,8 +611,8 @@ const vehicleOrgansQuestions = [
     question: 'À quoi sert l’embrayage ?',
     choices: [
       'À démarrer, s’arrêter, changer de vitesse et aider au frein moteur',
-      'Réguler automatiquement le régime moteur et corriger la trajectoire du véhicule',
-      'Maintenir la pression hydraulique du système de freinage',
+      'À allumer les phares',
+      'À tourner les roues',
     ],
     answer: 0,
     explanation:
@@ -700,8 +642,8 @@ const vehicleOrgansQuestions = [
   {
     question: 'Pourquoi l’état des pneus est-il essentiel pour la sécurité ?',
     choices: [
-      'Ils garantissent l’adhérence, la stabilité et l’efficacité du freinage',
-      'Ils compensent automatiquement les défauts de suspension du véhicule',
+      'Ils permettent de bien tenir la route et de bien freiner',
+      'Ils servent seulement à la décoration du véhicule',
       'Ils permettent uniquement d’économiser du carburant',
     ],
     answer: 0,
@@ -711,7 +653,7 @@ const vehicleOrgansQuestions = [
     question: 'Quel élément du véhicule permet de voir derrière soi ?',
     choices: [
       'Les rétroviseurs',
-      'La caméra de recul',
+      'Le pare-soleil',
       'Le GPS du véhicule',
     ],
     answer: 0,
@@ -722,7 +664,7 @@ const vehicleOrgansQuestions = [
     choices: [
       'Les essuie-glaces',
       'Les feux de route',
-      'Le système antiblocage des roues',
+      'Les feux de détresse',
     ],
     answer: 0,
     explanation: 'Les essuie-glaces permettent de conserver une bonne visibilité en cas de pluie.',
@@ -741,15 +683,8 @@ const drivingPositionModule = {
   },
   summaryIntro:
     'Chaque étape prépare le conducteur à agir avec précision, à anticiper la trajectoire et à garder une maîtrise sûre du véhicule.',
-  images: [
-    {
-      src: installationPosteConduiteImage,
-      alt: 'Schéma pédagogique : installation correcte au poste de conduite',
-      title: 'Installation correcte au poste de conduite',
-      caption:
-        'Repères visuels pour vérifier la position du siège, du dossier, des mains, des jambes, des pédales et des rétroviseurs.',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: DRIVING_POSITION_INFOGRAPHIC,
   summary: [
     {
       title: 'Réglage du siège en hauteur',
@@ -797,16 +732,16 @@ const drivingPositionModule = {
 
 const drivingPositionQuestions = [
   {
-    question: 'Quel est le bon ordre d’installation au poste de conduite ?',
+    question: 'Pourquoi règle-t-on les rétroviseurs après le siège ?',
     choices: [
-      'Ceinture → siège → rétroviseurs → volant',
-      'Volant → ceinture → siège → rétroviseurs',
-      'Siège → dossier → volant → rétroviseurs → ceinture',
-      'Rétroviseurs → siège → ceinture → volant',
+      'Parce qu’ils dépendent de la position du conducteur une fois installé',
+      'Parce que le siège se règle automatiquement avec les rétroviseurs',
+      'Parce qu’il est interdit de régler les rétroviseurs en premier',
+      'Parce que les rétroviseurs ne se règlent qu’en roulant',
     ],
-    answer: 2,
+    answer: 0,
     explanation:
-      'Il faut d’abord régler le siège, puis le dossier, le volant, les rétroviseurs et terminer par la ceinture.',
+      'Les rétroviseurs se règlent depuis la position de conduite définitive : si on déplace le siège ensuite, tout est à refaire.',
   },
   {
     question: 'Lors du réglage de l’avancement du siège sur une boîte manuelle, quel contrôle permet de vérifier la bonne distance ?',
@@ -859,7 +794,7 @@ const drivingPositionQuestions = [
   {
     question: 'Pourquoi faut-il éviter de poser la main sur la vitre lors du réglage du rétroviseur intérieur ?',
     choices: [
-      'Cela peut salir la vitre',
+      'Cela allume le dégivrage arrière',
       'Cela dérègle automatiquement le siège',
       'Cela réduit la précision du réglage',
       'Cela incline le rétroviseur vers le bas',
@@ -928,16 +863,8 @@ const steeringWheelModule = {
     kicker: 'Repère visuel',
     title: 'Tenir et tourner le volant',
   },
-  images: [
-    {
-      src: steeringWheelGuideImage,
-      alt: 'Infographie : position conseillée 9h15 et positions déconseillées sur le volant',
-      title: 'Tenir et tourner le volant',
-      caption:
-        'Position conseillée à 9h15, mains détendues et regard loin devant. Positions déconseillées : mains croisées, une seule main, mains en 12h ou trop basses.',
-      objectFit: 'contain',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: STEERING_WHEEL_INFOGRAPHIC,
   summary: [
     {
       title: 'Position des mains et regard',
@@ -997,10 +924,15 @@ const steeringWheelQuestions = [
     explanation: 'Dans une courbe, le conducteur peut voir la sortie ou le bout de la route.',
   },
   {
-    question: 'Quelle technique est utilisée dans une courbe ?',
-    choices: ['Chevauchement', 'Tirer-glisser', 'Maintien des mains', 'Rotation rapide'],
+    question: 'Dans une courbe légère, que font les mains sur le volant ?',
+    choices: [
+      'Elles se croisent sur le volant',
+      'Elles lâchent le volant à tour de rôle',
+      'Elles restent à leur place et accompagnent le volant',
+      'Une seule main tourne le volant',
+    ],
     answer: 2,
-    explanation: 'Pour une légère courbe, la technique utilisée est le maintien des mains.',
+    explanation: 'Dans une courbe légère, le faible angle de volant permet de garder les mains à leur place (9 h 15 ou 10 h 10).',
   },
   {
     question: 'La technique « tirer-glisser » sert surtout :',
@@ -1055,24 +987,8 @@ const startStopModule = {
   schemaSection: {
     kicker: 'Schémas et photos',
   },
-  images: [
-    {
-      src: startStopGuideImage,
-      alt: 'Infographie : démarrer et s’arrêter — conseils pratiques et erreurs à éviter',
-      title: 'Démarrer et s’arrêter',
-      caption:
-        'Conseils pratiques (démarrage en douceur, arrêt sécurisé, point de patinage) et gestes à éviter (embrayage brutal, commandes forcées, freinage brutal).',
-      objectFit: 'contain',
-    },
-    {
-      src: brakingTypesGuideImage,
-      alt: 'Infographie : types de freinage progressif et dégressif',
-      title: 'Types de freinage',
-      caption:
-        'Freinage progressif : pression qui augmente progressivement. Freinage dégressif : forte pression au début puis relâchement progressif.',
-      objectFit: 'contain',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: START_STOP_INFOGRAPHIC,
   summary: [
     {
       title: 'Démarrage sans accélérateur',
@@ -1127,8 +1043,8 @@ const startStopQuestions = [
     explanation: 'Le démarrage avec accélération se fait en trouvant le point de patinage, puis en accélérant légèrement.',
   },
   {
-    question: 'Le démarrage en côte sert surtout :',
-    choices: ['D’accélérer plus vite', 'D’éviter le recul du véhicule', 'De tourner plus facilement', 'D’utiliser moins les pédales'],
+    question: 'En démarrage en côte, la bonne technique sert à :',
+    choices: ['Accélérer plus vite', 'Empêcher la voiture de reculer', 'Tourner plus facilement', 'Utiliser moins les pédales'],
     answer: 1,
     explanation: 'Le démarrage en côte sert surtout à éviter le recul du véhicule.',
   },
@@ -1183,18 +1099,88 @@ const accelerationBrakingModule = {
   intro:
     'Le conducteur doit apprendre à doser correctement les pédales afin de conduire avec souplesse, précision et sécurité. Chaque pédale possède un rôle précis : embrayage, frein et accélérateur. Les pieds doivent être utilisés avec douceur afin d’éviter les à-coups, le calage et les freinages brusques.',
   schemaSection: {
-    kicker: 'Schémas et photos',
+    kicker: 'Fiche récapitulative',
+    title: 'Démarrer et freiner',
   },
-  images: [
-    {
-      src: doseAccelerationFreinageImage,
-      alt: 'Infographie : doser l’accélération et le freinage — démarrages, freinages et conseils',
-      title: 'Doser l’accélération et le freinage',
-      caption:
-        'Démarrages (sans accélérateur, avec accélération, en côte), freinages (progressif, dégressif, urgence) et conseils de sécurité.',
-      objectFit: 'contain',
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: {
+    title: 'Doser l’accélération et le freinage',
+    subtitle: 'Conduite souple, sûre et économique',
+    sections: [
+      {
+        title: 'Démarrages',
+        tone: 'blue',
+        items: [
+          {
+            number: 1,
+            title: 'Démarrage sans accélérateur',
+            lines: [
+              { icon: MapPin, label: 'Quand', text: 'Sur un parking, en manœuvre et à très faible allure.' },
+              { icon: Settings2, label: 'Pédales', text: 'Embrayage et frein.' },
+              { icon: TrendingUp, label: 'Geste', text: 'Lever doucement l’embrayage jusqu’au point de patinage.' },
+            ],
+          },
+          {
+            number: 2,
+            title: 'Démarrage avec accélération',
+            lines: [
+              { icon: MapPin, label: 'Quand', text: 'Sur la route, aux feux, aux stops et dans la circulation.' },
+              { icon: Settings2, label: 'Pédales', text: 'Embrayage, point de patinage et légère accélération.' },
+              { icon: TrendingUp, label: 'Geste', text: 'Relâcher doucement l’embrayage en accélérant un peu.' },
+            ],
+          },
+          {
+            number: 3,
+            title: 'Démarrage en côte',
+            lines: [
+              { icon: MapPin, label: 'Quand', text: 'Pour ne pas reculer dans une montée.' },
+              { icon: Settings2, label: 'Pédales', text: 'Frein à main et embrayage, ou frein et embrayage.' },
+              { icon: TrendingUp, label: 'Geste', text: 'Trouver le point de patinage, accélérer un peu, puis relâcher doucement le frein et l’embrayage.' },
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Freinages',
+        tone: 'rose',
+        items: [
+          {
+            number: 4,
+            title: 'Freinage progressif',
+            lines: [
+              { icon: Hand, label: 'Geste', text: 'Freiner doucement au début, puis appuyer de plus en plus.' },
+              { icon: CarFront, label: 'Résultat', text: 'Ralentissement confortable, sans à-coup.' },
+            ],
+          },
+          {
+            number: 5,
+            title: 'Freinage dégressif',
+            lines: [
+              { icon: Hand, label: 'Geste', text: 'Freiner fort au début, puis relâcher petit à petit.' },
+              { icon: CarFront, label: 'Résultat', text: 'Arrêt précis, stable et confortable.' },
+            ],
+          },
+          {
+            number: 6,
+            title: 'Freinage d’urgence',
+            lines: [
+              { icon: TriangleAlert, label: 'Quand', text: 'En cas de danger immédiat.' },
+              { icon: Settings2, label: 'Geste', text: 'Freiner et débrayer à fond, en gardant le contrôle du volant.' },
+            ],
+          },
+        ],
+      },
+    ],
+    tips: {
+      title: 'Conseils de sécurité',
+      items: [
+        'Choisir le bon démarrage selon la situation : parking, circulation, feu, stop ou côte.',
+        'Chercher le point de patinage en douceur pour éviter les à-coups et le calage.',
+        'En côte, bien tenir le point de patinage pour que le véhicule ne recule pas.',
+        'En freinage d’urgence, freiner et débrayer à fond en gardant le volant bien en main.',
+      ],
     },
-  ],
+  },
   summary: [
     {
       title: 'Le rôle de l’embrayage',
@@ -1254,8 +1240,8 @@ const accelerationBrakingQuestions = [
     explanation: 'L’embrayage permet au véhicule d’avancer grâce au point de patinage.',
   },
   {
-    question: 'L’embrayage sert surtout :',
-    choices: ['D’allumer les feux', 'De démarrer, s’arrêter et changer les vitesses', 'D’augmenter uniquement la vitesse', 'De tourner le volant'],
+    question: 'À quoi sert la pédale d’embrayage ?',
+    choices: ['À allumer les feux', 'À démarrer, s’arrêter et passer les vitesses', 'À augmenter la vitesse', 'À tourner le volant'],
     answer: 1,
     explanation: 'L’embrayage sert à démarrer, s’arrêter et changer les vitesses.',
   },
@@ -1267,19 +1253,19 @@ const accelerationBrakingQuestions = [
   },
   {
     question: 'Garder le pied sur l’embrayage peut :',
-    choices: ['Réduire la consommation', 'Faciliter le freinage', 'Provoquer une perte de contrôle sur la vitesse', 'Améliorer l’adhérence'],
+    choices: ['Réduire la consommation', 'Faciliter le freinage', 'Provoquer une perte de contrôle sur la vitesse', 'Allumer les feux'],
     answer: 2,
     explanation: 'Garder le pied sur l’embrayage peut provoquer une perte de contrôle du véhicule sur la vitesse.',
   },
   {
     question: 'Quelle vitesse possède le plus de puissance moteur ?',
-    choices: ['La 5ème vitesse', 'La marche arrière uniquement', 'La vitesse la plus élevée', 'La 1ère vitesse'],
+    choices: ['La 5ème vitesse', 'La 3ème vitesse', 'La 4ème vitesse', 'La 1ère vitesse'],
     answer: 3,
     explanation: 'Plus la vitesse est petite, plus elle possède de puissance moteur : la 1ère est donc la plus puissante.',
   },
   {
-    question: 'Le frein sert surtout :',
-    choices: ['D’accélérer', 'De ralentir ou s’arrêter', 'De changer les vitesses', 'De tourner plus facilement'],
+    question: 'À quoi sert la pédale de frein ?',
+    choices: ['À accélérer', 'À ralentir ou à s’arrêter', 'À passer les vitesses', 'À allumer les clignotants'],
     answer: 1,
     explanation: 'Le frein permet de ralentir, contrôler l’allure et s’arrêter.',
   },
@@ -1291,7 +1277,7 @@ const accelerationBrakingQuestions = [
   },
   {
     question: 'Une forte accélération peut :',
-    choices: ['Réduire la consommation', 'Faciliter le point de patinage', 'Provoquer des à-coups', 'Stabiliser automatiquement le véhicule'],
+    choices: ['Réduire la consommation', 'Faire moins de bruit', 'Provoquer des à-coups', 'Allumer les feux stop'],
     answer: 2,
     explanation: 'Une forte accélération peut provoquer des à-coups, surprendre les autres usagers et augmenter la consommation.',
   },
@@ -1318,16 +1304,8 @@ const gearboxModule = {
   schemaSection: {
     kicker: 'Schémas et photos',
   },
-  images: [
-    {
-      src: gearboxGuideImage,
-      alt: 'Infographie : utiliser la boîte de vitesses — rapports, passage des vitesses et conseils',
-      title: 'Utiliser la boîte de vitesses',
-      caption:
-        'Rôle de la boîte, schéma des rapports, passage des vitesses (débrayer, changer, embrayer), conseils pratiques et erreurs à éviter.',
-      objectFit: 'contain',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: GEARBOX_INFOGRAPHIC,
   summary: [
     {
       title: 'Rôle de la boîte de vitesse',
@@ -1383,13 +1361,13 @@ const gearboxQuestions = [
   createRandomizedQuestion(
     'Quel est le rôle principal de la boîte de vitesse ?',
     'Adapter la puissance du moteur à la vitesse et à la situation de circulation',
-    ['Augmenter automatiquement l’adhérence du véhicule', 'Remplacer le système de freinage', 'Stabiliser automatiquement la direction'],
+    ['Allumer les phares', 'Remplacer le système de freinage', 'Tourner les roues'],
     'La boîte de vitesse sert à adapter la puissance du moteur selon la vitesse du véhicule et la situation de circulation.',
   ),
   createRandomizedQuestion(
     'Pourquoi la 1ère vitesse possède-t-elle davantage de puissance moteur ?',
     'Parce que la 1ère vitesse envoie plus de force aux roues pour démarrer',
-    ['Parce qu’elle permet d’atteindre la vitesse maximale du véhicule', 'Parce qu’elle réduit totalement la consommation', 'Parce qu’elle utilise automatiquement le frein moteur'],
+    ['Parce qu’elle permet d’atteindre la vitesse maximale du véhicule', 'Parce qu’elle réduit totalement la consommation', 'Parce qu’elle allume les feux'],
     'La 1ère vitesse possède un rapport très court : elle donne plus de force aux roues pour démarrer ou avancer à faible allure.',
   ),
   createRandomizedQuestion(
@@ -1400,26 +1378,26 @@ const gearboxQuestions = [
   ),
   createRandomizedQuestion(
     'Quel est le bon ordre pour monter une vitesse ?',
-    'Embrayer → changer le rapport → relâcher progressivement l’embrayage → accélérer',
-    ['Relâcher l’embrayage → changer la vitesse → accélérer', 'Accélérer fortement → changer la vitesse sans embrayer', 'Freiner → accélérer → changer le rapport'],
-    'Pour monter une vitesse, il faut embrayer à fond, changer le rapport, relâcher progressivement l’embrayage puis accélérer progressivement.',
+    'Lever le pied de l’accélérateur → débrayer à fond → changer le rapport → embrayer progressivement en accélérant',
+    ['Changer le rapport sans débrayer → accélérer fortement', 'Accélérer fortement → débrayer → changer le rapport', 'Freiner → accélérer → changer le rapport'],
+    'Pour monter une vitesse : lever le pied de l’accélérateur, débrayer à fond (pédale enfoncée), changer le rapport, puis embrayer progressivement en reprenant l’accélérateur.',
   ),
   createRandomizedQuestion(
     'Pourquoi faut-il relâcher progressivement l’embrayage après un changement de vitesse ?',
     'Pour éviter les à-coups et garder le contrôle du véhicule',
-    ['Pour augmenter immédiatement la vitesse du moteur', 'Pour utiliser automatiquement le frein moteur', 'Pour accélérer sans changer de rapport'],
+    ['Pour augmenter immédiatement la vitesse du moteur', 'Pour faire plus de bruit', 'Pour accélérer sans changer de rapport'],
     'Un relâchement progressif évite les à-coups, limite le risque de calage et aide à garder le contrôle du véhicule.',
   ),
   createRandomizedQuestion(
     'Un moteur qui “hurle” indique généralement :',
-    'Un sur-régime moteur',
-    ['Un régime moteur adapté à la situation', 'Un sous-régime moteur', 'Une perte d’adhérence des pneus'],
+    'Un moteur qui tourne trop vite (sur-régime)',
+    ['Un moteur qui tourne normalement', 'Un moteur qui tourne trop lentement', 'Un pneu dégonflé'],
     'Un moteur qui hurle indique souvent un sur-régime : le rapport engagé est trop petit par rapport à l’allure.',
   ),
   createRandomizedQuestion(
-    'Le rétrogradage sert surtout :',
-    'D’utiliser le frein moteur et récupérer de la puissance',
-    ['D’augmenter rapidement la vitesse du véhicule', 'De supprimer l’effet de l’embrayage', 'De réduire automatiquement la consommation'],
+    'Le rétrogradage sert surtout à :',
+    'Utiliser le frein moteur et retrouver de la puissance',
+    ['Augmenter rapidement la vitesse', 'Allumer les feux stop', 'Réduire automatiquement la consommation'],
     'Le rétrogradage permet d’utiliser le frein moteur, de ralentir le véhicule et de récupérer de la puissance.',
   ),
   createRandomizedQuestion(
@@ -1431,7 +1409,7 @@ const gearboxQuestions = [
   createRandomizedQuestion(
     'Pourquoi le conducteur ne doit-il pas garder le pied sur l’embrayage ?',
     'Cela peut provoquer une usure prématurée et perturber le contrôle de la vitesse',
-    ['Cela bloque automatiquement le passage des vitesses', 'Cela empêche le moteur de fonctionner', 'Cela augmente uniquement le bruit moteur'],
+    ['Cela allume les feux de détresse', 'Cela empêche le moteur de fonctionner', 'Cela augmente uniquement le bruit moteur'],
     'Garder le pied sur l’embrayage peut user prématurément le mécanisme et perturber le contrôle de la vitesse.',
   ),
   createRandomizedQuestion(
@@ -1452,14 +1430,8 @@ const forwardReverseModule = {
     kicker: 'Schémas et photos',
     title: 'Marche avant et marche arrière',
   },
-  images: [
-    {
-      src: forwardReverseGuideImage,
-      alt: 'Infographie : diriger le véhicule en marche avant et en marche arrière — trajectoire, regard, rétroviseurs et points clés',
-      title: 'Marche avant et marche arrière',
-      objectFit: 'contain',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: FORWARD_REVERSE_INFOGRAPHIC,
   summary: [
     {
       title: 'La marche avant',
@@ -1519,15 +1491,15 @@ const forwardReverseQuestions = [
     'En marche arrière, les roues directrices restent à l’avant : le véhicule réagit différemment et la trajectoire devient plus délicate à contrôler.',
   ),
   createRandomizedQuestion(
-    'En marche avant, les roues directrices servent surtout :',
-    'De guider immédiatement la trajectoire du véhicule',
-    ['De stabiliser le moteur', 'D’augmenter automatiquement l’adhérence', 'De réduire les distances de freinage'],
+    'En marche avant, les roues directrices servent à :',
+    'Diriger la voiture',
+    ['Allumer les feux', 'Régler les rétroviseurs', 'Freiner la voiture'],
     'En marche avant, les roues directrices situées à l’avant orientent directement la trajectoire du véhicule.',
   ),
   createRandomizedQuestion(
     'Pourquoi un petit mouvement du volant peut-il avoir un effet important en marche arrière ?',
     'Parce qu’un petit tour de volant déplace beaucoup l’arrière du véhicule',
-    ['Parce que le moteur transmet plus de puissance', 'Parce que les roues arrière deviennent motrices', 'Parce que le rayon de braquage augmente automatiquement'],
+    ['Parce que le moteur transmet plus de puissance', 'Parce que les roues arrière deviennent motrices', 'Parce que le volant devient plus léger'],
     'En marche arrière, le véhicule réagit plus vite aux corrections et pivote autour de son arrière, ce qui amplifie les petits mouvements.',
   ),
   createRandomizedQuestion(
@@ -1551,20 +1523,20 @@ const forwardReverseQuestions = [
   createRandomizedQuestion(
     'Pourquoi regarder trop près du véhicule peut-il provoquer des erreurs de trajectoire ?',
     'Parce que le conducteur anticipe moins les déplacements du véhicule',
-    ['Parce que les roues deviennent moins réactives', 'Parce que le volant devient plus sensible', 'Parce que le frein moteur agit moins efficacement'],
+    ['Parce que les phares éclairent moins', 'Parce que le volant devient plus sensible', 'Parce que le moteur tourne moins vite'],
     'Regarder trop près limite l’anticipation et rend les corrections de trajectoire plus tardives.',
   ),
   createRandomizedQuestion(
     'En marche arrière, une allure faible permet surtout :',
     'De corriger plus facilement la trajectoire',
-    ['D’éviter d’utiliser l’embrayage', 'D’augmenter la puissance moteur', 'De réduire automatiquement le rayon de braquage'],
+    ['D’éviter d’utiliser l’embrayage', 'D’augmenter la puissance moteur', 'D’allumer les feux de recul'],
     'Une allure faible laisse le temps de contrôler, d’observer et de corriger la trajectoire avec précision.',
   ),
   createRandomizedQuestion(
-    'Que suit le véhicule quand vous conduisez ?',
-    'Le regard du conducteur',
-    ['Les mouvements du levier de vitesse', 'La position des pédales uniquement', 'Le rétroviseur intérieur'],
-    'Le véhicule suit généralement le regard du conducteur : regarder loin aide à guider la trajectoire.',
+    'Où le conducteur doit-il regarder pour garder une trajectoire précise ?',
+    'Loin, vers l’endroit où il veut aller',
+    ['Juste devant le capot', 'Sur le compteur de vitesse', 'Dans le rétroviseur intérieur'],
+    'Les mains suivent naturellement le regard : regarder loin, là où l’on veut aller, rend la trajectoire plus précise et plus stable.',
   ),
   createRandomizedQuestion(
     'Pour conserver une bonne maîtrise de la trajectoire, le conducteur doit :',
@@ -1584,14 +1556,8 @@ const observationWarningModule = {
     kicker: 'Schémas et photos',
     title: 'Regarder autour de soi et avertir',
   },
-  images: [
-    {
-      src: observationWarningGuideImage,
-      alt: 'Infographie : regarder autour de soi et avertir — observer, contrôler les rétroviseurs et angles morts, avertir en cas d’urgence, sécuriser chaque déplacement',
-      title: 'Regarder autour de soi et avertir',
-      objectFit: 'contain',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: OBSERVATION_INFOGRAPHIC,
   summary: [
     {
       title: 'Regarder autour',
@@ -1647,7 +1613,7 @@ const observationWarningQuestions = [
   createRandomizedQuestion(
     'Pourquoi le conducteur doit-il contrôler régulièrement ses rétroviseurs ?',
     'Pour surveiller l’environnement autour du véhicule et anticiper les situations',
-    ['Pour vérifier uniquement la vitesse des véhicules derrière', 'Pour éviter l’utilisation du volant', 'Pour maintenir automatiquement la trajectoire'],
+    ['Pour vérifier uniquement la vitesse des véhicules derrière', 'Pour éviter l’utilisation du volant', 'Pour régler la radio'],
     'Les rétroviseurs permettent de surveiller l’environnement autour du véhicule et d’anticiper les situations.',
   ),
   createRandomizedQuestion(
@@ -1697,10 +1663,10 @@ const observationWarningQuestions = [
     'Regarder uniquement devant soi fait perdre des informations importantes sur les côtés et à l’arrière du véhicule.',
   ),
   createRandomizedQuestion(
-    'L’avertisseur sonore doit être utilisé surtout :',
-    'En cas de danger immédiat',
-    ['Pour signaler une priorité', 'Pour prévenir d’un stationnement', 'Pour demander le passage aux intersections'],
-    'L’avertisseur sonore doit rester exceptionnel et servir surtout à prévenir un danger immédiat.',
+    'En agglomération, quand l’avertisseur sonore est-il autorisé ?',
+    'Seulement en cas de danger immédiat',
+    ['Pour saluer un autre conducteur', 'Pour faire avancer le véhicule de devant', 'Pour signaler que l’on veut se garer'],
+    'En agglomération, l’avertisseur sonore est réservé au danger immédiat. Hors agglomération, il peut aussi servir à signaler sa présence, de jour.',
   ),
   createRandomizedQuestion(
     'Pourquoi le regard doit-il être mobile et régulier ?',
@@ -1744,6 +1710,8 @@ const lessonModules = {
     ...observationWarningModule,
     questions: observationWarningQuestions,
   },
+  // Compétence 2 : un module par sous-compétence du REMC (C2a à C2g).
+  ...Object.fromEntries(COMPETENCY_2_LESSON_MODULES.map((module) => [module.id, module])),
 }
 
 function StatusPill({ label, value, complete }) {
@@ -1819,11 +1787,11 @@ function ChoiceButton({ checked, children, disabled, onClick, status }) {
         ? 'border-rose-300 bg-rose-50 text-rose-900 ring-2 ring-rose-100'
         : checked
           ? 'border-blue-300 bg-blue-50 text-blue-950 ring-2 ring-blue-100'
-          : 'border-white/80 bg-white/50 text-slate-700 hover:bg-white/75'
+          : 'border-slate-200 bg-white text-slate-800 hover:border-blue-300 hover:bg-blue-50/40'
 
   return (
     <button
-      className={`flex items-center gap-2 rounded-2xl border px-4 py-3 text-left text-sm font-medium backdrop-blur-md transition duration-200 active:scale-[0.98] ${statusClass}`}
+      className={`flex min-h-12 items-center gap-2 rounded-xl border px-4 py-3 text-left text-sm font-medium transition duration-200 active:scale-[0.98] ${statusClass}`}
       disabled={disabled}
       onClick={onClick}
       type="button"
@@ -1861,6 +1829,10 @@ export default function StudentLessonsPage() {
   const [moduleProgressById, setModuleProgressById] = useState(buildEmptyModuleProgress)
   const [expandedModuleIds, setExpandedModuleIds] = useState({})
   const lessonScrollRef = useRef(null)
+  // QCU : après une réponse, la correction et « Question suivante » peuvent tomber sous le
+  // bandeau du bas (surtout sur iPhone) ; on les amène à l'écran.
+  const quizFeedbackRef = useRef(null)
+  const quizQuestionRef = useRef(null)
   const activeCompetency =
     competencies.find((competency) => competency.id === activeCompetencyId) || competencies[0]
   const activeSubcompetencies = subcompetenciesByCompetency[activeCompetency.id] || []
@@ -2167,6 +2139,7 @@ export default function StudentLessonsPage() {
         [currentQuizIndex]: choiceIndex,
       },
     }))
+    window.setTimeout(() => quizFeedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 60)
   }
 
   const goToNextQuizQuestion = () => {
@@ -2179,6 +2152,7 @@ export default function StudentLessonsPage() {
       ...current,
       [openedModuleId]: currentQuizIndex + 1,
     }))
+    window.setTimeout(() => quizQuestionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60)
   }
 
   const progressValue = unlockState ? globalProgress : activeCompetency.progress
@@ -2361,10 +2335,11 @@ export default function StudentLessonsPage() {
         </section>
 
 
-      {openedModule && activeCompetencyUnlocked && (
+      {/* Rendue dans <body> : un parent animé ne doit pas la placer sous la barre du haut. */}
+      {openedModule && activeCompetencyUnlocked && createPortal(
         <div className="fixed inset-0 z-[120] flex items-center justify-center overflow-hidden bg-slate-900/20 backdrop-blur-md sm:p-5 lg:p-8">
-          <div className="lesson-glass flex h-full min-h-0 w-full max-w-[1200px] flex-col overflow-hidden rounded-none sm:h-[90vh] sm:max-h-[90vh] sm:rounded-xl">
-            <div className="shrink-0 border-b border-white/70 bg-white/40 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))] backdrop-blur-xl sm:p-5">
+          <div className="lesson-glass lesson-modal-panel flex h-full min-h-0 w-full max-w-[1200px] flex-col overflow-hidden rounded-none sm:h-[90vh] sm:max-h-[90vh] sm:rounded-xl">
+            <div className="shrink-0 border-b border-slate-100 bg-white px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))] sm:border-white/70 sm:bg-white/40 sm:p-5 sm:backdrop-blur-xl">
               <div className="flex flex-col justify-between gap-2.5 lg:flex-row lg:items-start">
                 <div className="min-w-0">
                   <p className="text-[11px] font-semibold text-sky-700/80">
@@ -2430,6 +2405,17 @@ export default function StudentLessonsPage() {
                     </p>
                   </CollapsibleSection>
 
+                  {openedLesson?.infographic && (
+                    <CollapsibleSection
+                      kicker={openedLesson.schemaSection?.kicker || 'Fiche récapitulative'}
+                      title={openedLesson.schemaSection?.title || openedLesson.infographic.title}
+                    >
+                      <div className="p-3 sm:p-4">
+                        <LessonInfographic infographic={openedLesson.infographic} />
+                      </div>
+                    </CollapsibleSection>
+                  )}
+
                   {openedLesson?.images?.length > 0 && (
                     <CollapsibleSection
                       kicker={openedLesson.schemaSection?.kicker || 'Illustrations'}
@@ -2476,30 +2462,6 @@ export default function StudentLessonsPage() {
                           {openedLesson.dashboardSection.intro}
                         </p>
                       </div>
-                      <button
-                        className="group block w-full text-left"
-                        onClick={() =>
-                          setOpenedGalleryImage({
-                            src: openedLesson.dashboardSection.image.src,
-                            alt: openedLesson.dashboardSection.image.alt,
-                            title: openedLesson.dashboardSection.title,
-                            caption: openedLesson.dashboardSection.image.caption,
-                          })
-                        }
-                        type="button"
-                      >
-                        <div className="aspect-[4/3] overflow-hidden bg-slate-50 sm:aspect-[16/10]">
-                          <LessonImage
-                            alt={openedLesson.dashboardSection.image.alt}
-                            className="h-full w-full object-contain p-3 transition duration-300 group-hover:scale-[1.01]"
-                            objectFit="contain"
-                            src={openedLesson.dashboardSection.image.src}
-                          />
-                        </div>
-                        <p className="border-t border-slate-200 px-4 py-3 text-sm font-semibold text-slate-500">
-                          {openedLesson.dashboardSection.image.caption}
-                        </p>
-                      </button>
                       <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2">
                         {openedLesson.dashboardSection.lights.map((light) => (
                           <article
@@ -2622,14 +2584,14 @@ export default function StudentLessonsPage() {
                 </aside>
               </div>
             ) : (
-              <div className="p-4 sm:p-5 lg:p-6">
+              <div className="px-4 py-4 sm:p-5 lg:p-6">
                 {openedLesson ? (
-                  <div className="rounded-xl border border-slate-300 bg-slate-50 p-4 md:p-5">
+                  <div className="sm:rounded-xl sm:border sm:border-slate-200 sm:bg-slate-50 sm:p-5">
                     <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                       <div>
                         <p className="text-sm font-semibold text-blue-700">QCU interactif</p>
-                        <h3 className="mt-2 text-2xl font-semibold text-slate-950">{openedLesson.title}</h3>
-                        <p className="mt-2 text-sm font-semibold text-slate-500">
+                        <h3 className="mt-1 text-xl font-semibold text-slate-950 sm:mt-2 sm:text-2xl">{openedLesson.title}</h3>
+                        <p className="mt-1 text-sm text-slate-500 sm:mt-2">
                           {getQuizIntro(openedLesson, quizDisplayTotal)}
                         </p>
                       </div>
@@ -2668,10 +2630,10 @@ export default function StudentLessonsPage() {
                           </p>
                         </article>
                       ) : currentQuizQuestion ? (
-                        <article className="mt-5 rounded-xl border border-white bg-white p-5 shadow-sm">
+                        <article className="mt-4 scroll-mt-4 sm:mt-5 sm:rounded-xl sm:border sm:border-white sm:bg-white sm:p-5 sm:shadow-sm" ref={quizQuestionRef}>
                           <div className="flex flex-wrap items-center justify-between gap-3">
                             <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-100">
-                              {currentQuizQuestion.iconType ? 'Témoin tableau de bord' : 'Question organes'}{' '}
+                              {currentQuizQuestion.iconType ? 'Témoin tableau de bord' : 'Question'}{' '}
                               {currentQuizIndex + 1}
                             </span>
                             <span className="text-xs font-semibold text-slate-400">
@@ -2720,7 +2682,8 @@ export default function StudentLessonsPage() {
                           </div>
                           {currentQuizAnswered && (
                             <div
-                              className={`mt-4 rounded-2xl border p-4 text-sm leading-6 ${
+                              ref={quizFeedbackRef}
+                              className={`mt-4 scroll-mb-4 rounded-2xl border p-4 text-sm leading-6 ${
                                 currentQuizAnswer === currentQuizQuestion.answer
                                   ? 'border-emerald-200 bg-emerald-50 text-emerald-950'
                                   : 'border-rose-200 bg-rose-50 text-rose-950'
@@ -2763,7 +2726,7 @@ export default function StudentLessonsPage() {
             )}
             </div>
             {moduleMode === 'quiz' && openedLesson && (
-              <div className="shrink-0 border-t border-white/60 bg-white/95 px-4 pt-4 shadow-[0_-18px_40px_rgba(15,23,42,0.08)] backdrop-blur-xl pb-[max(1rem,env(safe-area-inset-bottom,0px))] sm:p-5">
+              <div className="shrink-0 border-t border-slate-100 bg-white px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:border-white/60 sm:bg-white/95 sm:p-5 sm:shadow-[0_-18px_40px_rgba(15,23,42,0.08)] sm:backdrop-blur-xl">
                 {currentValidated ? (
                   <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
                     <div>
@@ -2793,11 +2756,12 @@ export default function StudentLessonsPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
-                    <p className="text-sm font-semibold text-slate-500">
-                      Répondez question par question. La question suivante apparaît uniquement après correction.
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-xs text-slate-500 sm:text-sm">
+                      <span className="sm:hidden">Une question à la fois · validation à la fin</span>
+                      <span className="hidden sm:inline">Répondez question par question. La question suivante apparaît uniquement après correction.</span>
                     </p>
-                    <span className="lesson-chip px-4 py-2 text-sm font-medium text-sky-800">
+                    <span className="hidden rounded-md bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 sm:inline-flex">
                       Validation automatique en fin de QCU
                     </span>
                   </div>
@@ -2811,7 +2775,8 @@ export default function StudentLessonsPage() {
               onClose={() => setOpenedGalleryImage(null)}
             />
           )}
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   )

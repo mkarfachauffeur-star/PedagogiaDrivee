@@ -1062,6 +1062,18 @@
     -webkit-backdrop-filter: blur(18px) saturate(1.25);
   }
 
+  /* Fenêtre Leçon / QCU sur téléphone (iOS, Android) : plein écran opaque, sans cadre. */
+  @media (max-width: 639px) {
+    .lesson-modal-panel {
+      border: 0;
+      border-radius: 0;
+      background: #fff;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+
   .lesson-chip {
     border-radius: 1.15rem;
     border: 1px solid rgba(255, 255, 255, 0.78);
