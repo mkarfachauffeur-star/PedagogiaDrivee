@@ -1,4 +1,4 @@
-import { Car, CheckCircle2, Lock, XCircle } from 'lucide-react'
+import { Car, CarFront, CheckCircle2, Hand, Lock, MapPin, Settings2, TrendingUp, TriangleAlert, XCircle } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useAuth } from '../../context/AuthContext'
@@ -21,13 +21,13 @@ import DashboardWarningIcon, { dashboardWarningLights } from '../../components/D
 import LessonImage from '../../components/ui/LessonImage'
 import ImageLightbox from '../../components/ui/ImageLightbox'
 import CollapsibleSection from '../../components/lessons/CollapsibleSection'
+import LessonInfographic from '../../components/lessons/LessonInfographic'
 import installationPosteConduiteImage from '../../assets/lessons/installation-poste-conduite.png'
 import vehicleOrgansDiagramImage from '../../assets/lessons/elements-essentiels-vehicule.png'
 import dashboardWarningLightsImage from '../../assets/lessons/voyants-tableau-de-bord.png'
 import steeringWheelGuideImage from '../../assets/lessons/tenir-tourner-volant.png'
 import startStopGuideImage from '../../assets/lessons/demarrer-arreter.png'
 import brakingTypesGuideImage from '../../assets/lessons/types-freinage.png'
-import doseAccelerationFreinageImage from '../../assets/lessons/doser-acceleration-freinage.png'
 import gearboxGuideImage from '../../assets/lessons/utiliser-boite-vitesses.png'
 import forwardReverseGuideImage from '../../assets/lessons/marche-avant-arriere.png'
 import observationWarningGuideImage from '../../assets/lessons/regarder-autour-avertir.png'
@@ -1143,18 +1143,88 @@ const accelerationBrakingModule = {
   intro:
     'Le conducteur doit apprendre à doser correctement les pédales afin de conduire avec souplesse, précision et sécurité. Chaque pédale possède un rôle précis : embrayage, frein et accélérateur. Les pieds doivent être utilisés avec douceur afin d’éviter les à-coups, le calage et les freinages brusques.',
   schemaSection: {
-    kicker: 'Schémas et photos',
+    kicker: 'Fiche récapitulative',
+    title: 'Démarrer et freiner',
   },
-  images: [
-    {
-      src: doseAccelerationFreinageImage,
-      alt: 'Infographie : doser l’accélération et le freinage — démarrages, freinages et conseils',
-      title: 'Doser l’accélération et le freinage',
-      caption:
-        'Démarrages (sans accélérateur, avec accélération, en côte), freinages (progressif, dégressif, urgence) et conseils de sécurité.',
-      objectFit: 'contain',
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: {
+    title: 'Doser l’accélération et le freinage',
+    subtitle: 'Conduite souple, sûre et économique',
+    sections: [
+      {
+        title: 'Démarrages',
+        tone: 'blue',
+        items: [
+          {
+            number: 1,
+            title: 'Démarrage sans accélérateur',
+            lines: [
+              { icon: MapPin, label: 'Quand', text: 'Sur un parking, en manœuvre et à très faible allure.' },
+              { icon: Settings2, label: 'Pédales', text: 'Embrayage et frein.' },
+              { icon: TrendingUp, label: 'Geste', text: 'Lever doucement l’embrayage jusqu’au point de patinage.' },
+            ],
+          },
+          {
+            number: 2,
+            title: 'Démarrage avec accélération',
+            lines: [
+              { icon: MapPin, label: 'Quand', text: 'Sur la route, aux feux, aux stops et dans la circulation.' },
+              { icon: Settings2, label: 'Pédales', text: 'Embrayage, point de patinage et légère accélération.' },
+              { icon: TrendingUp, label: 'Geste', text: 'Relâcher doucement l’embrayage en accélérant un peu.' },
+            ],
+          },
+          {
+            number: 3,
+            title: 'Démarrage en côte',
+            lines: [
+              { icon: MapPin, label: 'Quand', text: 'Pour ne pas reculer dans une montée.' },
+              { icon: Settings2, label: 'Pédales', text: 'Frein à main et embrayage, ou frein et embrayage.' },
+              { icon: TrendingUp, label: 'Geste', text: 'Trouver le point de patinage, accélérer un peu, puis relâcher doucement le frein et l’embrayage.' },
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Freinages',
+        tone: 'rose',
+        items: [
+          {
+            number: 4,
+            title: 'Freinage progressif',
+            lines: [
+              { icon: Hand, label: 'Geste', text: 'Freiner doucement au début, puis appuyer de plus en plus.' },
+              { icon: CarFront, label: 'Résultat', text: 'Ralentissement confortable, sans à-coup.' },
+            ],
+          },
+          {
+            number: 5,
+            title: 'Freinage dégressif',
+            lines: [
+              { icon: Hand, label: 'Geste', text: 'Freiner fort au début, puis relâcher petit à petit.' },
+              { icon: CarFront, label: 'Résultat', text: 'Arrêt précis, stable et confortable.' },
+            ],
+          },
+          {
+            number: 6,
+            title: 'Freinage d’urgence',
+            lines: [
+              { icon: TriangleAlert, label: 'Quand', text: 'En cas de danger immédiat.' },
+              { icon: Settings2, label: 'Geste', text: 'Freiner et débrayer à fond, en gardant le contrôle du volant.' },
+            ],
+          },
+        ],
+      },
+    ],
+    tips: {
+      title: 'Conseils de sécurité',
+      items: [
+        'Choisir le bon démarrage selon la situation : parking, circulation, feu, stop ou côte.',
+        'Chercher le point de patinage en douceur pour éviter les à-coups et le calage.',
+        'En côte, bien tenir le véhicule pour qu’il ne recule pas.',
+        'En freinage d’urgence, freiner et débrayer à fond en gardant le volant bien en main.',
+      ],
     },
-  ],
+  },
   summary: [
     {
       title: 'Le rôle de l’embrayage',
@@ -2398,6 +2468,17 @@ export default function StudentLessonsPage() {
                       {openedLesson?.intro || 'Ce module ouvre une fiche pédagogique complète avec objectifs, supports visuels et validation progressive.'}
                     </p>
                   </CollapsibleSection>
+
+                  {openedLesson?.infographic && (
+                    <CollapsibleSection
+                      kicker={openedLesson.schemaSection?.kicker || 'Fiche récapitulative'}
+                      title={openedLesson.schemaSection?.title || openedLesson.infographic.title}
+                    >
+                      <div className="p-3 sm:p-4">
+                        <LessonInfographic infographic={openedLesson.infographic} />
+                      </div>
+                    </CollapsibleSection>
+                  )}
 
                   {openedLesson?.images?.length > 0 && (
                     <CollapsibleSection
