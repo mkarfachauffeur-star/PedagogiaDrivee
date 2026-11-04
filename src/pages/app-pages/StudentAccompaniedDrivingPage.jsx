@@ -71,12 +71,13 @@ export default function StudentAccompaniedDrivingPage() {
 
   return (
     <PageShell>
-      <PageHeader description="Vos kilomètres, vos trajets et vos rendez-vous pédagogiques." title="Conduite accompagnée" />
+      <PageHeader description="Vos kilomètres et vos rendez-vous pédagogiques." title="Conduite accompagnée" />
       <AacPanel
         birthDate={student.birthDate}
         mode="student"
         organizationId={student.organizationId}
         senderName={formatPersonName(profile || student)}
+        showTrips={false}
         studentId={student.id}
         userId={user?.id}
       />

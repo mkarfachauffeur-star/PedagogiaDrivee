@@ -817,20 +817,21 @@ export default function AacPanel({
       </section>
 
       {!isStaff && (
-        <section className="aac-rec relative overflow-hidden rounded-xl border border-sky-400/25 bg-gradient-to-br from-[#081a33] via-[#0b2a52] to-[#103a75] p-4 text-white shadow-[0_24px_60px_rgba(6,20,50,0.45)] sm:p-5">
+        <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h3 className="text-base font-semibold text-white">Enregistrer un trajet</h3>
+            <h3 className="text-base font-semibold text-slate-900">Enregistrer un trajet</h3>
             {tripActive && (
-              <span className="rounded-full border border-emerald-300/40 bg-emerald-400/15 px-3 py-1 text-xs font-medium text-emerald-200">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">
+                <span aria-hidden="true" className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
                 En cours
               </span>
             )}
           </div>
-          <p className="mt-1 text-sm leading-6 text-sky-100/70">
+          <p className="mt-1 text-sm leading-6 text-slate-500">
             Le relevé continue si le téléphone est verrouillé. Il s’arrête quand vous terminez le trajet.
           </p>
 
-          <div className={`mt-3 rounded-2xl border px-4 py-3 text-sm leading-6 ${gpsStatusClass(gpsStatus)}`} role="status">
+          <div className={`mt-3 rounded-lg border px-3 py-2.5 text-sm leading-6 ${gpsStatusClass(gpsStatus)}`} role="status">
             <p>{LOCATION_STATUS_MESSAGES[gpsStatus] || LOCATION_STATUS_MESSAGES.prompt}</p>
             {tripActive && locationScope === 'whenInUse' && (
               <p className="mt-2 text-xs">
@@ -844,7 +845,7 @@ export default function AacPanel({
             )}
             {canOpenLocationSettings() && ['denied', 'restricted', 'servicesDisabled', 'reducedAccuracy'].includes(gpsStatus) && (
               <button
-                className="mt-3 rounded-xl border border-sky-300/40 bg-sky-400/15 px-3 py-2 text-sm font-semibold text-sky-100 transition hover:bg-sky-400/25"
+                className="mt-2 inline-flex h-9 items-center rounded-lg border border-current/20 bg-white px-3 text-sm font-medium transition hover:bg-white/70"
                 onClick={openLocationSettings}
                 type="button"
               >
@@ -854,9 +855,9 @@ export default function AacPanel({
           </div>
 
           <fieldset className="mt-5">
-            <legend className="text-base font-semibold text-white">Critères de conduite</legend>
-            <p className="mt-1 text-sm text-sky-100/70">Facultatif. Plusieurs critères peuvent être choisis.</p>
-            <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-3">
+            <legend className="text-sm font-semibold text-slate-900">Critères de conduite</legend>
+            <p className="mt-0.5 text-xs text-slate-500">Facultatif. Plusieurs choix possibles.</p>
+            <div className="mt-3 flex flex-wrap gap-2">
               {AAC_DRIVING_CONDITIONS.map((item) => (
                 <DrivingCriterionCard
                   id={item.id}
@@ -869,37 +870,40 @@ export default function AacPanel({
             </div>
           </fieldset>
 
-          <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <button
-              className="touch-manipulation rounded-xl bg-gradient-to-r from-sky-400 to-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_28px_rgba(56,132,244,0.35)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
-              disabled={saving || tripActive}
-              onClick={handleStartTrip}
-              type="button"
-            >
-              {saving ? 'Acquisition GPS…' : 'Démarrer le trajet'}
-            </button>
-            <button
-              className="aac-btn-stop touch-manipulation px-5 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-40"
-              disabled={stopBusy || !tripActive}
-              onClick={handleStopTrip}
-              type="button"
-            >
-              {stopBusy ? 'Arrêt du trajet…' : 'Arrêter le trajet'}
-            </button>
-          </div>
-
           {tripActive && (
-            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <div className="mt-5 grid grid-cols-3 gap-2">
               <KpiLight label="Distance" value={`${formatKm(liveKm)} km`} />
               <KpiLight label="Durée" value={formatDuration(elapsed)} />
               <KpiLight label="Positions" value={String(livePoints.length)} />
             </div>
           )}
 
+          <div className="mt-5">
+            {tripActive ? (
+              <button
+                className="inline-flex h-12 w-full touch-manipulation items-center justify-center rounded-lg bg-rose-600 px-5 text-sm font-semibold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={stopBusy}
+                onClick={handleStopTrip}
+                type="button"
+              >
+                {stopBusy ? 'Arrêt du trajet…' : 'Arrêter le trajet'}
+              </button>
+            ) : (
+              <button
+                className="inline-flex h-12 w-full touch-manipulation items-center justify-center rounded-lg bg-[#1769FF] px-5 text-sm font-semibold text-white transition hover:bg-[#145fe8] disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={saving}
+                onClick={handleStartTrip}
+                type="button"
+              >
+                {saving ? 'Acquisition GPS…' : 'Démarrer le trajet'}
+              </button>
+            )}
+          </div>
+
           {lastTripSummary && (
-            <div className="mt-5 border-t border-white/10 pt-4">
-              <p className="mb-3 text-sm text-sky-100/70">Dernier trajet</p>
-              <TripRecap dark trip={lastTripSummary} />
+            <div className="mt-5 border-t border-slate-100 pt-4">
+              <p className="mb-2 text-xs font-medium text-slate-500">Dernier trajet</p>
+              <TripRecap trip={lastTripSummary} />
             </div>
           )}
         </section>
@@ -990,9 +994,9 @@ export default function AacPanel({
 
 function KpiLight({ label, value }) {
   return (
-    <div className="lesson-chip px-3 py-2.5">
-      <p className="text-lg font-semibold tabular-nums text-white">{value}</p>
-      <p className="text-xs text-sky-200/70">{label}</p>
+    <div className="rounded-lg bg-slate-50 px-3 py-2.5 text-center ring-1 ring-slate-100">
+      <p className="text-base font-semibold tabular-nums text-slate-900">{value}</p>
+      <p className="text-xs text-slate-500">{label}</p>
     </div>
   )
 }
@@ -1181,15 +1185,15 @@ function mergeGpsPoints(...groups) {
 
 function gpsStatusClass(status) {
   if (status === 'tracking' || status === 'background' || status === 'ready' || status === 'granted') {
-    return 'border-emerald-300/40 bg-emerald-400/15 text-emerald-100'
+    return 'border-emerald-200 bg-emerald-50 text-emerald-800'
   }
   if (status === 'paused' || status === 'acquiring' || status === 'weak' || status === 'timeout' || status === 'inaccurate') {
-    return 'border-amber-300/40 bg-amber-400/15 text-amber-100'
+    return 'border-amber-200 bg-amber-50 text-amber-800'
   }
   if (status === 'denied' || status === 'restricted' || status === 'servicesDisabled' || status === 'unavailable' || status === 'reducedAccuracy') {
-    return 'border-rose-300/40 bg-rose-400/15 text-rose-100'
+    return 'border-rose-200 bg-rose-50 text-rose-800'
   }
-  return 'border-white/15 bg-white/5 text-sky-50'
+  return 'border-slate-200 bg-slate-50 text-slate-700'
 }
 
 function formatClock(value) {
@@ -1206,7 +1210,7 @@ function formatTripDate(value) {
   return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
-function TripRecap({ trip, dark = false }) {
+function TripRecap({ trip }) {
   const done = new Set((trip.mandatoryRvp || []).map(Number))
   const extras = trip.extraRvp || []
   const conditions = trip.drivingConditions || []
@@ -1220,16 +1224,16 @@ function TripRecap({ trip, dark = false }) {
     <article className="flex min-w-0 flex-col gap-3">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0">
-        <p className={`text-sm font-semibold ${dark ? 'text-white' : 'text-slate-900'}`}>
+        <p className={`text-sm font-semibold text-slate-900`}>
           <span className="tabular-nums">{formatKm(trip.distanceKm)} km</span>
-          <span className={`font-normal ${dark ? 'text-sky-400/50' : 'text-slate-300'}`}> · </span>
-          <span className={`font-medium ${dark ? 'text-sky-100/80' : 'text-slate-700'}`}>{formatDuration(trip.durationSeconds)}</span>
+          <span className={`font-normal text-slate-300`}> · </span>
+          <span className={`font-medium text-slate-700`}>{formatDuration(trip.durationSeconds)}</span>
         </p>
         {tags.length > 0 && (
           <ul className="mt-2 flex flex-wrap gap-1.5">
             {tags.map((tag, index) => (
               <li
-                className={`rounded-full border px-2.5 py-0.5 text-xs ${dark ? 'border-white/15 bg-white/10 text-sky-100' : 'border-white/80 bg-white/60 text-sky-900/80'}`}
+                className={`rounded-full border px-2.5 py-0.5 text-xs border-slate-200 bg-slate-50 text-slate-600`}
                 key={`${tag}-${index}`}
               >
                 {tag}
@@ -1238,9 +1242,9 @@ function TripRecap({ trip, dark = false }) {
           </ul>
         )}
       </div>
-      <p className={`shrink-0 text-xs tabular-nums leading-5 sm:text-right ${dark ? 'text-sky-100/60' : 'text-slate-500'}`}>
+      <p className={`shrink-0 text-xs tabular-nums leading-5 sm:text-right text-slate-500`}>
         {formatTripDate(trip.startedAt)}
-        <span className={`mx-1.5 ${dark ? 'text-sky-400/50' : 'text-slate-300'}`}>·</span>
+        <span className={`mx-1.5 text-slate-300`}>·</span>
         {formatClock(trip.startedAt)} – {formatClock(trip.endedAt)}
       </p>
       </div>
@@ -1249,38 +1253,34 @@ function TripRecap({ trip, dark = false }) {
 }
 
 const DRIVING_CRITERIA_LOOK = {
-  nuit: { icon: Moon, tone: 'nuit', deco: 'stars' },
-  pluie: { icon: CloudRain, tone: 'pluie', deco: 'drops' },
-  autoroute: { icon: Route, tone: 'autoroute' },
-  voie_rapide: { icon: Gauge, tone: 'voie' },
-  agglomeration: { icon: Building2, tone: 'ville' },
-  hors_agglomeration: { icon: Trees, tone: 'campagne' },
-  circulation_dense: { icon: TrafficCone, tone: 'dense' },
-  mauvais_temps: { icon: CloudLightning, tone: 'orage' },
-  conditions_difficiles: { icon: Mountain, tone: 'relief' },
+  nuit: { icon: Moon, color: 'text-indigo-500', short: 'Nuit' },
+  pluie: { icon: CloudRain, color: 'text-sky-600', short: 'Pluie' },
+  autoroute: { icon: Route, color: 'text-slate-600', short: 'Autoroute' },
+  voie_rapide: { icon: Gauge, color: 'text-cyan-600', short: 'Voie rapide' },
+  agglomeration: { icon: Building2, color: 'text-orange-600', short: 'Agglomération' },
+  hors_agglomeration: { icon: Trees, color: 'text-green-700', short: 'Hors agglomération' },
+  circulation_dense: { icon: TrafficCone, color: 'text-amber-600', short: 'Circulation dense' },
+  mauvais_temps: { icon: CloudLightning, color: 'text-rose-600', short: 'Mauvais temps' },
+  conditions_difficiles: { icon: Mountain, color: 'text-teal-700', short: 'Conditions difficiles' },
 }
 
 function DrivingCriterionCard({ id, label, selected, onToggle }) {
-  const look = DRIVING_CRITERIA_LOOK[id] || { icon: CloudRain, tone: 'pluie' }
+  const look = DRIVING_CRITERIA_LOOK[id] || { icon: CloudRain, color: 'text-sky-600' }
   const Icon = look.icon
   return (
     <button
+      aria-label={label}
       aria-pressed={selected}
-      className={`aac-criterion aac-criterion--${look.tone}${selected ? ' is-selected' : ''}`}
+      className={`inline-flex min-h-10 touch-manipulation items-center gap-2 rounded-full border px-3.5 py-2 text-sm transition active:scale-[0.97] ${
+        selected
+          ? 'border-[#1769FF] bg-[#1769FF] font-medium text-white'
+          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+      }`}
       onClick={onToggle}
       type="button"
     >
-      <span className="aac-criterion__mark" aria-hidden="true">{selected ? '✓' : ''}</span>
-      {look.deco === 'drops' && (
-        <span className="aac-criterion__drops" aria-hidden="true"><i /><i /><i /></span>
-      )}
-      {look.deco === 'stars' && (
-        <span className="aac-criterion__stars" aria-hidden="true"><i /><i /><i /></span>
-      )}
-      <span className="aac-criterion__icon" aria-hidden="true">
-        <Icon className="h-4 w-4" strokeWidth={1.75} />
-      </span>
-      <span className="aac-criterion__label">{label}</span>
+      <Icon aria-hidden="true" className={`h-4 w-4 shrink-0 ${selected ? 'text-white' : look.color}`} strokeWidth={1.75} />
+      <span className="leading-5">{look.short || label}</span>
     </button>
   )
 }
