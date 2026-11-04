@@ -1819,11 +1819,11 @@ function ChoiceButton({ checked, children, disabled, onClick, status }) {
         ? 'border-rose-300 bg-rose-50 text-rose-900 ring-2 ring-rose-100'
         : checked
           ? 'border-blue-300 bg-blue-50 text-blue-950 ring-2 ring-blue-100'
-          : 'border-white/80 bg-white/50 text-slate-700 hover:bg-white/75'
+          : 'border-slate-200 bg-white text-slate-800 hover:border-blue-300 hover:bg-blue-50/40'
 
   return (
     <button
-      className={`flex items-center gap-2 rounded-2xl border px-4 py-3 text-left text-sm font-medium backdrop-blur-md transition duration-200 active:scale-[0.98] ${statusClass}`}
+      className={`flex min-h-12 items-center gap-2 rounded-xl border px-4 py-3 text-left text-sm font-medium transition duration-200 active:scale-[0.98] ${statusClass}`}
       disabled={disabled}
       onClick={onClick}
       type="button"
@@ -1861,6 +1861,10 @@ export default function StudentLessonsPage() {
   const [moduleProgressById, setModuleProgressById] = useState(buildEmptyModuleProgress)
   const [expandedModuleIds, setExpandedModuleIds] = useState({})
   const lessonScrollRef = useRef(null)
+  // QCU : après une réponse, la correction et « Question suivante » peuvent tomber sous le
+  // bandeau du bas (surtout sur iPhone) ; on les amène à l'écran.
+  const quizFeedbackRef = useRef(null)
+  const quizQuestionRef = useRef(null)
   const activeCompetency =
     competencies.find((competency) => competency.id === activeCompetencyId) || competencies[0]
   const activeSubcompetencies = subcompetenciesByCompetency[activeCompetency.id] || []
@@ -2167,6 +2171,7 @@ export default function StudentLessonsPage() {
         [currentQuizIndex]: choiceIndex,
       },
     }))
+    window.setTimeout(() => quizFeedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 60)
   }
 
   const goToNextQuizQuestion = () => {
@@ -2179,6 +2184,7 @@ export default function StudentLessonsPage() {
       ...current,
       [openedModuleId]: currentQuizIndex + 1,
     }))
+    window.setTimeout(() => quizQuestionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60)
   }
 
   const progressValue = unlockState ? globalProgress : activeCompetency.progress
@@ -2668,7 +2674,7 @@ export default function StudentLessonsPage() {
                           </p>
                         </article>
                       ) : currentQuizQuestion ? (
-                        <article className="mt-5 rounded-xl border border-white bg-white p-5 shadow-sm">
+                        <article className="mt-5 scroll-mt-4 rounded-xl border border-white bg-white p-5 shadow-sm" ref={quizQuestionRef}>
                           <div className="flex flex-wrap items-center justify-between gap-3">
                             <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-100">
                               {currentQuizQuestion.iconType ? 'Témoin tableau de bord' : 'Question organes'}{' '}
@@ -2720,7 +2726,8 @@ export default function StudentLessonsPage() {
                           </div>
                           {currentQuizAnswered && (
                             <div
-                              className={`mt-4 rounded-2xl border p-4 text-sm leading-6 ${
+                              ref={quizFeedbackRef}
+                              className={`mt-4 scroll-mb-4 rounded-2xl border p-4 text-sm leading-6 ${
                                 currentQuizAnswer === currentQuizQuestion.answer
                                   ? 'border-emerald-200 bg-emerald-50 text-emerald-950'
                                   : 'border-rose-200 bg-rose-50 text-rose-950'
