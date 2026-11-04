@@ -8,6 +8,7 @@ import RemcLockedBanner from '../../components/remc/RemcLockedBanner'
 import PaginationBar from '../../components/ui/PaginationBar'
 import PageHeader from '../../components/ui/PageHeader'
 import { REMC_COMPETENCY_ORDER } from '../../data/remcCompetencies'
+import { COMPETENCY_2_LESSON_MODULES } from '../../data/lessonsCompetency2'
 import {
   fetchLessonModuleProgressMap,
   isQcuPassed,
@@ -50,7 +51,7 @@ const competencies = [
     description: 'Observer, anticiper et adapter son allure',
     progress: 0,
     modulesStarted: 0,
-    remaining: 6,
+    remaining: 7,
     summary:
       'Travaillez l’observation, l’anticipation et l’adaptation de votre allure en environnement réel.',
   },
@@ -154,60 +155,13 @@ const subcompetenciesByCompetency = {
     },
   ],
   C2: [
-    {
-      id: 'SC2.1',
-      title: 'Rechercher la signalisation et les indices utiles',
-      description:
-        'Repérer panneaux, marquages, feux, comportements des usagers et indices annonçant un danger.',
-      accent: 'cyan',
-      video: 'Leçon',
-      qcm: 'À faire',
-    },
-    {
-      id: 'SC2.2',
-      title: 'Positionner le véhicule sur la chaussée',
-      description:
-        'Choisir sa voie, respecter les marquages et maintenir un placement adapté à la situation.',
-      accent: 'emerald',
-      video: '13 min',
-      qcm: 'À faire',
-    },
-    {
-      id: 'SC2.3',
-      title: 'Adapter son allure aux situations',
-      description:
-        'Ajuster sa vitesse selon visibilité, trafic, météo, signalisation et configuration des lieux.',
-      accent: 'amber',
-      video: '16 min',
-      qcm: 'À faire',
-    },
-    {
-      id: 'SC2.4',
-      title: 'Détecter et franchir les intersections',
-      description:
-        'Identifier les régimes de priorité et franchir une intersection avec observation et décision sûre.',
-      accent: 'violet',
-      video: '10 min',
-      qcm: 'À faire',
-    },
-    {
-      id: 'SC2.5',
-      title: 'Changer de direction',
-      description:
-        'Préparer, signaler et réaliser un changement de direction en conservant sécurité et placement.',
-      accent: 'rose',
-      video: '12 min',
-      qcm: 'À faire',
-    },
-    {
-      id: 'SC2.6',
-      title: 'Stationner et repartir',
-      description:
-        'Choisir un emplacement, stationner sans gêner et repartir après contrôles complets.',
-      accent: 'teal',
-      video: '18 min',
-      qcm: 'À faire',
-    },
+    { id: 'SC2.1', title: 'Rechercher la signalisation et les indices utiles', description: 'Repérer panneaux, marquages, feux et indices annonçant un danger.', accent: 'cyan', video: 'Leçon', qcm: 'À faire' },
+    { id: 'SC2.2', title: 'Positionner le véhicule et choisir sa voie', description: 'Circuler à droite, choisir sa voie et garder ses marges.', accent: 'emerald', video: 'Leçon', qcm: 'À faire' },
+    { id: 'SC2.3', title: 'Adapter son allure aux situations', description: 'Vitesses maximales, distance de sécurité et distance d’arrêt.', accent: 'amber', video: 'Leçon', qcm: 'À faire' },
+    { id: 'SC2.4', title: 'Détecter et franchir les intersections', description: 'Priorité à droite, STOP, cédez-le-passage et route prioritaire.', accent: 'violet', video: 'Leçon', qcm: 'À faire' },
+    { id: 'SC2.5', title: 'Tourner à droite et à gauche en agglomération', description: 'Observer, signaler, se placer et céder le passage.', accent: 'rose', video: 'Leçon', qcm: 'À faire' },
+    { id: 'SC2.6', title: 'Franchir les ronds-points et carrefours giratoires', description: 'Céder aux véhicules engagés, choisir sa voie et signaler sa sortie.', accent: 'teal', video: 'Leçon', qcm: 'À faire' },
+    { id: 'SC2.7', title: 'S’arrêter et stationner', description: 'Créneau, bataille, épi : se garer sans gêner et repartir en sécurité.', accent: 'cyan', video: 'Leçon', qcm: 'À faire' },
   ],
   C3: [
     {
@@ -548,8 +502,8 @@ const vehicleOrgansDashboardQuestions = [
     'Que signifie ce voyant ?',
     'Il signale un problème de batterie ou de charge.',
     [
-      'Signale l’activation du mode économie d’énergie du véhicule.',
-      'Indique que les bougies de préchauffage sont en fonctionnement.',
+      'Il signale que le coffre est ouvert.',
+      'Il signale que la radio est allumée.',
       'Signale que les feux de croisement sont allumés.',
     ],
     'Ce témoin concerne l’alternateur, la batterie ou le circuit de charge.',
@@ -557,7 +511,7 @@ const vehicleOrgansDashboardQuestions = [
   ),
   createRandomizedQuestion(
     'Que signifie ce voyant ?',
-    'Il signale un problème au moteur (injection, allumage ou antipollution).',
+    'Il signale un problème au moteur : il faut le faire contrôler.',
     [
       'Indique que le niveau de carburant est passé en réserve.',
       'Signale une panne au système de freinage.',
@@ -571,8 +525,8 @@ const vehicleOrgansDashboardQuestions = [
     'Indique que le frein de stationnement est activé ou qu’un problème de freinage est détecté.',
     [
       'Signale que les plaquettes de frein viennent d’être remplacées.',
-      'Indique l’activation de l’aide au démarrage en côte.',
-      'Signale une usure excessive des pneus arrière uniquement.',
+      'Il signale que les essuie-glaces sont usés.',
+      'Il signale que le réservoir est plein.',
     ],
     'Vérifiez le frein à main et l’état du circuit de freinage si le témoin reste allumé en roulant.',
     'parking-brake',
@@ -582,8 +536,8 @@ const vehicleOrgansDashboardQuestions = [
     'Indique une pression insuffisante dans un ou plusieurs pneus.',
     [
       'Signale qu’il faut équiper le véhicule de pneus hiver.',
-      'Indique un risque de verglas sur la chaussée.',
-      'Signale que les roues ne sont pas correctement alignées.',
+      'Il signale que le réservoir de carburant est vide.',
+      'Il signale que la portière est mal fermée.',
     ],
     'Une pression insuffisante réduit l’adhérence et allonge les distances de freinage.',
     'tire-pressure',
@@ -605,7 +559,7 @@ const vehicleOrgansDashboardQuestions = [
     [
       'Indique l’activation des feux de brouillard arrière.',
       'Signale que seuls les feux de position sont en service.',
-      'Indique que les feux de croisement sont en mode automatique.',
+      'Il signale que le moteur chauffe.',
     ],
     'Les feux de route améliorent la visibilité loin, mais peuvent éblouir : à couper face aux usagers.',
     'high-beam',
@@ -614,9 +568,9 @@ const vehicleOrgansDashboardQuestions = [
     'Que signifie ce voyant ?',
     'Indique l’activation des feux de croisement.',
     [
-      'Indique l’activation des feux de jour uniquement.',
-      'Signale que les feux de route sont en mode automatique permanent.',
-      'Indique que les feux de stationnement sont seuls allumés.',
+      'Il signale que la ceinture n’est pas bouclée.',
+      'Il signale une panne de batterie.',
+      'Il signale que les feux de détresse sont allumés.',
     ],
     'Les feux de croisement éclairent la route sans éblouir les autres usagers.',
     'low-beam',
@@ -626,7 +580,7 @@ const vehicleOrgansDashboardQuestions = [
     'Il signale un problème avec l’ABS (freinage antiblocage).',
     [
       'Il signale que le frein à main est serré.',
-      'Signale une usure avancée des disques de frein avant.',
+      'Il signale que le réservoir de carburant est presque vide.',
       'Il signale que les feux de route sont allumés.',
     ],
     'Sans ABS, le freinage reste possible mais le blocage des roues n’est plus évité.',
@@ -637,7 +591,7 @@ const vehicleOrgansDashboardQuestions = [
     'Indique une surchauffe du moteur.',
     [
       'Signale que le chauffage de l’habitacle est réglé au maximum.',
-      'Indique que le liquide lave-glace a atteint une température élevée.',
+      'Il signale que la vitre arrière est dégivrée.',
       'Signale que le niveau de carburant est bas.',
     ],
     'Une surchauffe impose un arrêt sécurisé pour protéger le moteur.',
@@ -651,7 +605,7 @@ const vehicleOrgansQuestions = [
     choices: [
       'Le frein',
       'La boîte de vitesses',
-      'Le système de refroidissement du moteur',
+      'Le klaxon',
     ],
     answer: 0,
     explanation: 'Le frein permet de ralentir et d’immobiliser le véhicule en sécurité.',
@@ -670,8 +624,8 @@ const vehicleOrgansQuestions = [
     question: 'À quoi sert l’embrayage ?',
     choices: [
       'À démarrer, s’arrêter, changer de vitesse et aider au frein moteur',
-      'Réguler automatiquement le régime moteur et corriger la trajectoire du véhicule',
-      'Maintenir la pression hydraulique du système de freinage',
+      'À allumer les phares',
+      'À tourner les roues',
     ],
     answer: 0,
     explanation:
@@ -701,8 +655,8 @@ const vehicleOrgansQuestions = [
   {
     question: 'Pourquoi l’état des pneus est-il essentiel pour la sécurité ?',
     choices: [
-      'Ils garantissent l’adhérence, la stabilité et l’efficacité du freinage',
-      'Ils compensent automatiquement les défauts de suspension du véhicule',
+      'Ils permettent de bien tenir la route et de bien freiner',
+      'Ils servent seulement à la décoration du véhicule',
       'Ils permettent uniquement d’économiser du carburant',
     ],
     answer: 0,
@@ -723,7 +677,7 @@ const vehicleOrgansQuestions = [
     choices: [
       'Les essuie-glaces',
       'Les feux de route',
-      'Le système antiblocage des roues',
+      'Les feux de détresse',
     ],
     answer: 0,
     explanation: 'Les essuie-glaces permettent de conserver une bonne visibilité en cas de pluie.',
@@ -798,16 +752,16 @@ const drivingPositionModule = {
 
 const drivingPositionQuestions = [
   {
-    question: 'Quel est le bon ordre d’installation au poste de conduite ?',
+    question: 'Pourquoi règle-t-on les rétroviseurs après le siège ?',
     choices: [
-      'Ceinture → siège → rétroviseurs → volant',
-      'Volant → ceinture → siège → rétroviseurs',
-      'Siège → dossier → volant → rétroviseurs → ceinture',
-      'Rétroviseurs → siège → ceinture → volant',
+      'Parce qu’ils dépendent de la position du conducteur une fois installé',
+      'Parce que le siège se règle automatiquement avec les rétroviseurs',
+      'Parce qu’il est interdit de régler les rétroviseurs en premier',
+      'Parce que les rétroviseurs ne se règlent qu’en roulant',
     ],
-    answer: 2,
+    answer: 0,
     explanation:
-      'Il faut d’abord régler le siège, puis le dossier, le volant, les rétroviseurs et terminer par la ceinture.',
+      'Les rétroviseurs se règlent depuis la position de conduite définitive : si on déplace le siège ensuite, tout est à refaire.',
   },
   {
     question: 'Lors du réglage de l’avancement du siège sur une boîte manuelle, quel contrôle permet de vérifier la bonne distance ?',
@@ -998,10 +952,15 @@ const steeringWheelQuestions = [
     explanation: 'Dans une courbe, le conducteur peut voir la sortie ou le bout de la route.',
   },
   {
-    question: 'Quelle technique est utilisée dans une courbe ?',
-    choices: ['Chevauchement', 'Tirer-glisser', 'Maintien des mains', 'Rotation rapide'],
+    question: 'Dans une courbe légère, que font les mains sur le volant ?',
+    choices: [
+      'Elles se croisent sur le volant',
+      'Elles lâchent le volant à tour de rôle',
+      'Elles restent à leur place et accompagnent le volant',
+      'Une seule main tourne le volant',
+    ],
     answer: 2,
-    explanation: 'Pour une légère courbe, la technique utilisée est le maintien des mains.',
+    explanation: 'Dans une courbe légère, le faible angle de volant permet de garder les mains à leur place (9 h 15 ou 10 h 10).',
   },
   {
     question: 'La technique « tirer-glisser » sert surtout :',
@@ -1268,7 +1227,7 @@ const accelerationBrakingQuestions = [
   },
   {
     question: 'Garder le pied sur l’embrayage peut :',
-    choices: ['Réduire la consommation', 'Faciliter le freinage', 'Provoquer une perte de contrôle sur la vitesse', 'Améliorer l’adhérence'],
+    choices: ['Réduire la consommation', 'Faciliter le freinage', 'Provoquer une perte de contrôle sur la vitesse', 'Allumer les feux'],
     answer: 2,
     explanation: 'Garder le pied sur l’embrayage peut provoquer une perte de contrôle du véhicule sur la vitesse.',
   },
@@ -1292,7 +1251,7 @@ const accelerationBrakingQuestions = [
   },
   {
     question: 'Une forte accélération peut :',
-    choices: ['Réduire la consommation', 'Faciliter le point de patinage', 'Provoquer des à-coups', 'Stabiliser automatiquement le véhicule'],
+    choices: ['Réduire la consommation', 'Faire moins de bruit', 'Provoquer des à-coups', 'Allumer les feux stop'],
     answer: 2,
     explanation: 'Une forte accélération peut provoquer des à-coups, surprendre les autres usagers et augmenter la consommation.',
   },
@@ -1384,13 +1343,13 @@ const gearboxQuestions = [
   createRandomizedQuestion(
     'Quel est le rôle principal de la boîte de vitesse ?',
     'Adapter la puissance du moteur à la vitesse et à la situation de circulation',
-    ['Augmenter automatiquement l’adhérence du véhicule', 'Remplacer le système de freinage', 'Stabiliser automatiquement la direction'],
+    ['Allumer les phares', 'Remplacer le système de freinage', 'Tourner les roues'],
     'La boîte de vitesse sert à adapter la puissance du moteur selon la vitesse du véhicule et la situation de circulation.',
   ),
   createRandomizedQuestion(
     'Pourquoi la 1ère vitesse possède-t-elle davantage de puissance moteur ?',
     'Parce que la 1ère vitesse envoie plus de force aux roues pour démarrer',
-    ['Parce qu’elle permet d’atteindre la vitesse maximale du véhicule', 'Parce qu’elle réduit totalement la consommation', 'Parce qu’elle utilise automatiquement le frein moteur'],
+    ['Parce qu’elle permet d’atteindre la vitesse maximale du véhicule', 'Parce qu’elle réduit totalement la consommation', 'Parce qu’elle allume les feux'],
     'La 1ère vitesse possède un rapport très court : elle donne plus de force aux roues pour démarrer ou avancer à faible allure.',
   ),
   createRandomizedQuestion(
@@ -1408,19 +1367,19 @@ const gearboxQuestions = [
   createRandomizedQuestion(
     'Pourquoi faut-il relâcher progressivement l’embrayage après un changement de vitesse ?',
     'Pour éviter les à-coups et garder le contrôle du véhicule',
-    ['Pour augmenter immédiatement la vitesse du moteur', 'Pour utiliser automatiquement le frein moteur', 'Pour accélérer sans changer de rapport'],
+    ['Pour augmenter immédiatement la vitesse du moteur', 'Pour faire plus de bruit', 'Pour accélérer sans changer de rapport'],
     'Un relâchement progressif évite les à-coups, limite le risque de calage et aide à garder le contrôle du véhicule.',
   ),
   createRandomizedQuestion(
     'Un moteur qui “hurle” indique généralement :',
-    'Un sur-régime moteur',
-    ['Un régime moteur adapté à la situation', 'Un sous-régime moteur', 'Une perte d’adhérence des pneus'],
+    'Un moteur qui tourne trop vite (sur-régime)',
+    ['Un moteur qui tourne normalement', 'Un moteur qui tourne trop lentement', 'Un pneu dégonflé'],
     'Un moteur qui hurle indique souvent un sur-régime : le rapport engagé est trop petit par rapport à l’allure.',
   ),
   createRandomizedQuestion(
     'Le rétrogradage sert surtout :',
     'D’utiliser le frein moteur et récupérer de la puissance',
-    ['D’augmenter rapidement la vitesse du véhicule', 'De supprimer l’effet de l’embrayage', 'De réduire automatiquement la consommation'],
+    ['D’augmenter rapidement la vitesse du véhicule', 'D’allumer les feux stop', 'De réduire automatiquement la consommation'],
     'Le rétrogradage permet d’utiliser le frein moteur, de ralentir le véhicule et de récupérer de la puissance.',
   ),
   createRandomizedQuestion(
@@ -1432,7 +1391,7 @@ const gearboxQuestions = [
   createRandomizedQuestion(
     'Pourquoi le conducteur ne doit-il pas garder le pied sur l’embrayage ?',
     'Cela peut provoquer une usure prématurée et perturber le contrôle de la vitesse',
-    ['Cela bloque automatiquement le passage des vitesses', 'Cela empêche le moteur de fonctionner', 'Cela augmente uniquement le bruit moteur'],
+    ['Cela allume les feux de détresse', 'Cela empêche le moteur de fonctionner', 'Cela augmente uniquement le bruit moteur'],
     'Garder le pied sur l’embrayage peut user prématurément le mécanisme et perturber le contrôle de la vitesse.',
   ),
   createRandomizedQuestion(
@@ -1522,13 +1481,13 @@ const forwardReverseQuestions = [
   createRandomizedQuestion(
     'En marche avant, les roues directrices servent surtout :',
     'De guider immédiatement la trajectoire du véhicule',
-    ['De stabiliser le moteur', 'D’augmenter automatiquement l’adhérence', 'De réduire les distances de freinage'],
+    ['D’allumer les feux', 'De régler les rétroviseurs', 'De freiner le véhicule'],
     'En marche avant, les roues directrices situées à l’avant orientent directement la trajectoire du véhicule.',
   ),
   createRandomizedQuestion(
     'Pourquoi un petit mouvement du volant peut-il avoir un effet important en marche arrière ?',
     'Parce qu’un petit tour de volant déplace beaucoup l’arrière du véhicule',
-    ['Parce que le moteur transmet plus de puissance', 'Parce que les roues arrière deviennent motrices', 'Parce que le rayon de braquage augmente automatiquement'],
+    ['Parce que le moteur transmet plus de puissance', 'Parce que les roues arrière deviennent motrices', 'Parce que le volant devient plus léger'],
     'En marche arrière, le véhicule réagit plus vite aux corrections et pivote autour de son arrière, ce qui amplifie les petits mouvements.',
   ),
   createRandomizedQuestion(
@@ -1552,20 +1511,20 @@ const forwardReverseQuestions = [
   createRandomizedQuestion(
     'Pourquoi regarder trop près du véhicule peut-il provoquer des erreurs de trajectoire ?',
     'Parce que le conducteur anticipe moins les déplacements du véhicule',
-    ['Parce que les roues deviennent moins réactives', 'Parce que le volant devient plus sensible', 'Parce que le frein moteur agit moins efficacement'],
+    ['Parce que les phares éclairent moins', 'Parce que le volant devient plus sensible', 'Parce que le moteur tourne moins vite'],
     'Regarder trop près limite l’anticipation et rend les corrections de trajectoire plus tardives.',
   ),
   createRandomizedQuestion(
     'En marche arrière, une allure faible permet surtout :',
     'De corriger plus facilement la trajectoire',
-    ['D’éviter d’utiliser l’embrayage', 'D’augmenter la puissance moteur', 'De réduire automatiquement le rayon de braquage'],
+    ['D’éviter d’utiliser l’embrayage', 'D’augmenter la puissance moteur', 'D’allumer les feux de recul'],
     'Une allure faible laisse le temps de contrôler, d’observer et de corriger la trajectoire avec précision.',
   ),
   createRandomizedQuestion(
-    'Que suit le véhicule quand vous conduisez ?',
-    'Le regard du conducteur',
-    ['Les mouvements du levier de vitesse', 'La position des pédales uniquement', 'Le rétroviseur intérieur'],
-    'Le véhicule suit généralement le regard du conducteur : regarder loin aide à guider la trajectoire.',
+    'Où le conducteur doit-il regarder pour garder une trajectoire précise ?',
+    'Loin, vers l’endroit où il veut aller',
+    ['Juste devant le capot', 'Sur le compteur de vitesse', 'Dans le rétroviseur intérieur'],
+    'Les mains suivent naturellement le regard : regarder loin, là où l’on veut aller, rend la trajectoire plus précise et plus stable.',
   ),
   createRandomizedQuestion(
     'Pour conserver une bonne maîtrise de la trajectoire, le conducteur doit :',
@@ -1648,7 +1607,7 @@ const observationWarningQuestions = [
   createRandomizedQuestion(
     'Pourquoi le conducteur doit-il contrôler régulièrement ses rétroviseurs ?',
     'Pour surveiller l’environnement autour du véhicule et anticiper les situations',
-    ['Pour vérifier uniquement la vitesse des véhicules derrière', 'Pour éviter l’utilisation du volant', 'Pour maintenir automatiquement la trajectoire'],
+    ['Pour vérifier uniquement la vitesse des véhicules derrière', 'Pour éviter l’utilisation du volant', 'Pour régler la radio'],
     'Les rétroviseurs permettent de surveiller l’environnement autour du véhicule et d’anticiper les situations.',
   ),
   createRandomizedQuestion(
@@ -1698,10 +1657,10 @@ const observationWarningQuestions = [
     'Regarder uniquement devant soi fait perdre des informations importantes sur les côtés et à l’arrière du véhicule.',
   ),
   createRandomizedQuestion(
-    'L’avertisseur sonore doit être utilisé surtout :',
-    'En cas de danger immédiat',
-    ['Pour signaler une priorité', 'Pour prévenir d’un stationnement', 'Pour demander le passage aux intersections'],
-    'L’avertisseur sonore doit rester exceptionnel et servir surtout à prévenir un danger immédiat.',
+    'En agglomération, quand l’avertisseur sonore est-il autorisé ?',
+    'Seulement en cas de danger immédiat',
+    ['Pour saluer un autre conducteur', 'Pour faire avancer le véhicule de devant', 'Pour signaler que l’on veut se garer'],
+    'En agglomération, l’avertisseur sonore est réservé au danger immédiat. Hors agglomération, il peut aussi servir à signaler sa présence, de jour.',
   ),
   createRandomizedQuestion(
     'Pourquoi le regard doit-il être mobile et régulier ?',
@@ -1745,6 +1704,8 @@ const lessonModules = {
     ...observationWarningModule,
     questions: observationWarningQuestions,
   },
+  // Compétence 2 : un module par sous-compétence du REMC (C2a à C2g).
+  ...Object.fromEntries(COMPETENCY_2_LESSON_MODULES.map((module) => [module.id, module])),
 }
 
 function StatusPill({ label, value, complete }) {
