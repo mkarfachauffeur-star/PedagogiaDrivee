@@ -22,15 +22,15 @@ import LessonImage from '../../components/ui/LessonImage'
 import ImageLightbox from '../../components/ui/ImageLightbox'
 import CollapsibleSection from '../../components/lessons/CollapsibleSection'
 import LessonInfographic from '../../components/lessons/LessonInfographic'
-import installationPosteConduiteImage from '../../assets/lessons/installation-poste-conduite.png'
-import vehicleOrgansDiagramImage from '../../assets/lessons/elements-essentiels-vehicule.png'
-import dashboardWarningLightsImage from '../../assets/lessons/voyants-tableau-de-bord.png'
-import steeringWheelGuideImage from '../../assets/lessons/tenir-tourner-volant.png'
-import startStopGuideImage from '../../assets/lessons/demarrer-arreter.png'
-import brakingTypesGuideImage from '../../assets/lessons/types-freinage.png'
-import gearboxGuideImage from '../../assets/lessons/utiliser-boite-vitesses.png'
-import forwardReverseGuideImage from '../../assets/lessons/marche-avant-arriere.png'
-import observationWarningGuideImage from '../../assets/lessons/regarder-autour-avertir.png'
+import {
+  DRIVING_POSITION_INFOGRAPHIC,
+  FORWARD_REVERSE_INFOGRAPHIC,
+  GEARBOX_INFOGRAPHIC,
+  OBSERVATION_INFOGRAPHIC,
+  START_STOP_INFOGRAPHIC,
+  STEERING_WHEEL_INFOGRAPHIC,
+  VEHICLE_ORGANS_INFOGRAPHIC,
+} from '../../data/lessonInfographics'
 
 const competencies = [
   {
@@ -404,15 +404,8 @@ const vehicleOrgansModule = {
   },
   summaryIntro:
     'Chaque point du schéma vous aide à repérer les commandes, les organes de sécurité et les vérifications indispensables avant de prendre la route.',
-  images: [
-    {
-      src: vehicleOrgansDiagramImage,
-      alt: 'Schéma pédagogique : les éléments essentiels du véhicule',
-      title: 'Les éléments essentiels du véhicule',
-      caption:
-        'Commandes, éléments extérieurs, témoins du tableau de bord, vérifications avant départ et visibilité : repères visuels avant de prendre la route.',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: VEHICLE_ORGANS_INFOGRAPHIC,
   summary: [
     {
       title: 'Le volant',
@@ -476,12 +469,6 @@ const vehicleOrgansModule = {
     title: 'Voyants importants du tableau de bord',
     intro:
       'Les couleurs orientent la conduite : rouge = danger immédiat, orange = contrôle à prévoir, bleu/vert = information. Retenez la signification de chaque témoin avant l’examen pratique.',
-    image: {
-      src: dashboardWarningLightsImage,
-      alt: 'Infographie : 10 voyants importants du tableau de bord',
-      caption:
-        'Dix témoins essentiels à reconnaître : pression d’huile, batterie, moteur, freinage, pneus, ceinture, feux, ABS et température.',
-    },
     lights: dashboardWarningLights,
   },
 }
@@ -696,15 +683,8 @@ const drivingPositionModule = {
   },
   summaryIntro:
     'Chaque étape prépare le conducteur à agir avec précision, à anticiper la trajectoire et à garder une maîtrise sûre du véhicule.',
-  images: [
-    {
-      src: installationPosteConduiteImage,
-      alt: 'Schéma pédagogique : installation correcte au poste de conduite',
-      title: 'Installation correcte au poste de conduite',
-      caption:
-        'Repères visuels pour vérifier la position du siège, du dossier, des mains, des jambes, des pédales et des rétroviseurs.',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: DRIVING_POSITION_INFOGRAPHIC,
   summary: [
     {
       title: 'Réglage du siège en hauteur',
@@ -883,16 +863,8 @@ const steeringWheelModule = {
     kicker: 'Repère visuel',
     title: 'Tenir et tourner le volant',
   },
-  images: [
-    {
-      src: steeringWheelGuideImage,
-      alt: 'Infographie : position conseillée 9h15 et positions déconseillées sur le volant',
-      title: 'Tenir et tourner le volant',
-      caption:
-        'Position conseillée à 9h15, mains détendues et regard loin devant. Positions déconseillées : mains croisées, une seule main, mains en 12h ou trop basses.',
-      objectFit: 'contain',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: STEERING_WHEEL_INFOGRAPHIC,
   summary: [
     {
       title: 'Position des mains et regard',
@@ -1015,24 +987,8 @@ const startStopModule = {
   schemaSection: {
     kicker: 'Schémas et photos',
   },
-  images: [
-    {
-      src: startStopGuideImage,
-      alt: 'Infographie : démarrer et s’arrêter — conseils pratiques et erreurs à éviter',
-      title: 'Démarrer et s’arrêter',
-      caption:
-        'Conseils pratiques (démarrage en douceur, arrêt sécurisé, point de patinage) et gestes à éviter (embrayage brutal, commandes forcées, freinage brutal).',
-      objectFit: 'contain',
-    },
-    {
-      src: brakingTypesGuideImage,
-      alt: 'Infographie : types de freinage progressif et dégressif',
-      title: 'Types de freinage',
-      caption:
-        'Freinage progressif : pression qui augmente progressivement. Freinage dégressif : forte pression au début puis relâchement progressif.',
-      objectFit: 'contain',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: START_STOP_INFOGRAPHIC,
   summary: [
     {
       title: 'Démarrage sans accélérateur',
@@ -1087,8 +1043,8 @@ const startStopQuestions = [
     explanation: 'Le démarrage avec accélération se fait en trouvant le point de patinage, puis en accélérant légèrement.',
   },
   {
-    question: 'Le démarrage en côte sert surtout :',
-    choices: ['D’accélérer plus vite', 'D’éviter le recul du véhicule', 'De tourner plus facilement', 'D’utiliser moins les pédales'],
+    question: 'En démarrage en côte, la bonne technique sert à :',
+    choices: ['Accélérer plus vite', 'Empêcher la voiture de reculer', 'Tourner plus facilement', 'Utiliser moins les pédales'],
     answer: 1,
     explanation: 'Le démarrage en côte sert surtout à éviter le recul du véhicule.',
   },
@@ -1284,8 +1240,8 @@ const accelerationBrakingQuestions = [
     explanation: 'L’embrayage permet au véhicule d’avancer grâce au point de patinage.',
   },
   {
-    question: 'L’embrayage sert surtout :',
-    choices: ['D’allumer les feux', 'De démarrer, s’arrêter et changer les vitesses', 'D’augmenter uniquement la vitesse', 'De tourner le volant'],
+    question: 'À quoi sert la pédale d’embrayage ?',
+    choices: ['À allumer les feux', 'À démarrer, s’arrêter et passer les vitesses', 'À augmenter la vitesse', 'À tourner le volant'],
     answer: 1,
     explanation: 'L’embrayage sert à démarrer, s’arrêter et changer les vitesses.',
   },
@@ -1308,8 +1264,8 @@ const accelerationBrakingQuestions = [
     explanation: 'Plus la vitesse est petite, plus elle possède de puissance moteur : la 1ère est donc la plus puissante.',
   },
   {
-    question: 'Le frein sert surtout :',
-    choices: ['D’accélérer', 'De ralentir ou s’arrêter', 'De changer les vitesses', 'De tourner plus facilement'],
+    question: 'À quoi sert la pédale de frein ?',
+    choices: ['À accélérer', 'À ralentir ou à s’arrêter', 'À passer les vitesses', 'À allumer les clignotants'],
     answer: 1,
     explanation: 'Le frein permet de ralentir, contrôler l’allure et s’arrêter.',
   },
@@ -1348,16 +1304,8 @@ const gearboxModule = {
   schemaSection: {
     kicker: 'Schémas et photos',
   },
-  images: [
-    {
-      src: gearboxGuideImage,
-      alt: 'Infographie : utiliser la boîte de vitesses — rapports, passage des vitesses et conseils',
-      title: 'Utiliser la boîte de vitesses',
-      caption:
-        'Rôle de la boîte, schéma des rapports, passage des vitesses (débrayer, changer, embrayer), conseils pratiques et erreurs à éviter.',
-      objectFit: 'contain',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: GEARBOX_INFOGRAPHIC,
   summary: [
     {
       title: 'Rôle de la boîte de vitesse',
@@ -1447,9 +1395,9 @@ const gearboxQuestions = [
     'Un moteur qui hurle indique souvent un sur-régime : le rapport engagé est trop petit par rapport à l’allure.',
   ),
   createRandomizedQuestion(
-    'Le rétrogradage sert surtout :',
-    'D’utiliser le frein moteur et récupérer de la puissance',
-    ['D’augmenter rapidement la vitesse du véhicule', 'D’allumer les feux stop', 'De réduire automatiquement la consommation'],
+    'Le rétrogradage sert surtout à :',
+    'Utiliser le frein moteur et retrouver de la puissance',
+    ['Augmenter rapidement la vitesse', 'Allumer les feux stop', 'Réduire automatiquement la consommation'],
     'Le rétrogradage permet d’utiliser le frein moteur, de ralentir le véhicule et de récupérer de la puissance.',
   ),
   createRandomizedQuestion(
@@ -1482,14 +1430,8 @@ const forwardReverseModule = {
     kicker: 'Schémas et photos',
     title: 'Marche avant et marche arrière',
   },
-  images: [
-    {
-      src: forwardReverseGuideImage,
-      alt: 'Infographie : diriger le véhicule en marche avant et en marche arrière — trajectoire, regard, rétroviseurs et points clés',
-      title: 'Marche avant et marche arrière',
-      objectFit: 'contain',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: FORWARD_REVERSE_INFOGRAPHIC,
   summary: [
     {
       title: 'La marche avant',
@@ -1549,9 +1491,9 @@ const forwardReverseQuestions = [
     'En marche arrière, les roues directrices restent à l’avant : le véhicule réagit différemment et la trajectoire devient plus délicate à contrôler.',
   ),
   createRandomizedQuestion(
-    'En marche avant, les roues directrices servent surtout :',
-    'De guider immédiatement la trajectoire du véhicule',
-    ['D’allumer les feux', 'De régler les rétroviseurs', 'De freiner le véhicule'],
+    'En marche avant, les roues directrices servent à :',
+    'Diriger la voiture',
+    ['Allumer les feux', 'Régler les rétroviseurs', 'Freiner la voiture'],
     'En marche avant, les roues directrices situées à l’avant orientent directement la trajectoire du véhicule.',
   ),
   createRandomizedQuestion(
@@ -1614,14 +1556,8 @@ const observationWarningModule = {
     kicker: 'Schémas et photos',
     title: 'Regarder autour de soi et avertir',
   },
-  images: [
-    {
-      src: observationWarningGuideImage,
-      alt: 'Infographie : regarder autour de soi et avertir — observer, contrôler les rétroviseurs et angles morts, avertir en cas d’urgence, sécuriser chaque déplacement',
-      title: 'Regarder autour de soi et avertir',
-      objectFit: 'contain',
-    },
-  ],
+  // Fiche en texte plutôt qu'en image : nette et lisible sur téléphone.
+  infographic: OBSERVATION_INFOGRAPHIC,
   summary: [
     {
       title: 'Regarder autour',
@@ -2526,30 +2462,6 @@ export default function StudentLessonsPage() {
                           {openedLesson.dashboardSection.intro}
                         </p>
                       </div>
-                      <button
-                        className="group block w-full text-left"
-                        onClick={() =>
-                          setOpenedGalleryImage({
-                            src: openedLesson.dashboardSection.image.src,
-                            alt: openedLesson.dashboardSection.image.alt,
-                            title: openedLesson.dashboardSection.title,
-                            caption: openedLesson.dashboardSection.image.caption,
-                          })
-                        }
-                        type="button"
-                      >
-                        <div className="aspect-[4/3] overflow-hidden bg-slate-50 sm:aspect-[16/10]">
-                          <LessonImage
-                            alt={openedLesson.dashboardSection.image.alt}
-                            className="h-full w-full object-contain p-3 transition duration-300 group-hover:scale-[1.01]"
-                            objectFit="contain"
-                            src={openedLesson.dashboardSection.image.src}
-                          />
-                        </div>
-                        <p className="border-t border-slate-200 px-4 py-3 text-sm font-semibold text-slate-500">
-                          {openedLesson.dashboardSection.image.caption}
-                        </p>
-                      </button>
                       <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2">
                         {openedLesson.dashboardSection.lights.map((light) => (
                           <article
@@ -2721,7 +2633,7 @@ export default function StudentLessonsPage() {
                         <article className="mt-4 scroll-mt-4 sm:mt-5 sm:rounded-xl sm:border sm:border-white sm:bg-white sm:p-5 sm:shadow-sm" ref={quizQuestionRef}>
                           <div className="flex flex-wrap items-center justify-between gap-3">
                             <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-100">
-                              {currentQuizQuestion.iconType ? 'Témoin tableau de bord' : 'Question organes'}{' '}
+                              {currentQuizQuestion.iconType ? 'Témoin tableau de bord' : 'Question'}{' '}
                               {currentQuizIndex + 1}
                             </span>
                             <span className="text-xs font-semibold text-slate-400">
