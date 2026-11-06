@@ -27,7 +27,7 @@ export default function PublicFooter({ isDark = true, compact = false }) {
       <div className={`mx-auto flex w-full max-w-7xl flex-col gap-8 ${compact ? '' : 'sm:flex-row sm:items-start sm:justify-between'}`}>
         {!compact && (
           <div className="shrink-0">
-            <BrandLogo animated={false} showMark={false} />
+            <BrandLogo animated={false} />
           </div>
         )}
         <nav

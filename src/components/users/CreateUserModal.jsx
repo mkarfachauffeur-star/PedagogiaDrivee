@@ -27,7 +27,7 @@ function validate(form) {
   if (!form.email.trim()) errors.email = "L'e-mail est obligatoire."
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) errors.email = 'E-mail invalide.'
   if (!form.role) errors.role = 'Le rôle est obligatoire.'
-  if (form.role !== 'secretary' && !normalizeGender(form.gender)) {
+  if (!normalizeGender(form.gender)) {
     errors.gender = 'Le genre est obligatoire.'
   }
   return errors
@@ -59,7 +59,13 @@ export default function CreateUserModal({ open, onClose, onCreated }) {
     event.preventDefault()
     const next = validate(form)
     setErrors(next)
-    if (Object.keys(next).length) return
+    if (Object.keys(next).length) {
+      // Le formulaire défile dans la fenêtre : on amène le premier champ manquant à l'écran.
+      requestAnimationFrame(() => {
+        document.querySelector(`#${FORM_ID} [data-error="true"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      })
+      return
+    }
 
     setBusy(true)
     setSubmitError(null)
@@ -99,34 +105,13 @@ export default function CreateUserModal({ open, onClose, onCreated }) {
         </p>
       ) : (
         <form id={FORM_ID} className="space-y-4" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="text-sm font-semibold text-slate-700">Nom</span>
-              <input className={inputClass} value={form.lastName} onChange={(e) => update('lastName', e.target.value)} disabled={!canWrite || busy} />
-              {errors.lastName && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.lastName}</p>}
-            </label>
-            <label className="block">
-              <span className="text-sm font-semibold text-slate-700">Prénom</span>
-              <input className={inputClass} value={form.firstName} onChange={(e) => update('firstName', e.target.value)} disabled={!canWrite || busy} />
-              {errors.firstName && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.firstName}</p>}
-            </label>
-          </div>
-          <label className="block">
-            <span className="text-sm font-semibold text-slate-700">E-mail</span>
-            <input className={inputClass} type="email" value={form.email} onChange={(e) => update('email', e.target.value)} disabled={!canWrite || busy} />
-            {errors.email && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.email}</p>}
-          </label>
-          <label className="block">
-            <span className="text-sm font-semibold text-slate-700">Téléphone</span>
-            <input className={inputClass} type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} disabled={!canWrite || busy} />
-          </label>
           <label className="block">
             <span className="text-sm font-semibold text-slate-700">Rôle</span>
             <select className={inputClass} value={form.role} onChange={(e) => update('role', e.target.value)} disabled={!canWrite || busy}>
               {ROLE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
           </label>
-          {form.role !== 'secretary' && (
+          {(
             <fieldset className="block">
               <legend className="text-sm font-semibold text-slate-700">Genre *</legend>
               <div className="mt-2 flex flex-wrap gap-3">
@@ -151,9 +136,30 @@ export default function CreateUserModal({ open, onClose, onCreated }) {
                   </label>
                 ))}
               </div>
-              {errors.gender && <p className="mt-1 text-xs font-semibold text-rose-600">{errors.gender}</p>}
+              {errors.gender && <p className="mt-1 text-xs font-semibold text-rose-600" data-error="true">{errors.gender}</p>}
             </fieldset>
           )}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <label className="block">
+              <span className="text-sm font-semibold text-slate-700">Nom</span>
+              <input className={inputClass} value={form.lastName} onChange={(e) => update('lastName', e.target.value)} disabled={!canWrite || busy} />
+              {errors.lastName && <p className="mt-1 text-xs font-semibold text-rose-600" data-error="true">{errors.lastName}</p>}
+            </label>
+            <label className="block">
+              <span className="text-sm font-semibold text-slate-700">Prénom</span>
+              <input className={inputClass} value={form.firstName} onChange={(e) => update('firstName', e.target.value)} disabled={!canWrite || busy} />
+              {errors.firstName && <p className="mt-1 text-xs font-semibold text-rose-600" data-error="true">{errors.firstName}</p>}
+            </label>
+          </div>
+          <label className="block">
+            <span className="text-sm font-semibold text-slate-700">E-mail</span>
+            <input className={inputClass} type="email" value={form.email} onChange={(e) => update('email', e.target.value)} disabled={!canWrite || busy} />
+            {errors.email && <p className="mt-1 text-xs font-semibold text-rose-600" data-error="true">{errors.email}</p>}
+          </label>
+          <label className="block">
+            <span className="text-sm font-semibold text-slate-700">Téléphone</span>
+            <input className={inputClass} type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} disabled={!canWrite || busy} />
+          </label>
           {submitError && (
             <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">{submitError}</p>
           )}

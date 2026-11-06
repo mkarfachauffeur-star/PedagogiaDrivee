@@ -287,6 +287,21 @@ export async function deleteOrganization(orgId) {
   }
 }
 
+export async function inviteOrganizationManager(orgId, { fullName, email, gender }) {
+  try {
+    const { data, error } = await supabase.functions.invoke('platform-organization', {
+      body: { action: 'invite_manager', organization_id: orgId, full_name: fullName, email, gender },
+    })
+    const payload = (await readFunctionPayload(error, data)) || data || {}
+    if (error || payload.error) {
+      throw new Error(payload.error || error?.message || 'Invitation impossible.')
+    }
+    return { error: null }
+  } catch (error) {
+    return { error }
+  }
+}
+
 export async function updateOrganizationStatus(orgId, status) {
   try {
     const { data, error } = await supabase

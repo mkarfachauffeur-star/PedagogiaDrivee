@@ -1,62 +1,59 @@
 import { supabase } from './supabase'
 
+// Ordre pensé pour une auto-école qui démarre : les formules d'abord (elles servent à
+// l'inscription et aux paiements), puis l'équipe, les élèves, la messagerie et les chiffres.
 export const MANAGER_ONBOARDING_STEPS = [
   {
     id: 'welcome',
-    icon: '🎉',
     title: 'Bienvenue sur Pedagogia Drive',
     description:
-      'Votre auto-école est activée. Vous disposez d\'un essai gratuit Starter de 30 jours pour configurer votre espace et inviter votre équipe.',
+      'Votre espace gérant est prêt. En quelques étapes, vous configurez vos formules, invitez votre équipe et inscrivez vos premiers élèves.',
   },
   {
-    id: 'dashboard',
-    icon: '📊',
-    title: 'Votre tableau de bord',
+    id: 'packages',
+    title: 'Vos formules et tarifs',
     description:
-      'Retrouvez ici une vue d\'ensemble : activité, planning, élèves et indicateurs clés. C\'est votre point de départ chaque jour.',
+      'Commencez par vérifier vos formules (permis B, conduite accompagnée, heures à l’unité…). Elles servent à l’inscription des élèves et aux paiements.',
+    href: '/manager/packages',
+    cta: 'Voir les formules',
   },
   {
     id: 'team',
-    icon: '👥',
     title: 'Invitez votre équipe',
     description:
-      'Ajoutez vos enseignants et votre secrétariat. Chaque membre reçoit un e-mail d\'invitation pour créer son mot de passe.',
+      'Ajoutez votre secrétariat et vos enseignants. Chacun reçoit un e-mail pour créer son mot de passe. Sans secrétaire, c’est vous qui gérez les inscriptions, le planning et les paiements.',
     href: '/manager/users',
-    cta: 'Gérer les utilisateurs',
-  },
-  {
-    id: 'teachers',
-    icon: '🧑‍🏫',
-    title: 'Fiches enseignants',
-    description:
-      'Complétez les profils de vos moniteurs (catégorie, disponibilités) pour planifier les leçons et suivre la charge de travail.',
-    href: '/manager/teachers',
-    cta: 'Voir les enseignants',
+    cta: 'Inviter l’équipe',
   },
   {
     id: 'students',
-    icon: '🎓',
-    title: 'Inscrivez vos premiers élèves',
+    title: 'Inscrivez vos élèves',
     description:
-      'Créez les dossiers élèves, assignez un enseignant référent et suivez la progression REMC depuis un seul endroit.',
+      'Créez le dossier de chaque élève et choisissez son enseignant référent. L’élève reçoit ses accès et peut réviser avec les leçons et les QCU du REMC.',
     href: '/manager/students',
     cta: 'Ajouter un élève',
   },
   {
-    id: 'packages',
-    icon: '💶',
-    title: 'Formules et tarifs',
+    id: 'messages',
+    title: 'La messagerie interne',
     description:
-      'Configurez vos forfaits (Permis B, AAC, conduite supervisée…) pour que le secrétariat facture avec les bons montants.',
-    href: '/manager/packages',
-    cta: 'Configurer les tarifs',
+      'Les élèves écrivent au secrétariat directement dans l’application, et l’équipe échange entre elle. Vous voyez quand un message est envoyé et lu.',
+    href: '/manager/messages',
+    cta: 'Ouvrir la messagerie',
+  },
+  {
+    id: 'finance',
+    title: 'Vos encaissements réels',
+    description:
+      'Chaque paiement saisi par le secrétariat ou un enseignant arrive dans votre tableau de bord : ce qui est encaissé, ce qui reste à encaisser, et l’évolution sur 12 mois.',
+    href: '/manager/payments',
+    cta: 'Voir les paiements',
   },
   {
     id: 'done',
-    icon: '✅',
-    title: 'Vous êtes prêt !',
+    title: 'Tout est prêt',
     description:
-      'Explorez le menu latéral pour accéder au planning, aux paiements, aux exports réglementaires et à la messagerie. Bonne prise en main !',
+      'Retrouvez toutes ces pages dans le menu. Vous pouvez commencer par inviter votre équipe : c’est la première étape pour faire vivre votre espace.',
   },
 ]
 

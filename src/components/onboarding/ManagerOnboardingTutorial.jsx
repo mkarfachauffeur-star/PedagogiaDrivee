@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { CheckCircle2, MessagesSquare, Sparkles, Tags, TrendingUp, UserPlus, Users } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import AppModal, { AppModalFooter } from '../ui/AppModal'
 import { useAuth } from '../../context/AuthContext'
@@ -8,6 +9,16 @@ import {
   completeManagerOnboarding,
   shouldShowManagerOnboarding,
 } from '../../lib/managerOnboarding'
+
+const STEP_ICONS = {
+  welcome: Sparkles,
+  packages: Tags,
+  team: Users,
+  students: UserPlus,
+  messages: MessagesSquare,
+  finance: TrendingUp,
+  done: CheckCircle2,
+}
 
 function formatTrialEnd(iso) {
   if (!iso) return null
@@ -92,6 +103,7 @@ export default function ManagerOnboardingTutorial() {
 
   if (!open || !step) return null
 
+  const StepIcon = STEP_ICONS[step.id] || Sparkles
   const orgName = organization?.name?.trim()
   const contactName = profile?.full_name?.trim()
 
@@ -162,48 +174,28 @@ export default function ManagerOnboardingTutorial() {
       }
     >
       <div className="flex flex-col gap-5">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5" aria-hidden>
           {steps.map((item, index) => (
             <span
               key={item.id}
-              className={`h-2 flex-1 rounded-full transition-colors ${
-                index <= stepIndex ? 'bg-blue-500' : 'bg-slate-200'
-              }`}
-              aria-hidden
+              className={`h-1.5 flex-1 rounded-full transition-colors ${index <= stepIndex ? 'bg-[#1769FF]' : 'bg-slate-200'}`}
             />
           ))}
         </div>
 
-        <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6 text-center">
-          <span className="text-5xl" role="img" aria-hidden>
-            {step.icon}
+        <div className="flex gap-4">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#1769FF]/10 text-[#1769FF]">
+            <StepIcon aria-hidden="true" className="h-5 w-5" strokeWidth={2} />
           </span>
-          <p className="mt-4 text-base leading-relaxed text-slate-700">{step.description}</p>
-          {step.id === 'welcome' && trialEndLabel && !isNativeApp && (
-            <p className="mt-3 text-sm font-semibold text-blue-800">
-              Essai gratuit actif jusqu&apos;au {trialEndLabel}
-            </p>
-          )}
-        </div>
-
-        {step.id === 'dashboard' && (
-          <ul className="space-y-2 text-sm text-slate-600">
-            <li className="flex gap-2">
-              <span aria-hidden>•</span>
-              <span>Menu latéral : accès rapide à toutes les sections de votre auto-école.</span>
-            </li>
-            {!isNativeApp && (
-              <li className="flex gap-2">
-                <span aria-hidden>•</span>
-                <span>Bandeau cyan : suivi de votre essai gratuit et du nombre d&apos;élèves.</span>
-              </li>
+          <div className="min-w-0">
+            <p className="text-[15px] leading-7 text-slate-700">{step.description}</p>
+            {step.id === 'welcome' && trialEndLabel && !isNativeApp && (
+              <p className="mt-3 inline-flex rounded-md bg-blue-50 px-2.5 py-1 text-sm font-medium text-blue-800">
+                Essai gratuit jusqu’au {trialEndLabel}
+              </p>
             )}
-            <li className="flex gap-2">
-              <span aria-hidden>•</span>
-              <span>Cloche de notification : messages non lus de votre équipe.</span>
-            </li>
-          </ul>
-        )}
+          </div>
+        </div>
       </div>
     </AppModal>
   )

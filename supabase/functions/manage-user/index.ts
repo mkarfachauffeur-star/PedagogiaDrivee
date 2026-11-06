@@ -1,6 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { acceptInviteUrl } from '../_shared/app-url.ts'
 import { emailLog } from '../_shared/email-utils.ts'
+import { inviteMember, sendPasswordReset } from '../_shared/invite-email.ts'
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -54,7 +55,7 @@ Deno.serve(async (req) => {
 
     const { data: targetProfile } = await admin
       .from('profiles')
-      .select('id, email, role, organization_id, is_active')
+      .select('id, email, full_name, role, organization_id, is_active')
       .eq('id', userId)
       .maybeSingle()
 
@@ -117,7 +118,7 @@ Deno.serve(async (req) => {
 
     if (action === 'reset_password') {
       emailLog('manage-user', 'info', 'reset_password', { email, redirectTo })
-      const { error } = await admin.auth.resetPasswordForEmail(email, { redirectTo })
+      const { error } = await sendPasswordReset(admin, { email, fullName: targetProfile.full_name || '' })
       if (error) {
         emailLog('manage-user', 'error', 'reset_password_failed', { email, error: error.message })
         return json({ error: error.message }, 400)
@@ -134,34 +135,30 @@ Deno.serve(async (req) => {
       emailLog('manage-user', 'info', 'resend_invite', { email, redirectTo, confirmed })
 
       if (confirmed) {
-        const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
-          type: 'recovery',
-          email,
-          options: { redirectTo },
-        })
-        if (linkError) {
-          emailLog('manage-user', 'error', 'recovery_link_failed', { email, error: linkError.message })
-          return json({ error: linkError.message }, 400)
-        }
-        const { error: sendError } = await admin.auth.resetPasswordForEmail(email, { redirectTo })
+        const { error: sendError } = await sendPasswordReset(admin, { email, fullName: targetProfile.full_name || '' })
         if (sendError) {
           emailLog('manage-user', 'error', 'recovery_email_failed', { email, error: sendError.message })
           return json({ error: sendError.message }, 400)
         }
-        emailLog('manage-user', 'ok', 'recovery_email_sent', {
-          email,
-          link_preview: linkData?.properties?.action_link?.slice(0, 80),
-        })
         return json({ ok: true, message: 'Lien de réinitialisation renvoyé.' })
       }
 
-      const { error } = await admin.auth.admin.inviteUserByEmail(email, {
+      const { data: org } = await admin
+        .from('organizations')
+        .select('name')
+        .eq('id', targetProfile.organization_id)
+        .maybeSingle()
+      const { error } = await inviteMember(admin, {
+        email,
+        fullName: meta.full_name || targetProfile.full_name || '',
+        role: targetProfile.role,
+        organizationName: org?.name || 'votre auto-école',
         data: {
           organization_id: targetProfile.organization_id,
           role: targetProfile.role,
           full_name: meta.full_name || '',
+          ...(meta.gender ? { gender: meta.gender } : {}),
         },
-        redirectTo,
       })
       if (error) {
         emailLog('manage-user', 'error', 'invite_failed', { email, error: error.message })

@@ -7,7 +7,7 @@
 // Simulateurs : compte technique sans invitation e-mail (createUser).
 // -----------------------------------------------------------------------------
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { acceptInviteUrl } from '../_shared/app-url.ts'
+import { inviteMember } from '../_shared/invite-email.ts'
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
     let email = String(body.email || '').trim().toLowerCase()
     const rawGender = String(body.gender || '').trim().toLowerCase()
     const gender =
-      !isSimulator && role !== 'secretary' && (rawGender === 'male' || rawGender === 'female')
+      !isSimulator && (rawGender === 'male' || rawGender === 'female')
         ? rawGender
         : null
 
@@ -87,13 +87,17 @@ Deno.serve(async (req) => {
       return json({ error: 'Paramètres invalides (email, role)' }, 400)
     }
 
-    if ((role === 'manager' || role === 'teacher') && !gender) {
+    if ((role === 'manager' || role === 'teacher' || role === 'secretary') && !gender) {
       return json({ error: 'Le genre est obligatoire pour ce rôle.' }, 400)
     }
 
-    const redirectTo = acceptInviteUrl()
+    console.log('[invite-user] invitation', { email, role, org: callerProfile.organization_id })
 
-    console.log('[invite-user] invitation', { email, role, redirectTo, org: callerProfile.organization_id })
+    const { data: org } = await admin
+      .from('organizations')
+      .select('name')
+      .eq('id', callerProfile.organization_id)
+      .maybeSingle()
 
     const inviteData: Record<string, unknown> = {
       organization_id: callerProfile.organization_id,
@@ -102,17 +106,19 @@ Deno.serve(async (req) => {
     }
     if (gender) inviteData.gender = gender
 
-    const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
+    const { userId, error } = await inviteMember(admin, {
+      email,
+      fullName,
+      role,
+      organizationName: org?.name || 'votre auto-école',
       data: inviteData,
-      redirectTo,
     })
+    if (gender && userId) {
+      await admin.from('profiles').update({ gender }).eq('id', userId)
+    }
     if (error) return json({ error: error.message }, 400)
 
-    if (gender && data.user?.id) {
-      await admin.from('profiles').update({ gender }).eq('id', data.user.id)
-    }
-
-    return json({ ok: true, user_id: data.user?.id })
+    return json({ ok: true, user_id: userId })
   } catch (err) {
     return json({ error: String(err?.message || err) }, 500)
   }

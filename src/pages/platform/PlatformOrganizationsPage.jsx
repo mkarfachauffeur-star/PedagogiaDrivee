@@ -11,7 +11,13 @@ import { TestDataToggle } from '../../components/ui/TableTools'
 import { useConfirm } from '../../components/ui/useConfirm'
 import { formatDate } from '../../lib/format'
 import { isTestOrganization } from '../../lib/platformTestData'
-import { createOrganization, deleteOrganization, fetchStudentQuotas, listAllOrganizations } from '../../services/platform'
+import {
+  createOrganization,
+  deleteOrganization,
+  fetchStudentQuotas,
+  inviteOrganizationManager,
+  listAllOrganizations,
+} from '../../services/platform'
 
 const STATUS = {
   trial: { label: 'Essai', tone: 'info' },
@@ -20,10 +26,12 @@ const STATUS = {
   cancelled: { label: 'Annulée', tone: 'neutral' },
 }
 
+const EMPTY_FORM = { name: '', phone: '', managerName: '', managerEmail: '', managerGender: '' }
+
 export default function PlatformOrganizationsPage() {
   const [organizations, setOrganizations] = useState([])
   const [loading, setLoading] = useState(true)
-  const [form, setForm] = useState({ name: '', email: '', phone: '' })
+  const [form, setForm] = useState(EMPTY_FORM)
   const [creating, setCreating] = useState(false)
   const [feedback, setFeedback] = useState(null)
   const [listFeedback, setListFeedback] = useState(null)
@@ -44,19 +52,40 @@ export default function PlatformOrganizationsPage() {
     refresh()
   }, [refresh])
 
+  const update = (key) => (event) => setForm((prev) => ({ ...prev, [key]: event.target.value }))
+
   const handleCreate = async (event) => {
     event.preventDefault()
     if (!form.name.trim()) return
     setCreating(true)
     setFeedback(null)
-    const { organizationId, error } = await createOrganization(form)
-    setCreating(false)
+    const name = form.name.trim()
+    const { organizationId, error } = await createOrganization({ name, email: form.managerEmail, phone: form.phone })
     if (error) {
+      setCreating(false)
       setFeedback({ type: 'error', message: error.message || 'Création impossible.' })
       return
     }
-    setFeedback({ type: 'ok', message: `Auto-école créée (identifiant ${organizationId}).` })
-    setForm({ name: '', email: '', phone: '' })
+    const { error: inviteError } = await inviteOrganizationManager(organizationId, {
+      fullName: form.managerName,
+      email: form.managerEmail,
+      gender: form.managerGender,
+    })
+    setCreating(false)
+    setFeedback(
+      inviteError
+        ? {
+            type: 'error',
+            message: `« ${name} » est créée, mais l’invitation du gérant n’est pas partie : ${inviteError.message}`,
+            organizationId,
+          }
+        : {
+            type: 'ok',
+            message: `« ${name} » est créée avec 30 jours d’essai gratuit. ${form.managerName.trim()} a reçu une invitation à ${form.managerEmail.trim()} pour créer son mot de passe.`,
+            organizationId,
+          },
+    )
+    setForm(EMPTY_FORM)
     refresh()
   }
 
@@ -95,44 +124,54 @@ export default function PlatformOrganizationsPage() {
 
       <section className={`${ui.card} ${ui.cardBody}`}>
         <h2 className={ui.sectionTitle}>Créer une auto-école</h2>
-        <p className={ui.sectionText}>Elle démarre avec un essai gratuit de 30 jours.</p>
-        <form className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3" onSubmit={handleCreate}>
+        <p className={ui.sectionText}>Elle démarre avec un essai gratuit de 30 jours. Le gérant reçoit un e-mail pour créer son mot de passe.</p>
+        <form className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={handleCreate}>
           <label className={ui.label}>
             Nom de l’auto-école
-            <input
-              className={ui.input}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              required
-              value={form.name}
-            />
+            <input className={ui.input} onChange={update('name')} required value={form.name} />
           </label>
           <label className={ui.label}>
-            E-mail
-            <input
-              className={ui.input}
-              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-              type="email"
-              value={form.email}
-            />
+            Téléphone de l’auto-école
+            <input className={ui.input} onChange={update('phone')} type="tel" value={form.phone} />
+          </label>
+          <p className="text-sm font-medium text-slate-900 sm:col-span-2">Gérant</p>
+          <label className={ui.label}>
+            Prénom et nom
+            <input className={ui.input} onChange={update('managerName')} required value={form.managerName} />
           </label>
           <label className={ui.label}>
-            Téléphone
-            <input
-              className={ui.input}
-              onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-              type="tel"
-              value={form.phone}
-            />
+            E-mail du gérant
+            <input className={ui.input} onChange={update('managerEmail')} required type="email" value={form.managerEmail} />
+            <span className={ui.hint}>Il reçoit l’invitation à cette adresse. Elle ne doit pas déjà avoir un compte.</span>
           </label>
-          <div className="sm:col-span-3">
+          <label className={ui.label}>
+            Civilité
+            <select className={ui.input} onChange={update('managerGender')} required value={form.managerGender}>
+              <option value="">Choisir</option>
+              <option value="female">Madame</option>
+              <option value="male">Monsieur</option>
+            </select>
+          </label>
+          <div className="flex items-end">
             <button className={ui.btnPrimary} disabled={creating} type="submit">
-              {creating ? 'Création…' : 'Créer l’auto-école'}
+              {creating ? 'Création…' : 'Créer et inviter le gérant'}
             </button>
           </div>
         </form>
         {feedback && (
           <div className="mt-4">
-            <Notice tone={feedback.type === 'error' ? 'danger' : 'success'}>{feedback.message}</Notice>
+            <Notice
+              action={
+                feedback.organizationId ? (
+                  <Link className={ui.btnSmallPrimary} to={`/platform/organizations/${feedback.organizationId}`}>
+                    Ouvrir la fiche
+                  </Link>
+                ) : null
+              }
+              tone={feedback.type === 'error' ? 'danger' : 'success'}
+            >
+              {feedback.message}
+            </Notice>
           </div>
         )}
       </section>

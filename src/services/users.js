@@ -47,7 +47,7 @@ export function staffToSelectOptions(users, { roles } = {}) {
 
 export async function createOrganizationUser({ firstName, lastName, email, phone, role, gender }) {
   const fullName = formatPersonName({ firstName, lastName })
-  const normalizedGender = role === 'secretary' ? null : normalizeGender(gender)
+  const normalizedGender = normalizeGender(gender)
   const { error: inviteError, userId } = await inviteUser({
     email,
     role,
@@ -95,21 +95,10 @@ export async function changeUserEmail(userId, newEmail) {
 }
 
 export async function sendStaffPasswordReset(userId) {
-  try {
-    const { data: email, error: rpcError } = await supabase.rpc('manager_staff_password_reset_target', {
-      p_user_id: userId,
-    })
-    if (rpcError) throw rpcError
-    if (!email) throw new Error('E-mail introuvable pour cet utilisateur.')
-
-    const redirectTo = `${window.location.origin}/accept-invite`
-    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
-    if (error) throw error
-
-    return { error: null, message: 'E-mail de réinitialisation envoyé.' }
-  } catch (error) {
-    return { error: toUserError(error, 'L’e-mail de réinitialisation n’a pas pu être envoyé. Veuillez réessayer.'), message: null }
-  }
+  // Envoi côté serveur : e-mail Pedagogia Drive en français, lien vers le site en ligne.
+  const { error, message } = await manageUser('reset_password', userId)
+  if (error) return { error, message: null }
+  return { error: null, message: message || 'E-mail de réinitialisation envoyé.' }
 }
 
 export async function setStaffAccountActive(userId, isActive) {
