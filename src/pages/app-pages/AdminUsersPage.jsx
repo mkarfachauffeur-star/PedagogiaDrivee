@@ -19,6 +19,12 @@ import { getUserFacingError } from '../../lib/userFacingError'
 import { listOrganizationUsers, manageUser, sendStaffPasswordReset, setStaffAccountActive, subscribeOrganizationUsers } from '../../services/users'
 
 const ROLE_ORDER = { manager: 0, secretary: 1, teacher: 2 }
+// Une couleur par rôle pour repérer chacun d'un coup d'œil.
+const ROLE_BADGE = {
+  manager: 'bg-violet-50 text-violet-700 ring-violet-200',
+  secretary: 'bg-amber-50 text-amber-800 ring-amber-200',
+  teacher: 'bg-blue-50 text-blue-700 ring-blue-200',
+}
 const ROLE_FILTERS = [
   { value: 'all', label: 'Tous' },
   { value: 'manager', label: 'Gérant' },
@@ -219,18 +225,21 @@ export default function AdminUsersPage() {
                   return (
                     <tr key={user.id} className="block border-b border-slate-100 px-4 py-3 last:border-0 md:table-row md:p-0">
                       <td className="block font-medium text-slate-900 md:table-cell md:px-4 md:py-3">
-                        {user.full_name || '—'}
-                        {isSelf && (
-                          <span className="ml-2 text-xs font-normal text-slate-400">(vous)</span>
-                        )}
+                        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                          <span>{user.full_name || '—'}</span>
+                          <span className={`rounded-md px-2 py-0.5 text-xs font-medium ring-1 md:hidden ${ROLE_BADGE[user.role] || ROLE_BADGE.teacher}`}>
+                            {staffRoleLabel(user.role, user.gender) || user.role}
+                          </span>
+                          {isSelf && <span className="text-xs font-normal text-slate-400">(vous)</span>}
+                        </span>
                       </td>
                       <td className="block break-all text-sm text-slate-600 md:table-cell md:break-normal md:px-4 md:py-3">{user.email || '—'}</td>
-                      <td className="mt-2 mr-2 inline-block md:mt-0 md:mr-0 md:table-cell md:px-4 md:py-3">
-                        <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+                      <td className="hidden md:table-cell md:px-4 md:py-3">
+                        <span className={`rounded-md px-2 py-0.5 text-xs font-medium ring-1 ${ROLE_BADGE[user.role] || ROLE_BADGE.teacher}`}>
                           {staffRoleLabel(user.role, user.gender) || user.role}
                         </span>
                       </td>
-                      <td className="inline-block md:table-cell md:px-4 md:py-3">
+                      <td className="mt-2 inline-block md:mt-0 md:table-cell md:px-4 md:py-3">
                         <span className={`rounded-md px-2 py-0.5 text-xs font-medium ring-1 ${STATUS_BADGE[status.tone]}`}>
                           {status.label}
                         </span>
