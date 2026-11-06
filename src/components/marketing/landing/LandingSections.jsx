@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Check } from 'lucide-react'
+import { Car, Check, GraduationCap, MessagesSquare, TrendingUp } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import BrandLogo from '../../BrandLogo'
 import AppStoreBadge from '../AppStoreBadge'
@@ -213,20 +213,33 @@ export function LandingFeatures({ shouldReduceMotion }) {
 
 const ROLES = [
   {
-    role: 'Gérant',
-    items: ['Tableau de bord et évolution du chiffre d’affaires', 'Comptes enseignants et secrétariat', 'Formules, contrats et exports réglementaires'],
-  },
-  {
-    role: 'Secrétariat',
-    items: ['Inscriptions et pré-inscriptions', 'Planning global et véhicules', 'Paiements, documents et examens'],
+    role: 'Élève',
+    icon: GraduationCap,
+    benefit: 'Il révise entre deux leçons, où qu’il soit.',
+    text: 'Les leçons et les QCU des 4 compétences du REMC sont sur son téléphone. Il arrive en voiture en connaissant déjà la théorie.',
+    items: ['QCU corrigés tout de suite', 'Progression visible à chaque leçon', 'Conduite accompagnée suivie au kilomètre'],
   },
   {
     role: 'Enseignant',
-    items: ['Planning de ses leçons', 'Livret et progression de ses élèves', 'Messagerie avec les élèves'],
+    icon: Car,
+    benefit: 'Moins de répétitions, plus de conduite.',
+    text: 'L’élève a revu la théorie avant la leçon. L’enseignant valide les compétences en quelques clics et consacre le temps en voiture à la pratique.',
+    items: ['Livret REMC rempli en fin de leçon', 'Planning de ses leçons à jour', 'Dossier complet de chaque élève'],
   },
   {
-    role: 'Élève',
-    items: ['Livret REMC et historique des leçons', 'QCU de révision', 'Planning, documents et messagerie'],
+    role: 'Secrétariat',
+    icon: MessagesSquare,
+    badge: 'Inédit',
+    benefit: 'Une messagerie interne pour toute l’auto-école.',
+    text: 'Les élèves écrivent au secrétariat dans l’app, l’équipe échange entre elle. Fini les SMS perdus et les appels pour une simple question.',
+    items: ['Accusés « Envoyé » et « Lu »', 'Pièces jointes et documents', 'Inscriptions, planning et paiements au même endroit'],
+  },
+  {
+    role: 'Gérant',
+    icon: TrendingUp,
+    benefit: 'Ses vrais chiffres, à jour en permanence.',
+    text: 'Chaque encaissement saisi par le secrétariat ou un enseignant remonte dans le tableau de bord. Le gérant voit ce qui est encaissé et ce qui reste à encaisser.',
+    items: ['Chiffre d’affaires sur 12 mois', 'Reste à encaisser par élève', 'Exports réglementaires'],
   },
 ]
 
@@ -234,27 +247,35 @@ export function LandingRoles({ shouldReduceMotion }) {
   return (
     <section className="scroll-mt-20 border-y border-[var(--lp-border)] bg-[var(--lp-section)] py-20 lg:py-28" id="pour-qui">
       <div className={CONTAINER}>
-        <SectionHeader eyebrow="Pour toute l’auto-école" title="Un espace adapté à chaque rôle.">
-          Chacun a son compte et ne voit que ce qui le concerne.
+        <SectionHeader eyebrow="Pour toute l’auto-école" title="Chacun y gagne, de l’élève au gérant.">
+          Un seul outil, un espace pour chaque rôle, et du temps gagné pour tout le monde.
         </SectionHeader>
 
-        <motion.div
-          className="mt-12 grid gap-px overflow-hidden rounded-xl border border-[var(--lp-border)] bg-[var(--lp-border)] sm:grid-cols-2 lg:grid-cols-4"
-          {...reveal(shouldReduceMotion)}
-        >
-          {ROLES.map((item) => (
-            <div className="bg-[var(--lp-card)] p-6" key={item.role}>
-              <h3 className="text-base font-semibold text-[var(--lp-ink)]">{item.role}</h3>
-              <ul className="mt-3 space-y-2">
-                {item.items.map((line) => (
-                  <li className="text-sm leading-6 text-[var(--lp-muted)]" key={line}>
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </motion.div>
+        <div className="mt-12 grid gap-4 sm:grid-cols-2">
+          {ROLES.map((item, index) => {
+            const Icon = item.icon
+            return (
+              <motion.article
+                className="flex flex-col rounded-xl border border-[var(--lp-border)] bg-[var(--lp-card)] p-6 sm:p-7"
+                key={item.role}
+                {...reveal(shouldReduceMotion, index * 0.05)}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#1769FF]/10 text-[#1769FF]">
+                    <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2} />
+                  </span>
+                  <p className="text-sm font-semibold text-[var(--lp-ink)]">{item.role}</p>
+                  {item.badge ? (
+                    <span className="ml-auto rounded-full bg-[#1769FF] px-2.5 py-0.5 text-xs font-semibold text-white">{item.badge}</span>
+                  ) : null}
+                </div>
+                <h3 className="mt-5 text-xl font-semibold tracking-[-0.02em] text-[var(--lp-ink)]">{item.benefit}</h3>
+                <p className="mt-2 text-[15px] leading-7 text-[var(--lp-muted)]">{item.text}</p>
+                <CheckList items={item.items} />
+              </motion.article>
+            )
+          })}
+        </div>
       </div>
     </section>
   )

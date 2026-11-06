@@ -50,8 +50,8 @@ export default function ProfileSelection() {
 
       <main id="main-content">
         <LandingHero shouldReduceMotion={shouldReduceMotion} />
-        <LandingFeatures shouldReduceMotion={shouldReduceMotion} />
         <LandingRoles shouldReduceMotion={shouldReduceMotion} />
+        <LandingFeatures shouldReduceMotion={shouldReduceMotion} />
         <LandingComparison shouldReduceMotion={shouldReduceMotion} />
         <LandingPricing
           onSelectOffer={selectOffer}
