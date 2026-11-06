@@ -146,7 +146,13 @@ export default function AcceptInvitePage() {
         <BrandLogo />
         <h1 className="mt-6 text-2xl font-semibold text-slate-950">Activer votre compte</h1>
         <p className="mt-2 text-sm text-slate-500">
-          Définissez votre mot de passe pour accéder à PEDAGOGIA DRIVE.
+          {ready && userEmail ? (
+            <>
+              Choisissez le mot de passe du compte <span className="font-medium text-slate-700">{userEmail}</span>.
+            </>
+          ) : (
+            'Définissez votre mot de passe pour accéder à PEDAGOGIA DRIVE.'
+          )}
         </p>
 
         {hashError && (
@@ -159,12 +165,6 @@ export default function AcceptInvitePage() {
           <p className="mt-4 text-sm text-amber-700">
             Ouvrez le lien reçu par e-mail pour activer cette page. Si vous venez de cliquer le lien,
             patientez quelques secondes…
-          </p>
-        )}
-
-        {!hashError && ready && userEmail && (
-          <p className="mt-4 text-sm text-emerald-700">
-            Compte trouvé : <strong>{userEmail}</strong>. Choisissez votre mot de passe.
           </p>
         )}
 
