@@ -4,6 +4,7 @@ import PageHeader from '../../components/ui/PageHeader'
 import CreateUserModal from '../../components/users/CreateUserModal'
 import AppModal, { AppModalFooter } from '../../components/ui/AppModal'
 import EmptyState from '../../components/ui/EmptyState'
+import Notice from '../../components/ui/Notice'
 import ListSearchField from '../../components/ui/ListSearchField'
 import PaginationBar from '../../components/ui/PaginationBar'
 import { useAuth } from '../../context/AuthContext'
@@ -17,6 +18,14 @@ import {
 import { getUserFacingError } from '../../lib/userFacingError'
 import { listOrganizationUsers, manageUser, sendStaffPasswordReset, setStaffAccountActive, subscribeOrganizationUsers } from '../../services/users'
 
+const ROLE_ORDER = { manager: 0, secretary: 1, teacher: 2 }
+const ROLE_FILTERS = [
+  { value: 'all', label: 'Tous' },
+  { value: 'manager', label: 'Gérant' },
+  { value: 'secretary', label: 'Secrétariat' },
+  { value: 'teacher', label: 'Enseignants' },
+]
+
 export default function AdminUsersPage() {
   const { profileId, canWrite } = useAuth()
   const [users, setUsers] = useState([])
@@ -27,6 +36,21 @@ export default function AdminUsersPage() {
   const [actionBusy, setActionBusy] = useState(null)
   const [feedback, setFeedback] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [roleFilter, setRoleFilter] = useState('all')
+
+  const roleCounts = useMemo(() => {
+    const counts = { all: users.length }
+    for (const user of users) counts[user.role] = (counts[user.role] || 0) + 1
+    return counts
+  }, [users])
+
+  const visibleUsers = useMemo(
+    () =>
+      users
+        .filter((user) => roleFilter === 'all' || user.role === roleFilter)
+        .sort((a, b) => (ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9) || (a.full_name || '').localeCompare(b.full_name || '', 'fr')),
+    [users, roleFilter],
+  )
 
   const {
     page,
@@ -35,7 +59,7 @@ export default function AdminUsersPage() {
     totalItems,
     pageItems,
     pageSize,
-  } = useClientPagination(users, {
+  } = useClientPagination(visibleUsers, {
     pageSize: 10,
     query: searchQuery,
     filterFn: (user, query) => {
@@ -134,11 +158,7 @@ export default function AdminUsersPage() {
         title="Utilisateurs"
       />
 
-      {feedback && (
-        <p className={`rounded-2xl px-4 py-3 text-sm font-semibold ${feedback.type === 'ok' ? 'border border-emerald-200 bg-emerald-50 text-emerald-700' : 'border border-rose-200 bg-rose-50 text-rose-700'}`}>
-          {feedback.text}
-        </p>
-      )}
+      {feedback && <Notice tone={feedback.type === 'ok' ? 'success' : 'danger'}>{feedback.text}</Notice>}
 
       <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
         {!profileId ? (
@@ -151,9 +171,27 @@ export default function AdminUsersPage() {
           <div className="p-5"><EmptyState title="Aucun utilisateur" message="Créez le premier compte staff de votre auto-école." icon="👤" /></div>
         ) : (
           <>
-          <div className="flex flex-col gap-3 border-b border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
-            <ListSearchField onChange={setSearchQuery} value={searchQuery} />
-            <p className="text-xs text-slate-500">{totalItems} utilisateur{totalItems > 1 ? 's' : ''}</p>
+          <div className="flex flex-col gap-3 border-b border-slate-200 p-4">
+            <ListSearchField onChange={setSearchQuery} placeholder="Rechercher un nom ou un e-mail" value={searchQuery} />
+            <div className="flex flex-wrap items-center gap-2">
+              {ROLE_FILTERS.filter((item) => item.value === 'all' || roleCounts[item.value]).map((item) => (
+                <button
+                  aria-pressed={roleFilter === item.value}
+                  className={`inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-xs font-medium transition ${
+                    roleFilter === item.value
+                      ? 'border-[#1769FF] bg-[#1769FF] text-white'
+                      : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                  }`}
+                  key={item.value}
+                  onClick={() => setRoleFilter(item.value)}
+                  type="button"
+                >
+                  {item.label}
+                  <span className={roleFilter === item.value ? 'text-white/80' : 'text-slate-400'}>{roleCounts[item.value] || 0}</span>
+                </button>
+              ))}
+              <p className="ml-auto text-xs text-slate-500">{totalItems} utilisateur{totalItems > 1 ? 's' : ''}</p>
+            </div>
           </div>
           <div className="overflow-x-auto">
             <table className="block min-w-full text-left text-sm md:table">

@@ -108,7 +108,7 @@ export default function AcceptInvitePage() {
       password,
       data: {
         must_change_password: false,
-        ...(isNewManager ? { manager_onboarding_pending: true } : {}),
+        ...(isNewManager ? { manager_onboarding_pending: true } : { onboarding_pending: true }),
       },
     })
     if (updateError) {

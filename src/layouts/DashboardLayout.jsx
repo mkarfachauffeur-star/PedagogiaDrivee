@@ -16,6 +16,7 @@ import { usePlatformUnreadCount } from '../hooks/usePlatformUnreadCount'
 import { useUnreadCount } from '../hooks/useUnreadCount'
 import { getTrackLabel } from '../lib/studentTrack'
 import ManagerOnboardingTutorial from '../components/onboarding/ManagerOnboardingTutorial'
+import RoleOnboardingTutorial from '../components/onboarding/RoleOnboardingTutorial'
 import DeleteAccountModal from '../components/account/DeleteAccountModal'
 import { roleLabelFor } from '../lib/genderedRoles'
 import { announcePresence, leavePresence } from '../services/presence'
@@ -349,6 +350,7 @@ export default function DashboardLayout({ role, children, fullWidth = false }) {
       </div>
 
       {role === 'manager' && <ManagerOnboardingTutorial />}
+      {['secretary', 'teacher', 'student'].includes(role) && <RoleOnboardingTutorial />}
       {role !== 'super_admin' && (
         <DeleteAccountModal
           open={deleteAccountOpen}
