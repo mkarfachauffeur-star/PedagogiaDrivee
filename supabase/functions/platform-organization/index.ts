@@ -108,6 +108,14 @@ Deno.serve(async (req) => {
         .limit(1)
       if (existing?.length) return json({ error: 'Cette auto-école a déjà un gérant.' }, 409)
 
+      const { data: emailTaken } = await admin.from('profiles').select('id').ilike('email', email).limit(1)
+      if (emailTaken?.length) {
+        return json(
+          { error: 'Cette adresse e-mail a déjà un compte Pedagogia Drive. Utilisez une autre adresse pour ce gérant.' },
+          409,
+        )
+      }
+
       const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
         data: { organization_id: orgId, role: 'manager', full_name: fullName, gender },
         redirectTo: acceptInviteUrl(),
