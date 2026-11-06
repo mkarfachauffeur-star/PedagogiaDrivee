@@ -12,7 +12,13 @@ import { ACTION_LABELS } from '../../lib/auditLabels'
 import { formatDate, formatDateTime } from '../../lib/format'
 import { formatPlatformEur, resolveSubscriptionStatus } from '../../lib/platformPlans'
 import { isTestOrganization } from '../../lib/platformTestData'
-import { fetchStudentQuotas, getOrganizationOverview, listAuditLogs, sendStudentQuotaTestEmail } from '../../services/platform'
+import {
+  fetchStudentQuotas,
+  getOrganizationOverview,
+  inviteOrganizationManager,
+  listAuditLogs,
+  sendStudentQuotaTestEmail,
+} from '../../services/platform'
 import { useAuth } from '../../context/AuthContext'
 import { useConfirm } from '../../components/ui/useConfirm'
 import { roleLabels } from '../../utils/authSession'
@@ -55,6 +61,65 @@ function Panel({ title, action, children }) {
   )
 }
 
+function InviteManagerPanel({ organizationId, onInvited }) {
+  const [form, setForm] = useState({ fullName: '', email: '', gender: '' })
+  const [sending, setSending] = useState(false)
+  const [feedback, setFeedback] = useState(null)
+  const update = (key) => (event) => setForm((prev) => ({ ...prev, [key]: event.target.value }))
+
+  const submit = async (event) => {
+    event.preventDefault()
+    setSending(true)
+    setFeedback(null)
+    const { error } = await inviteOrganizationManager(organizationId, form)
+    setSending(false)
+    if (error) {
+      setFeedback({ tone: 'danger', message: error.message })
+      return
+    }
+    setFeedback({ tone: 'success', message: `Invitation envoyée à ${form.email}.` })
+    setForm({ fullName: '', email: '', gender: '' })
+    onInvited()
+  }
+
+  return (
+    <Panel title="Inviter le gérant">
+      <form className="grid gap-4 px-5 py-4 sm:grid-cols-2" onSubmit={submit}>
+        <p className="text-sm text-slate-500 sm:col-span-2">
+          Cette auto-école n’a pas encore de gérant. Il recevra un e-mail pour choisir son mot de passe, puis pourra créer
+          le secrétariat, les enseignants et les élèves.
+        </p>
+        <label className={ui.label}>
+          Prénom et nom
+          <input className={ui.input} onChange={update('fullName')} required value={form.fullName} />
+        </label>
+        <label className={ui.label}>
+          E-mail
+          <input className={ui.input} onChange={update('email')} required type="email" value={form.email} />
+        </label>
+        <label className={ui.label}>
+          Civilité
+          <select className={ui.input} onChange={update('gender')} required value={form.gender}>
+            <option value="">Choisir</option>
+            <option value="female">Madame</option>
+            <option value="male">Monsieur</option>
+          </select>
+        </label>
+        <div className="flex items-end">
+          <button className={ui.btnPrimary} disabled={sending} type="submit">
+            {sending ? 'Envoi…' : 'Envoyer l’invitation'}
+          </button>
+        </div>
+        {feedback ? (
+          <div className="sm:col-span-2">
+            <Notice tone={feedback.tone}>{feedback.message}</Notice>
+          </div>
+        ) : null}
+      </form>
+    </Panel>
+  )
+}
+
 export default function PlatformOrganizationDetailPage() {
   const { organizationId } = useParams()
   const [data, setData] = useState(null)
@@ -84,6 +149,8 @@ export default function PlatformOrganizationDetailPage() {
   }
   const { online } = useOnlinePresence()
 
+  const [reloadKey, setReloadKey] = useState(0)
+
   useEffect(() => {
     let active = true
     Promise.all([getOrganizationOverview(organizationId), listAuditLogs({ organizationId, limit: 20 }), fetchStudentQuotas()]).then(
@@ -97,7 +164,7 @@ export default function PlatformOrganizationDetailPage() {
     return () => {
       active = false
     }
-  }, [organizationId])
+  }, [organizationId, reloadKey])
 
   const onlineIds = useMemo(
     () => new Set(online.filter((entry) => entry.organizationId === organizationId).map((entry) => entry.profileId)),
@@ -194,6 +261,10 @@ export default function PlatformOrganizationDetailPage() {
           </dl>
         </Panel>
       </div>
+
+      {!profiles.some((profile) => profile.role === 'manager') ? (
+        <InviteManagerPanel onInvited={() => setReloadKey((key) => key + 1)} organizationId={organizationId} />
+      ) : null}
 
       <Panel title={`Comptes (${profiles.length})`}>
         <div className="overflow-x-auto">

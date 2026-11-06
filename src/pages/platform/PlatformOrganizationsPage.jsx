@@ -55,7 +55,11 @@ export default function PlatformOrganizationsPage() {
       setFeedback({ type: 'error', message: error.message || 'Création impossible.' })
       return
     }
-    setFeedback({ type: 'ok', message: `Auto-école créée (identifiant ${organizationId}).` })
+    setFeedback({
+      type: 'ok',
+      message: `« ${form.name.trim()} » est créée, avec 30 jours d’essai gratuit. Étape suivante : inviter son gérant.`,
+      organizationId,
+    })
     setForm({ name: '', email: '', phone: '' })
     refresh()
   }
@@ -132,7 +136,18 @@ export default function PlatformOrganizationsPage() {
         </form>
         {feedback && (
           <div className="mt-4">
-            <Notice tone={feedback.type === 'error' ? 'danger' : 'success'}>{feedback.message}</Notice>
+            <Notice
+              action={
+                feedback.organizationId ? (
+                  <Link className={ui.btnSmallPrimary} to={`/platform/organizations/${feedback.organizationId}`}>
+                    Inviter le gérant
+                  </Link>
+                ) : null
+              }
+              tone={feedback.type === 'error' ? 'danger' : 'success'}
+            >
+              {feedback.message}
+            </Notice>
           </div>
         )}
       </section>
