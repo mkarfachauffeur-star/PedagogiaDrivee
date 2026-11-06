@@ -47,7 +47,7 @@ export function staffToSelectOptions(users, { roles } = {}) {
 
 export async function createOrganizationUser({ firstName, lastName, email, phone, role, gender }) {
   const fullName = formatPersonName({ firstName, lastName })
-  const normalizedGender = role === 'secretary' ? null : normalizeGender(gender)
+  const normalizedGender = normalizeGender(gender)
   const { error: inviteError, userId } = await inviteUser({
     email,
     role,
