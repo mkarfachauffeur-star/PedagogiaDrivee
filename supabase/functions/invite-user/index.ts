@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
     let email = String(body.email || '').trim().toLowerCase()
     const rawGender = String(body.gender || '').trim().toLowerCase()
     const gender =
-      !isSimulator && role !== 'secretary' && (rawGender === 'male' || rawGender === 'female')
+      !isSimulator && (rawGender === 'male' || rawGender === 'female')
         ? rawGender
         : null
 
@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
       return json({ error: 'Paramètres invalides (email, role)' }, 400)
     }
 
-    if ((role === 'manager' || role === 'teacher') && !gender) {
+    if ((role === 'manager' || role === 'teacher' || role === 'secretary') && !gender) {
       return json({ error: 'Le genre est obligatoire pour ce rôle.' }, 400)
     }
 

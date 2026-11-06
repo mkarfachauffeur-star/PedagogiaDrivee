@@ -27,7 +27,7 @@ function validate(form) {
   if (!form.email.trim()) errors.email = "L'e-mail est obligatoire."
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) errors.email = 'E-mail invalide.'
   if (!form.role) errors.role = 'Le rôle est obligatoire.'
-  if (form.role !== 'secretary' && !normalizeGender(form.gender)) {
+  if (!normalizeGender(form.gender)) {
     errors.gender = 'Le genre est obligatoire.'
   }
   return errors
@@ -111,7 +111,7 @@ export default function CreateUserModal({ open, onClose, onCreated }) {
               {ROLE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
           </label>
-          {form.role !== 'secretary' && (
+          {(
             <fieldset className="block">
               <legend className="text-sm font-semibold text-slate-700">Genre *</legend>
               <div className="mt-2 flex flex-wrap gap-3">

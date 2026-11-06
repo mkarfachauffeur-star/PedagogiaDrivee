@@ -8,7 +8,7 @@ export const GENDER_OPTIONS = [
 const ROLE_LABELS = {
   student: { male: 'Élève', female: 'Élève' },
   teacher: { male: 'Enseignant', female: 'Enseignante' },
-  secretary: { male: 'Secrétariat', female: 'Secrétariat' },
+  secretary: { male: 'Secrétaire', female: 'Secrétaire' },
   manager: { male: 'Gérant', female: 'Gérante' },
   super_admin: { male: 'Super Admin', female: 'Super Admin' },
 }
