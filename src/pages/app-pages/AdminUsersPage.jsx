@@ -5,6 +5,7 @@ import CreateUserModal from '../../components/users/CreateUserModal'
 import AppModal, { AppModalFooter } from '../../components/ui/AppModal'
 import EmptyState from '../../components/ui/EmptyState'
 import Notice from '../../components/ui/Notice'
+import { useConfirm } from '../../components/ui/useConfirm'
 import ListSearchField from '../../components/ui/ListSearchField'
 import PaginationBar from '../../components/ui/PaginationBar'
 import { useAuth } from '../../context/AuthContext'
@@ -43,6 +44,7 @@ export default function AdminUsersPage() {
   const [feedback, setFeedback] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
+  const [confirm, confirmDialog] = useConfirm()
 
   const roleCounts = useMemo(() => {
     const counts = { all: users.length }
@@ -101,8 +103,24 @@ export default function AdminUsersPage() {
     if (!canWrite) return
     const userId = user.id
 
-    if (action === 'delete' && !window.confirm('Supprimer définitivement ce compte ?')) return
-    if (action === 'disable' && !window.confirm('Désactiver ce compte ?')) return
+    const name = user.full_name || user.email
+    if (action === 'delete') {
+      const ok = await confirm({
+        title: `Supprimer le compte de ${name} ?`,
+        description: 'Le compte est supprimé définitivement. Cette personne ne pourra plus se connecter.',
+        confirmLabel: 'Supprimer définitivement',
+        danger: true,
+      })
+      if (!ok) return
+    }
+    if (action === 'disable') {
+      const ok = await confirm({
+        title: `Désactiver le compte de ${name} ?`,
+        description: 'Cette personne ne pourra plus se connecter. Vous pourrez réactiver son compte à tout moment.',
+        confirmLabel: 'Désactiver',
+      })
+      if (!ok) return
+    }
     if (action === 'reset_password') {
       setResetConfirmUser(user)
       return
@@ -283,6 +301,7 @@ export default function AdminUsersPage() {
         )}
       </section>
 
+      {confirmDialog}
       <CreateUserModal open={modalOpen} onClose={() => setModalOpen(false)} onCreated={() => refresh()} />
 
       <AppModal

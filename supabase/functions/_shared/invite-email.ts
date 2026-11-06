@@ -63,22 +63,49 @@ export async function inviteMember(admin: Admin, { email, fullName, role, organi
     footerNote: 'Ce lien est personnel et valable pour une durée limitée. Si vous n’attendiez pas cette invitation, ignorez cet e-mail.',
   })
 
+  const sent = await sendBrandedEmail(apiKey, email, `Votre accès Pedagogia Drive — ${organizationName}`, html)
+  return { userId, error: sent.error }
+}
+
+/** Lien de réinitialisation du mot de passe, en français, envoyé par Resend. */
+export async function sendPasswordReset(admin: Admin, { email, fullName }: { email: string; fullName: string }) {
+  const redirectTo = acceptInviteUrl()
+  const apiKey = normalizeResendKey(Deno.env.get('RESEND_API_KEY'))
+  if (!apiKey) {
+    const { error } = await admin.auth.resetPasswordForEmail(email, { redirectTo })
+    return { error }
+  }
+  const { data: link, error } = await admin.auth.admin.generateLink({ type: 'recovery', email, options: { redirectTo } })
+  if (error) return { error }
+  const actionLink = link?.properties?.action_link as string | undefined
+  if (!actionLink) return { error: new Error('Lien de réinitialisation introuvable.') }
+
+  const firstName = (fullName || '').split(' ')[0]
+  const html = renderEmail({
+    title: 'Choisissez un nouveau mot de passe',
+    preheader: 'Votre auto-école vous envoie un lien pour réinitialiser votre mot de passe.',
+    bodyHtml: [
+      emailParagraph(firstName ? `Bonjour ${escapeHtml(firstName)},` : 'Bonjour,'),
+      emailParagraph('Votre auto-école vous envoie un lien pour choisir un nouveau mot de passe Pedagogia Drive.'),
+    ].join(''),
+    cta: { label: 'Choisir mon mot de passe', url: actionLink },
+    footerNote: 'Ce lien est personnel et valable pour une durée limitée. Si vous n’avez rien demandé, ignorez cet e-mail.',
+  })
+  return sendBrandedEmail(apiKey, email, 'Réinitialisation de votre mot de passe Pedagogia Drive', html)
+}
+
+async function sendBrandedEmail(apiKey: string, email: string, subject: string, html: string) {
   const from = Deno.env.get('ACCESS_EMAIL_FROM') || Deno.env.get('RESEND_FROM') || 'Pedagogia Drive <noreply@pedagogia-drive.fr>'
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      from,
-      to: [email],
-      subject: `Votre accès Pedagogia Drive — ${organizationName}`,
-      html,
-    }),
+    body: JSON.stringify({ from, to: [email], subject, html }),
   })
   if (!res.ok) {
     const body = await res.text().catch(() => '')
     emailLog('invite-email', 'error', 'resend_failed', { email, status: res.status, body })
-    return { userId, error: new Error('Le compte est créé, mais l’e-mail d’invitation n’a pas pu être envoyé.') }
+    return { error: new Error('Le compte est à jour, mais l’e-mail n’a pas pu être envoyé.') }
   }
-  emailLog('invite-email', 'ok', 'invite_sent', { email, role })
-  return { userId, error: null }
+  emailLog('invite-email', 'ok', 'email_sent', { email, subject })
+  return { error: null }
 }
