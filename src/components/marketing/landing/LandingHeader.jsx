@@ -131,7 +131,7 @@ export default function LandingHeader() {
     'inline-flex h-10 items-center justify-center rounded-lg px-3 text-sm font-semibold text-[var(--lp-ink)] transition hover:bg-[var(--lp-bg-alt)]'
   const demoClass = BTN_PRIMARY.replace('h-11', 'h-10').replace('px-5', 'px-4')
 
-  const logo = <BrandLogo animated={false} idPrefix="landing-nav" lightMark={!isDark} variant={isDark ? 'marketing' : 'light'} />
+  const logo = <BrandLogo animated={false} showMark={false} idPrefix="landing-nav" lightMark={!isDark} variant={isDark ? 'marketing' : 'light'} />
 
   const demoLink = (className, source) =>
     isHome ? (

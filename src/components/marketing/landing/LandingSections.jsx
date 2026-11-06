@@ -469,7 +469,7 @@ export function LandingFooter({ isDark }) {
     <footer className="border-t border-[var(--lp-border)] bg-[var(--lp-section)] py-14">
       <div className={`${CONTAINER} grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]`}>
         <div className="max-w-xs">
-          <BrandLogo animated={false} idPrefix="landing-footer" lightMark={!isDark} variant={isDark ? 'marketing' : 'light'} />
+          <BrandLogo animated={false} showMark={false} idPrefix="landing-footer" lightMark={!isDark} variant={isDark ? 'marketing' : 'light'} />
           <p className="mt-4 text-sm leading-6 text-[var(--lp-muted)]">
             Livret d’apprentissage numérique et outil de gestion pour les auto-écoles.
           </p>

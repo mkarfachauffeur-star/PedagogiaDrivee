@@ -46,10 +46,11 @@ export default function BrandLogo({
   variant = 'marketing',
   idPrefix = 'pd',
   lightMark = false,
+  showMark = true,
 }) {
   const content = (
     <>
-      <LogoMark compact={compact} idPrefix={idPrefix} light={lightMark} />
+      {showMark && <LogoMark compact={compact} idPrefix={idPrefix} light={lightMark} />}
       {!compact && <LogoText variant={variant} />}
     </>
   )
