@@ -1,6 +1,6 @@
 // PEDAGOGIA DRIVE — Super Admin : création / suppression d'auto-école, invitation du gérant
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { acceptInviteUrl } from '../_shared/app-url.ts'
+import { inviteMember } from '../_shared/invite-email.ts'
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
       if (!email || !fullName) return json({ error: 'Le nom et l’e-mail du gérant sont obligatoires.' }, 400)
       if (!gender) return json({ error: 'La civilité du gérant est obligatoire.' }, 400)
 
-      const { data: orgRow } = await admin.from('organizations').select('id').eq('id', orgId).maybeSingle()
+      const { data: orgRow } = await admin.from('organizations').select('id, name').eq('id', orgId).maybeSingle()
       if (!orgRow) return json({ error: 'Auto-école introuvable.' }, 404)
 
       const { data: existing } = await admin
@@ -116,17 +116,19 @@ Deno.serve(async (req) => {
         )
       }
 
-      const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
+      const { userId, error } = await inviteMember(admin, {
+        email,
+        fullName,
+        role: 'manager',
+        organizationName: orgRow.name,
         data: { organization_id: orgId, role: 'manager', full_name: fullName, gender },
-        redirectTo: acceptInviteUrl(),
       })
-      if (error) return json({ error: error.message }, 400)
-
-      if (data.user?.id) {
-        await admin.from('profiles').update({ gender }).eq('id', data.user.id)
+      if (userId) {
+        await admin.from('profiles').update({ gender }).eq('id', userId)
       }
+      if (error) return json({ error: error.message }, 400)
       await admin.from('organizations').update({ manager_name: fullName }).eq('id', orgId)
-      return json({ ok: true, user_id: data.user?.id })
+      return json({ ok: true, user_id: userId })
     }
 
     return json({ error: 'Action non supportée' }, 400)

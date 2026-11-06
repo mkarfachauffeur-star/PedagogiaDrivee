@@ -46,12 +46,19 @@ export default function BrandLogo({
   variant = 'marketing',
   idPrefix = 'pd',
   lightMark = false,
-  showMark = true,
+  showMark = false,
 }) {
+  // Sans l'icône, la version compacte (menu replié) garde les initiales.
+  const compactText = (
+    <span className={`text-sm font-black tracking-[0.08em] ${variant === 'light' ? 'text-[#07111f]' : 'text-white'}`}>
+      P<span className="text-blue-500">D</span>
+    </span>
+  )
   const content = (
     <>
       {showMark && <LogoMark compact={compact} idPrefix={idPrefix} light={lightMark} />}
       {!compact && <LogoText variant={variant} />}
+      {compact && !showMark && compactText}
     </>
   )
 
